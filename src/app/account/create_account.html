@@ -1,0 +1,21 @@
+
+<body>
+<div>
+
+
+  <h2>Create User</h2>
+
+  <input type="text" [(ngModel)]="userName" placeholder="Name">
+  <input type="text" [(ngModel)]="userPasskey" placeholder="1234">
+
+  <button (click)="createUser()">Send User to Flask</button>
+
+  <div>{{ userNameTaken() }}</div>
+
+  <div>
+   <a routerLink="/login">Login</a>
+  </div>
+</div>
+
+</body>
+

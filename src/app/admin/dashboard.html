@@ -1,0 +1,30 @@
+
+<div class="main-container">
+  <h2>Event Panel</h2>
+
+  <button (click)="toggleMenu()">Create New Event</button>
+
+
+
+  <div>
+    <a routerLink="/login">Login</a>
+  </div>
+</div>
+
+<div class="overlay" [class.active]="isOpen" (click)="toggleMenu()"></div>
+
+<div class="bottom-sheet" [class.open]="isOpen">
+  <div class="handle-area" (click)="toggleMenu()">
+    <div class="handle"></div>
+  </div>
+
+  <div class="content">
+    <h3>New Group</h3>
+    <input type="text" [(ngModel)]="event_name" placeholder="Event Name">
+    <p>Select friends to start a chat</p>
+    <div [innerHTML]="people"></div>
+
+    <button class="open-btn" (click)="toggleMenu()">Create New Event</button>
+    <button (click)="toggleMenu()">Close</button>
+  </div>
+</div>

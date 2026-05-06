@@ -1,0 +1,61 @@
+import {Component, inject, signal} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {AuthService, UserProfile} from '../auth';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './login.html'
+})
+export class LoginComponent {
+  http = inject(HttpClient);
+  authService = inject(AuthService);
+  router = inject(Router);
+
+  userName = '';
+  userPasskey = '';
+  incorrect_login = signal('');
+  isLoading = false;
+
+
+  createUser() {
+    if (this.isLoading) {
+      return;
+    }
+    this.isLoading = true;
+    this.incorrect_login.set('');
+
+    const login_data = { name: this.userName, passkey: this.userPasskey };
+
+    this.http.post('http://localhost:5002/api/login-user', login_data)
+      .subscribe({
+        next: (response: any) => {
+          this.isLoading = false;
+          console.log(response,response.received)
+          if (response.received == "Wrong") {
+            this.incorrect_login.set('Incorrect Login Information');
+          } else {
+
+            const profile: UserProfile = {
+              id: response.id,
+              name: response.name,
+              role: response.role
+            };
+            this.authService.setSession(profile);
+            this.router.navigate(['/admin-dashboard']).then(r => {});
+
+            console.log('User Login successfully!', response);
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.incorrect_login.set('Incorrect Login Information');
+          console.error('Flask request failed:', err);
+        }
+      });
+  }
+}
