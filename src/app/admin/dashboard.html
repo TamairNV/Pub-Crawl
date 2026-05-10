@@ -19,12 +19,42 @@
   </div>
 
   <div class="content">
-    <h3>New Group</h3>
+    <h3>New Crawl</h3>
     <input type="text" [(ngModel)]="event_name" placeholder="Event Name">
-    <p>Select friends to start a chat</p>
-    <div [innerHTML]="people"></div>
+    <button (click)="createCrawl()">Next</button>
+    <p>Select people for pub crawl</p>
+    <div *ngIf="eventCreated()" >
+      <div *ngFor="let item of people; let i = index">
+        {{ item.name }}
+        <input type="checkbox" [id]="'check-' + i" [name]="'subscribe-' + i" [value]="item.id" [(ngModel)]="selectedPeople[i]">
+        <label [for]="'check-' + i"></label>
 
-    <button class="open-btn" (click)="toggleMenu()">Create New Event</button>
+        <label [for]="'team-' + i">Team:</label>
+        <select [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
+
+          <option *ngFor="let v of teams" [value]="v.id">
+            {{ v.name }}
+          </option>
+
+          <option disabled>──────────</option>
+
+
+          <option value="new">Add New Team...</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="open-btn" (click)="savePlayers()">Create  Crawl</button>
     <button (click)="toggleMenu()">Close</button>
+  </div>
+
+  <div *ngIf="showNewTeamForm" class="team-popup">
+    <input type="text" [(ngModel)]="newTeamName" placeholder="Team Name">
+
+    <label>Pick a color:</label>
+    <input type="color" [(ngModel)]="newTeamColor">
+
+    <button (click)="saveTeam()">Save</button>
+    <button (click)="showNewTeamForm = false">Cancel</button>
   </div>
 </div>

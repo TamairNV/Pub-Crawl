@@ -51,3 +51,51 @@ def login_user():
 
   return jsonify({"status": "success", "received": user_data})
 
+@main.route('/api/create-crawl',methods=['POST'])
+def create_crawl():
+  user_data = request.get_json()
+  if not user_data:
+    return jsonify({"status": "failed", "received": user_data})
+
+  name = user_data['name']
+  id = user_data['id']
+  out = create_event_sql(id,name)
+  if out:
+    return jsonify({"status": "success", "received": out['id']})
+
+
+@main.route('/api/get-teams',methods=['GET', 'POST'])
+def get_teams():
+  data = request.get_json()
+  if not data:
+    return jsonify({"status": "failed", "received": data})
+  print(data)
+  teams = get_all_teams_sql(data['event_id'])
+  print(teams)
+  return jsonify({"status": "success", "received": teams})
+
+
+
+@main.route('/api/save-new-team',methods=['GET', 'POST'])
+def save_new_team():
+  data = request.get_json()
+  if not data:
+    return jsonify({"status": "failed", "received": data})
+
+  teams = create_new_team_sql(data['name'],data['colour'],data['event_id'])
+  return jsonify({"status": "success", "received": teams})
+
+
+@main.route('/api/save-people-to-event',methods=['GET', 'POST'])
+def save_people_to_event():
+  data = request.get_json()
+  if not data:
+    return jsonify({"status": "failed", "received": data})
+
+  out = create_participants(data)
+  if out:
+    return jsonify({"status": "success", "received": out})
+
+  else:
+    return jsonify({"status": "fail", "received": out})
+
