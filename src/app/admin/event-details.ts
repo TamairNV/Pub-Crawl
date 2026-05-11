@@ -59,7 +59,7 @@ export class EventDetailsComponent implements OnInit {
   getEventDetails(){
     console.log(this.currentEventID)
     const event = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-event-details',event).subscribe({
+    this.http.post('/api/get-event-details',event).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("event error");

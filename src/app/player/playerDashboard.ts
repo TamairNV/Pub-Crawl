@@ -36,7 +36,7 @@ export class PlayerDashboard implements OnInit {
 
   getUserEvents(){
     const data = {user_id : this.currentUser.id}
-    this.http.post('http://localhost:5002/api/get-user-events',data).subscribe({
+    this.http.post('/api/get-user-events',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("got events error");

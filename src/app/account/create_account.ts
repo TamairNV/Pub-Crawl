@@ -29,7 +29,7 @@ export class CreateAccountComponent {
 
     const newUser = { name: this.userName, passkey: this.userPasskey };
 
-    this.http.post('http://localhost:5002/api/create-user', newUser)
+    this.http.post('/api/create-user', newUser)
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;

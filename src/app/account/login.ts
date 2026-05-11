@@ -32,7 +32,7 @@ export class LoginComponent {
 
     const login_data = { name: this.userName, passkey: this.userPasskey };
 
-    this.http.post('http://localhost:5002/api/login-user', login_data)
+    this.http.post('/api/login-user', login_data)
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;

@@ -48,7 +48,7 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.http.get('http://localhost:5002/api/get-users')
+    this.http.get('/api/get-users')
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -70,7 +70,7 @@ export class AdminDashboardComponent implements OnInit {
 
   getTeams(){
     const data = {event_id :this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-teams',data)
+    this.http.post('/api/get-teams',data)
       .subscribe({
         next: (response: any) => {
           console.log(response,response.received)
@@ -95,7 +95,7 @@ export class AdminDashboardComponent implements OnInit {
       const data = { name: this.event_name, id: this.eventID };
       try {
         const response: any = await firstValueFrom(
-          this.http.post('http://localhost:5002/api/create-crawl', data)
+          this.http.post('/api/create-crawl', data)
         );
 
         if (response.status === "failed") {
@@ -133,7 +133,7 @@ export class AdminDashboardComponent implements OnInit {
       colour: this.newTeamColor,
       event_id : this.eventID
     };
-    this.http.post('http://localhost:5002/api/save-new-team',newTeam).subscribe({
+    this.http.post('/api/save-new-team',newTeam).subscribe({
       next: (response: any) => {
         if (response.received == "Wrong") {
           console.log("Team adding error");
@@ -164,7 +164,7 @@ export class AdminDashboardComponent implements OnInit {
 
     console.log("Final payload:", finalData);
 
-    this.http.post('http://localhost:5002/api/save-people-to-event',finalData).subscribe({
+    this.http.post('/api/save-people-to-event',finalData).subscribe({
       next: (response: any) => {
         if (response.received == "False") {
           console.log("People added error");
@@ -178,7 +178,7 @@ export class AdminDashboardComponent implements OnInit {
 
 
   getEvents(){
-    this.http.get('http://localhost:5002/api/get-events').subscribe({
+    this.http.get('/api/get-events').subscribe({
       next: (response: any) => {
         if (response.received == "fail") {
           console.log("events error");

@@ -44,7 +44,7 @@ export class RefComponent implements OnInit {
   getEventDetails(){
     console.log(this.currentEventID)
     const event = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-event-details',event).subscribe({
+    this.http.post('/api/get-event-details',event).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("event error");
@@ -63,7 +63,7 @@ export class RefComponent implements OnInit {
   getBaseRules(){
 
     const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-base-rules',data).subscribe({
+    this.http.post('/api/get-base-rules',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("rule error");
@@ -80,7 +80,7 @@ export class RefComponent implements OnInit {
   getLocationRules(){
 
     const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-locations-rules',data).subscribe({
+    this.http.post('/api/get-locations-rules',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("locations error");
@@ -98,7 +98,7 @@ export class RefComponent implements OnInit {
   givePoint(n: any,id : String){
     console.log(this.currentUser.id)
     const data = {event_id : this.currentEventID, points : n, user_id :id,ref_id : this.currentUser.id}
-    this.http.post('http://localhost:5002/api/give-user-points',data).subscribe({
+    this.http.post('/api/give-user-points',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("give points error");
@@ -113,7 +113,7 @@ export class RefComponent implements OnInit {
   points  : any = []
   getPoints(){
     const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-user-points',data).subscribe({
+    this.http.post('/api/get-user-points',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("got points error");
