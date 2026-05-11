@@ -4,7 +4,7 @@ services:
   frontend:
     build: .
     ports:
-      - "8080:80" # Maps server port 8080 to container 80
+      - "8082:80" # Maps server port 8080 to container 80
     restart: always
 
   backend:
