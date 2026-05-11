@@ -3,3 +3,4 @@ Flask-CORS
 flask_talisman
 pymysql
 gunicorn
+dotenv
