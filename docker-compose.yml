@@ -23,10 +23,10 @@ services:
   tunnel:
     image: cloudflare/cloudflared:latest
     container_name: cloudflare-tunnel
+    command: tunnel run
     restart: always
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-    # The tunnel needs to be on the same network as the apps AND Nginx
     networks:
       - pub-crawl_default
       - csc2033_team32_25-26_default
