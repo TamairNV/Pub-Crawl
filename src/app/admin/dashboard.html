@@ -2,6 +2,11 @@
 <div class="main-container">
   <h2>Event Panel</h2>
 
+  <div *ngFor="let event of events">
+    <a [routerLink]="['/event-details', event.id]">
+      {{event.name}}
+    </a>
+  </div>
   <button (click)="toggleMenu()">Create New Event</button>
 
 

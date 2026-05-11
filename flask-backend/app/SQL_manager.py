@@ -133,7 +133,7 @@ def create_event_sql(id,name):
     print(f"Query Failed: {e}")
     return False
 
-def get_all_events():
+def get_all_events_sql():
   query = "SELECT * FROM Event"
 
   try:
@@ -187,6 +187,189 @@ def create_participants(people):
     cursor.executemany(query, params)
     connection.commit()
     return True
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+
+def get_users_in_event_sql(event_id):
+    query = """
+            SELECT
+              p.eventID,
+              p.teamID,
+              p.userID,
+              u.name,
+              t.name AS teamName
+            FROM Participant as p
+                   JOIN User as u ON p.userID = u.id
+                   JOIN Team as t ON p.teamID = t.id
+            WHERE p.eventID = %s;
+    """
+    try:
+      connection = get_db()
+      params = [event_id]
+      return run_query(connection, query, params)
+
+    except Exception as e:
+      print(f"Query Failed: {e}")
+      return False
+
+def get_teams_in_event_sql(event_id):
+  query = "SELECT * FROM Team WHERE eventID = %s;"
+  try:
+    connection = get_db()
+    params = [event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def update_user_team_sql(event_id,user_id,new_team_id):
+  query = "UPDATE Participant SET teamID = %s WHERE userID = %s and eventID = %s"
+  try:
+    connection = get_db()
+    params = [new_team_id,user_id,event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def add_new_location_sql(name,event_id,index):
+  id = str(uuid.uuid1())
+  query = "INSERT INTO Pub (id,eventID,name,order_index) VALUES (%s,%s,%s,%s)"
+  try:
+    connection = get_db()
+    params = [id,event_id,name,index]
+    out = run_query(connection, query, params)
+    return {
+      "id": id,
+      "out": out
+    }
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+
+def add_new_rule_sql(pub_id,name,description,event_id):
+  query = "INSERT INTO Rule (pubID,name,description,event_id) VALUES (%s,%s,%s,%s)"
+  try:
+    connection = get_db()
+    params = [pub_id,name,description,event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def get_all_base_rules_sql(event_id):
+  query = "SELECT * FROM Rule WHERE event_id = %s and pubID IS NULL"
+  try:
+    connection = get_db()
+    params = [event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def get_location_rules_sql(event_id):
+  query = """
+          SELECT
+            r.name as ruleName,
+            r.description as ruleDescription,
+            p.name as pubName,
+            p.order_index,
+            p.id
+          FROM Rule as r
+                 JOIN Pub as p on r.pubID = p.id
+          WHERE p.eventID = %s
+          ORDER BY p.order_index DESC;
+          """
+  try:
+    connection = get_db()
+    params = [event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def remove_user_sql(event_id,user_id):
+  query = "DELETE FROM Participant WHERE eventID = %s and userID = %s"
+  try:
+    connection = get_db()
+    params = [event_id,user_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+
+
+def remove_base_rule_sql(rule_id):
+  query = "DELETE FROM Rule WHERE id = %s"
+  try:
+    connection = get_db()
+    params = [rule_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def remove_location_sql(pub_id):
+  query = "DELETE FROM Rule WHERE pubID = %s"
+  connection = get_db()
+  params = [pub_id]
+  try:
+    out = run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+  query2 = "DELETE FROM Pub WHERE id = %s;"
+  try:
+    out2 = run_query(connection, query2, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+  return [out,out2]
+
+def get_user_points_sql(event_id):
+  query = """
+          SELECT
+            p.userID,
+            COALESCE(SUM(pt.point_number), 0) AS total_points
+          FROM Participant p
+                 LEFT JOIN Point pt ON p.userID = pt.userID AND p.eventID = pt.eventID
+          WHERE p.eventID = %s
+          GROUP BY p.userID
+          ORDER BY total_points DESC;
+  """
+  try:
+    connection = get_db()
+    params = [event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+
+def give_user_points_sql(event_id,user_id,points,admin_id):
+  query = "INSERT INTO Point (eventID,refID,userID,point_number) VALUES (%s,%s,%s,%s)"
+  try:
+    connection = get_db()
+    params = [event_id,admin_id,user_id,points]
+    return run_query(connection, query, params)
 
   except Exception as e:
     print(f"Query Failed: {e}")

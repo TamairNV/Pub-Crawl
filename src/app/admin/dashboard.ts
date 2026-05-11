@@ -17,6 +17,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef) {}
   ngOnInit() {
     this.getUsers()
+    this.getEvents()
   }
   isOpen = false;
   showNewTeamForm = false;
@@ -32,6 +33,7 @@ export class AdminDashboardComponent implements OnInit {
   }
   http = inject(HttpClient);
   router = inject(Router);
+  events : any[] = [];
 
   event_name = '';
   people : any[] = [];
@@ -42,8 +44,8 @@ export class AdminDashboardComponent implements OnInit {
   getUsers() {
     if (this.isLoading) {
       return;
-
     }
+
     this.isLoading = true;
     this.http.get('http://localhost:5002/api/get-users')
       .subscribe({
@@ -167,7 +169,23 @@ export class AdminDashboardComponent implements OnInit {
           console.log("People added error");
         }else{
           this.toggleMenu();
+          this.getEvents()
           console.log("Full Event Created")}
+      }
+    })
+  }
+
+
+  getEvents(){
+    this.http.get('http://localhost:5002/api/get-events').subscribe({
+      next: (response: any) => {
+        if (response.received == "fail") {
+          console.log("events error");
+        }else{
+          this.events = response.received
+          console.log(this.events)
+          this.cdr.detectChanges();
+          console.log("Events got")}
       }
     })
   }
