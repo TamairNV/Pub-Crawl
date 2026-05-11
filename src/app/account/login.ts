@@ -41,12 +41,18 @@ export class LoginComponent {
           } else {
 
             const profile: UserProfile = {
-              id: response.id,
-              name: response.name,
-              role: response.role
+              id: response.received.id,
+              name: this.userName,
+              role: response.received.role
             };
+            console.log(profile)
             this.authService.setSession(profile);
-            this.router.navigate(['/admin-dashboard']).then(r => {});
+            if(response.received.role == 'player'){
+              this.router.navigate(['/player-dashboard']).then(r => {});
+            }else{
+              this.router.navigate(['/admin-dashboard']).then(r => {});
+            }
+
 
             console.log('User Login successfully!', response);
           }

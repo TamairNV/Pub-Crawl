@@ -4,6 +4,8 @@ import {LoginComponent} from './account/login';
 import {AdminDashboardComponent} from './admin/dashboard';
 import {EventDetailsComponent} from './admin/event-details';
 import {RefComponent} from './admin/ref';
+import {PlayerDashboard} from './player/playerDashboard';
+import {EventPlay} from './player/eventPlay';
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
@@ -11,5 +13,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '',redirectTo: '/login',pathMatch : 'full' },
   { path: 'event-details/:id', component: EventDetailsComponent },
-  { path: 'ref/:id', component: RefComponent }
+  { path: 'ref/:id', component: RefComponent },
+  { path: 'player-dashboard', component: PlayerDashboard },
+  { path: 'event-play/:id', component: EventPlay },
 ];

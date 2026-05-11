@@ -173,7 +173,7 @@ export class EventDetailsComponent implements OnInit {
     const data = {
       event_id : this.currentEventID,
       name : this.newLocationName,
-      index : 0
+      index : this.locationsRules.length+1
     }
     this.http.post('http://localhost:5002/api/add-new-location',data).subscribe({
       next: (response: any) => {

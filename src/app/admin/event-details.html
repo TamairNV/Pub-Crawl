@@ -1,5 +1,7 @@
 <p>Admin Event Panel</p>
 <a [routerLink]="['/ref', currentEventID]">Ref Mode</a>
+<br>
+<a [routerLink]="['/admin-dashboard']">Back</a>
 <div *ngFor="let user of userDetails; let i = index" class="user-row">
   <strong>{{ user.name }}</strong>:
 
@@ -73,7 +75,7 @@
 
 ---locations ------
 <div *ngFor="let pub of locationsRules; let i = index">
-  {{i+1}}
+  {{pub.order_index}}
   {{pub.pubName}}
   {{pub.ruleName}}
   {{pub.ruleDescription}}

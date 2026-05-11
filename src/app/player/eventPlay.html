@@ -1,0 +1,18 @@
+
+<a [routerLink]="['/player-dashboard']">Back</a>
+
+<div *ngFor="let team of leaderboardData" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+
+  <h2 [style.color]="team.colour">
+    {{ team.teamName }} — {{ team.totalPoints }} Points
+  </h2>
+
+  <ul>
+    <li *ngFor="let member of team.members">
+      {{ member.name }} ({{ member.points }} pts)
+    </li>
+  </ul>
+
+</div>
+
+<p *ngIf="!leaderboardData || leaderboardData.length === 0">Loading leaderboard...</p>

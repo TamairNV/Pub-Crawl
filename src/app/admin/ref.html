@@ -1,10 +1,50 @@
 
 
 
+{{currentUser.name}}
+<br>
+<a [routerLink]="['/event-details', currentEventID]">Back</a>
+<br>
 
+---base rules ----
+<div *ngFor="let rule of baseRules; let i = index">
+  {{rule.name}}
+  {{rule.description}}
+  <br>
+</div>
+---locations ----
+<br>
+
+@if (locationsRules && locationsRules[currentPubIndex]) {
+  pub: {{locationsRules[currentPubIndex].order_index}}
+  <br>
+  {{locationsRules[currentPubIndex].pubName}}
+  <br>
+  {{locationsRules[currentPubIndex].ruleName}}
+  <br>
+  {{locationsRules[currentPubIndex].ruleDescription}}
+  <br>
+} @else {
+  <p>Loading rules...</p>
+}
+
+<!-- Disable if we are at the first item (index 0) -->
+<button
+  (click)="movePub(-1)"
+  [disabled]="currentPubIndex === 0">
+  Prev
+</button>
+
+<!-- Disable if we are at the last item OR data hasn't loaded -->
+<button
+  (click)="movePub(1)"
+  [disabled]="!locationsRules || currentPubIndex === locationsRules.length - 1">
+  Next
+</button>
+
+<br>
 
 <div *ngFor="let user of userDetails; let i = index">
-  {{user.name}} <button (click)="givePoint(1)">+</button><button (click)="givePoint(1)">-</button>
-
-
+  {{user.name}} <button (click)="givePoint(1,user.userID)">+</button><button (click)="givePoint(-1,user.userID)">-</button>
+  {{user.points}}
 </div>

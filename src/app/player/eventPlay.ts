@@ -12,34 +12,45 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-ref',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './ref.html'
+  templateUrl: './eventPlay.html'
 })
 
 
 
-export class RefComponent implements OnInit {
-  protected currentEventID: string | null | undefined;
+export class EventPlay implements OnInit {
+
   http = inject(HttpClient);
   router = inject(Router);
   authService = inject(AuthService);
-  protected userDetails: any;
-  private teams: any;
-  currentUser: any;
-  constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const eventId = params.get('id');
-      this.currentEventID = eventId
-      this.currentUser = this.authService.getSession()();
-      console.log("current User ", this.currentUser)
-      console.log('Loaded event with ID:', eventId);
-    });
-    this.getEventDetails();
-    this.getBaseRules();
 
-    this.getLocationRules();
+
+  currentUser: any;
+  private currentEventID: string | null | undefined;
+  constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
+  eventLoaded = false;
+  pointsLoaded = false;
+
+  ngOnInit() {
+    this.currentUser = this.authService.getSession()();
+
+    this.route.paramMap.subscribe(params => {
+      this.currentEventID = params.get('id');
+      console.log('Loaded event with ID:', this.currentEventID);
+
+      // Now that we HAVE the ID, fetch the data!
+      this.getEventDetails();
+      this.getPoints();
+    });
+  }
+  checkAndBuildLeaderboard() {
+    if (this.eventLoaded && this.pointsLoaded) {
+      this.generateLeaderboard();
+      this.cdr.detectChanges(); // Update the screen once everything is ready
+    }
   }
 
+  userDetails : any = []
+  teams : any = []
   getEventDetails(){
     console.log(this.currentEventID)
     const event = {event_id : this.currentEventID}
@@ -50,65 +61,16 @@ export class RefComponent implements OnInit {
         }else{
           this.userDetails = response.received.users
           this.teams = response.received.teams
-          this.getPoints();
-
+          this.eventLoaded = true;
           console.log("Event got",response.received)}
-      }
-    })
-  }
-  baseRules : any[] = [];
-  locationsRules : any[] = [];
+          this.checkAndBuildLeaderboard();
 
-  getBaseRules(){
-
-    const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-base-rules',data).subscribe({
-      next: (response: any) => {
-        if (response.received == "failed") {
-          console.log("rule error");
-        }else{
-          console.log("base rules got",response.received)
-          this.baseRules = response.received
           this.cdr.detectChanges();
 
-        }
       }
     })
   }
 
-  getLocationRules(){
-
-    const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-locations-rules',data).subscribe({
-      next: (response: any) => {
-        if (response.received == "failed") {
-          console.log("locations error");
-        }else{
-          console.log("locations rules got",response.received)
-          this.locationsRules = response.received
-          this.cdr.detectChanges();
-
-        }
-      }
-    })
-  }
-
-
-  givePoint(n: any,id : String){
-    console.log(this.currentUser.id)
-    const data = {event_id : this.currentEventID, points : n, user_id :id,ref_id : this.currentUser.id}
-    this.http.post('http://localhost:5002/api/give-user-points',data).subscribe({
-      next: (response: any) => {
-        if (response.received == "failed") {
-          console.log("give points error");
-        }else{
-          console.log("points given ",response.received)
-          this.getPoints()
-
-        }
-      }
-    })
-  }
   points  : any = []
   getPoints(){
     const data = {event_id : this.currentEventID}
@@ -127,17 +89,47 @@ export class RefComponent implements OnInit {
               }
             }
           }
+
           console.log(this.userDetails)
+          this.pointsLoaded = true;
+          this.checkAndBuildLeaderboard();
           this.cdr.detectChanges();
         }
       }
     })
   }
+  leaderboardData: any[] = [];
 
+  generateLeaderboard() {
+    this.leaderboardData = this.teams.map((team: any) => {
 
-  currentPubIndex = 0
-  movePub(n : any){
-    this.currentPubIndex += n;
+      const teamMembers = this.userDetails.filter((user: any) => user.teamID === team.id);
+      const mappedMembers = teamMembers.map((m: any) => {
+        const scoreRecord = this.points.find((p: any) => p.userID === m.userID);
+
+        const pts = scoreRecord ? (parseInt(scoreRecord.total_points) || 0) : 0;
+
+        return {
+          name: m.name,
+          userID: m.userID,
+          points: pts
+        };
+      });
+
+      const totalPoints = mappedMembers.reduce((sum: number, member: any) => sum + member.points, 0);
+
+      return {
+        teamID: team.id,
+        teamName: team.name,
+        colour: team.colour,
+        totalPoints: totalPoints,
+        members: mappedMembers
+      };
+    });
+
+    this.leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints);
+
+    console.log("Final Leaderboard:", this.leaderboardData);
   }
 
 }

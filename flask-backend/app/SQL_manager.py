@@ -287,7 +287,7 @@ def get_location_rules_sql(event_id):
           FROM Rule as r
                  JOIN Pub as p on r.pubID = p.id
           WHERE p.eventID = %s
-          ORDER BY p.order_index DESC;
+          ORDER BY p.order_index ASC;
           """
   try:
     connection = get_db()
@@ -369,6 +369,24 @@ def give_user_points_sql(event_id,user_id,points,admin_id):
   try:
     connection = get_db()
     params = [event_id,admin_id,user_id,points]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+
+def events_user_is_in_sql(user_id):
+  query = """
+        SELECT *
+        FROM Participant p
+               JOIN Event e ON e.id = p.eventID
+        WHERE p.userID = %s;
+  """
+
+  try:
+    connection = get_db()
+    params = [user_id]
     return run_query(connection, query, params)
 
   except Exception as e:

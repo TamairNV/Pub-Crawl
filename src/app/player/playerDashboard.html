@@ -1,0 +1,16 @@
+
+
+
+
+<a [routerLink]="['/login']">login</a>
+<br>
+<div *ngIf="currentUser.role == 'ADMIN'">
+  <a [routerLink]="['/admin-dashboard']">Admin</a>
+</div>
+
+<br>
+<div *ngFor="let event of events; let i = index">
+  <a [routerLink]="['/event-play', event.id]">
+    {{event.name}}
+  </a>
+</div>

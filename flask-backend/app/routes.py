@@ -278,7 +278,22 @@ def give_user_points():
   ref_id = data['ref_id']
   points = data['points']
 
+
   out = give_user_points_sql(event_id,user_id,points,ref_id)
+  if out:
+    return jsonify({"status": "success", "received": out})
+  else:
+    return jsonify({"status": "failed", "received": out})
+
+@main.route('/api/get-user-events',methods=['GET', 'POST'])
+def get_user_events():
+  data = request.get_json()
+  if not data:
+    return jsonify({"status": "failed", "received": data})
+
+  user_id = data['user_id']
+
+  out = events_user_is_in_sql(user_id)
   if out:
     return jsonify({"status": "success", "received": out})
   else:
