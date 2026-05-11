@@ -8,6 +8,8 @@ services:
     restart: always
 
   backend:
+    environment:
+      - PYTHONUNBUFFERED=1
     build: ./flask-backend
     ports:
       - "8001:8001"
