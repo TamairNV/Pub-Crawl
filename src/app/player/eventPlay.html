@@ -1,18 +1,27 @@
+<div class="event-play-container">
+  <div class="header">
+    <a [routerLink]="['/player-dashboard']" class="back-button">&larr; Back to Your Events</a>
+    <h2>Live Leaderboard</h2>
+  </div>
 
-<a [routerLink]="['/player-dashboard']">Back</a>
+  <div *ngIf="leaderboardData.length > 0; else loading">
+    <div *ngFor="let team of leaderboardData; let i = index" class="dashboard-card">
+      <h3 [style.color]="team.colour">
+        #{{ i + 1 }} {{ team.teamName }} - {{ team.totalPoints }} Points
+      </h3>
+      <ul class="player-list">
+        <li *ngFor="let member of team.members" class="player-item">
+          <span>{{ member.name }}</span>
+          <strong>{{ member.points }} pts</strong>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-<div *ngFor="let team of leaderboardData" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
-
-  <h2 [style.color]="team.colour">
-    {{ team.teamName }} — {{ team.totalPoints }} Points
-  </h2>
-
-  <ul>
-    <li *ngFor="let member of team.members">
-      {{ member.name }} ({{ member.points }} pts)
-    </li>
-  </ul>
-
+  <ng-template #loading>
+    <div class="dashboard-card">
+      <h3>Loading Leaderboard...</h3>
+      <p>Please wait while we calculate the scores.</p>
+    </div>
+  </ng-template>
 </div>
-
-<p *ngIf="!leaderboardData || leaderboardData.length === 0">Loading leaderboard...</p>

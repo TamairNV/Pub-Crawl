@@ -1,0 +1,263 @@
+/* Core Layout & Typography - Soft Blue, Black & Yellow Theme */
+.admin-dashboard {
+  max-width: 800px;
+  margin: 2rem auto;
+  font-family: "Nunito", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Slightly rounder, fun font */
+  color: #111827; /* Dark black for readable text */
+}
+.admin-header h1 {
+  margin: 0;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #f0f8ff; /* Soft blue fill */
+  -webkit-text-stroke: 2px #111827; /* Bold black outline */
+  text-shadow: 4px 4px 0px #fbbf24, 5px 5px 0px #111827; /* Fun yellow shadow */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform: rotate(-1deg); /* Slight tilt for that fun vibe */
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Cards - Softest blue tint */
+.admin-card {
+  background: #f0f8ff; /* Very soft blue */
+  border-radius: 12px; /* Rounder, fun corners */
+  border: 3px solid #111827; /* Bold black borders */
+  box-shadow: 4px 4px 0px #fbbf24; /* Fun yellow offset shadow */
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #000;
+  border-bottom: 3px solid #111827;
+  padding-bottom: 0.5rem;
+}
+
+.admin-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem 0;
+  color: #000;
+}
+
+/* Lists */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 2px solid #111827;
+  border-radius: 8px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 1.05rem;
+}
+
+.description-text {
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+/* Forms & Inputs */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px dashed #111827;
+}
+
+.form-control {
+  padding: 0.6rem;
+  border: 2px solid #111827;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fafafa;
+}
+
+.form-control:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px #fbbf24;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+/* Edit Controls & Specific Layouts */
+.edit-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.new-user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+}
+
+.checkbox-group, .team-select-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Buttons - Making them pop! */
+.btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #111827;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+
+.btn-small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  background: #fbbf24; /* Fun yellow */
+  box-shadow: 2px 2px 0px #111827;
+}
+.btn-primary:hover { background: #f59e0b; }
+
+.btn-secondary {
+  background: #bfdbfe; /* Soft blue */
+}
+.btn-secondary:hover { background: #93c5fd; }
+
+.btn-danger {
+  background: #fca5a5; /* Soft red for destructive actions */
+}
+.btn-danger:hover { background: #f87171; }
+
+.btn-success {
+  background: #bbf7d0; /* Soft green */
+}
+.btn-success:hover { background: #86efac; }
+
+.btn-outline {
+  background: #ffffff;
+  box-shadow: 2px 2px 0px #111827;
+}
+.btn-outline:hover { background: #f3f4f6; }
+
+/* Badges */
+.badge {
+  background: #fbbf24; /* Yellow badge */
+  color: #000;
+  padding: 0.2rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border: 1px solid #111827;
+}
+
+.badge-gray {
+  background: #111827;
+  color: #fff;
+}
+
+/* Modal Popup - High Readability */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 24, 39, 0.7); /* Darker backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.team-popup {
+  background: #f0f8ff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  border: 3px solid #111827;
+  box-shadow: 6px 6px 0px #fbbf24;
+}
+
+.team-popup h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.color-picker {
+  border: 2px solid #111827;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}

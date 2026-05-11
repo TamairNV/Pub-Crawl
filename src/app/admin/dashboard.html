@@ -1,70 +1,73 @@
+<div class="admin-dashboard">
+  <header class="admin-header">
+    <h1>Admin Dashboard</h1>
 
+    <div class="header-actions">
+      <!-- Emojis add to the fun vibe, but feel free to remove them! -->
+      <a [routerLink]="['/player-dashboard']" class="btn btn-secondary">Player Mode</a>
+      <a [routerLink]="['/login']" class="btn btn-secondary">Logout</a>
 
+    </div>
+  </header>
 
-<a [routerLink]="['/player-dashboard']">Player Mode</a>
+  <div class="dashboard-grid">
+    <!-- Create New Crawl Card -->
+    <section class="admin-card">
+      <h2>Create New Crawl</h2>
+      <div class="form-group">
+        <input type="text" class="form-control" [(ngModel)]="event_name" placeholder="Event Name">
+        <button class="btn btn-primary" (click)="createCrawl()">Create & Configure</button>
+      </div>
 
+      <div *ngIf="eventCreated()">
+        <hr>
+        <h3>Add Participants</h3>
+        <div class="list-container">
+          <div *ngFor="let item of people; let i = index" class="list-item">
+            <div class="item-info">
+              <input type="checkbox" [id]="'check-' + i" [(ngModel)]="selectedPeople[i]">
+              <label [for]="'check-' + i">{{ item.name }}</label>
+            </div>
+            <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
+              <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
+              <option disabled>──────────</option>
+              <option value="new">Add New Team...</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-success" (click)="savePlayers()">Save All Participants</button>
+      </div>
+    </section>
 
-<div class="main-container">
-  <h2>Event Panel</h2>
-
-  <div *ngFor="let event of events">
-    <a [routerLink]="['/event-details', event.id]">
-      {{event.name}}
-    </a>
-  </div>
-  <button (click)="toggleMenu()">Create New Event</button>
-
-
-
-  <div>
-    <a routerLink="/login">Login</a>
+    <!-- Current Events Card -->
+    <section class="admin-card">
+      <h2>Current Events</h2>
+      <div class="list-container">
+        <div *ngFor="let event of events" class="list-item">
+          <a [routerLink]="['/event-details', event.id]" class="item-info">{{ event.name }}</a>
+        </div>
+        <div *ngIf="events.length === 0" class="list-item">
+          <p>No events found.</p>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
-<div class="overlay" [class.active]="isOpen" (click)="toggleMenu()"></div>
-
-<div class="bottom-sheet" [class.open]="isOpen">
-  <div class="handle-area" (click)="toggleMenu()">
-    <div class="handle"></div>
-  </div>
-
-  <div class="content">
-    <h3>New Crawl</h3>
-    <input type="text" [(ngModel)]="event_name" placeholder="Event Name">
-    <button (click)="createCrawl()">Next</button>
-    <p>Select people for pub crawl</p>
-    <div *ngIf="eventCreated()" >
-      <div *ngFor="let item of people; let i = index">
-        {{ item.name }}
-        <input type="checkbox" [id]="'check-' + i" [name]="'subscribe-' + i" [value]="item.id" [(ngModel)]="selectedPeople[i]">
-        <label [for]="'check-' + i"></label>
-
-        <label [for]="'team-' + i">Team:</label>
-        <select [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
-
-          <option *ngFor="let v of teams" [value]="v.id">
-            {{ v.name }}
-          </option>
-
-          <option disabled>──────────</option>
-
-
-          <option value="new">Add New Team...</option>
-        </select>
+<!-- New Team Modal -->
+<div class="modal-overlay" *ngIf="showNewTeamForm">
+  <div class="team-popup card">
+    <h3>Create New Team</h3>
+    <div class="form-group">
+      <input type="text" class="form-control" [(ngModel)]="newTeamName" placeholder="Team Name">
+      <div class="color-picker-group">
+        <label>Pick a color:</label>
+        <input type="color" class="color-picker" [(ngModel)]="newTeamColor">
       </div>
     </div>
-
-    <button class="open-btn" (click)="savePlayers()">Create  Crawl</button>
-    <button (click)="toggleMenu()">Close</button>
-  </div>
-
-  <div *ngIf="showNewTeamForm" class="team-popup">
-    <input type="text" [(ngModel)]="newTeamName" placeholder="Team Name">
-
-    <label>Pick a color:</label>
-    <input type="color" [(ngModel)]="newTeamColor">
-
-    <button (click)="saveTeam()">Save</button>
-    <button (click)="showNewTeamForm = false">Cancel</button>
+    <div class="modal-actions">
+      <button class="btn btn-outline" (click)="showNewTeamForm = false">Cancel</button>
+      <button class="btn btn-success" (click)="saveTeam()">Save Team</button>
+    </div>
   </div>
 </div>

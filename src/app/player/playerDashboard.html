@@ -1,16 +1,25 @@
+<div class="player-dashboard-container">
+  <div class="header">
 
 
 
 
-<a [routerLink]="['/login']">login</a>
-<br>
-<div *ngIf="currentUser.role == 'ADMIN'">
-  <a [routerLink]="['/admin-dashboard']">Admin</a>
-</div>
+    <h2>Your Events</h2>
+    <div *ngIf="currentUser.role == 'ADMIN'">
+      <a [routerLink]="['/admin-dashboard']" class="link-as-button">Go to Admin Dashboard</a>
+    </div>
+  </div>
 
-<br>
-<div *ngFor="let event of events; let i = index">
-  <a [routerLink]="['/event-play', event.id]">
-    {{event.name}}
-  </a>
+  <div class="event-grid">
+    <div *ngFor="let event of events" class="event-card">
+      <h3>{{ event.name }}</h3>
+      <p>Your adventure awaits! Click below to join the fun.</p>
+      <a [routerLink]="['/event-play', event.id]" class="btn-primary">Go to Event</a>
+    </div>
+    <div *ngIf="events.length === 0" class="event-card">
+        <h3>No Events Found</h3>
+        <p>You are not currently part of any events. An admin needs to add you to one.</p>
+    </div>
+  </div>
+  <a [routerLink]="['/login']" class="btn btn-secondary">Logout</a>
 </div>

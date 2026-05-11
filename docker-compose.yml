@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "8080:80" # Maps server port 8080 to container 80
+    restart: always
+
+  backend:
+    build: ./flask-backend
+    ports:
+      - "8001:8001"
+    restart: always
+    env_file: .env

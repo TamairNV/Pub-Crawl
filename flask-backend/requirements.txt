@@ -2,3 +2,4 @@ Flask
 Flask-CORS
 flask_talisman
 pymysql
+gunicorn

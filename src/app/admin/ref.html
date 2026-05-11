@@ -1,50 +1,62 @@
+<div class="ref-dashboard">
+  <!-- Header -->
+  <header class="ref-header">
+    <a [routerLink]="['/event-details', currentEventID]" class="btn btn-outline">&larr; Back to Event Details</a>
+    <h1>Referee Mode</h1>
+    <p class="user-badge">Viewing as: <strong>{{ currentUser.name }}</strong></p>
+  </header>
 
+  <!-- Location & Rules Card -->
+  <section class="fun-card">
+    <h2>Current Location</h2>
 
+    <div *ngIf="locationsRules && locationsRules[currentPubIndex]; else noLocations">
+      <div class="pub-title">
+        <span class="badge">{{ locationsRules[currentPubIndex].order_index }}</span>
+        <h3>{{ locationsRules[currentPubIndex].pubName }}</h3>
+      </div>
 
-{{currentUser.name}}
-<br>
-<a [routerLink]="['/event-details', currentEventID]">Back</a>
-<br>
+      <div class="rule-box">
+        <strong>Rule: {{ locationsRules[currentPubIndex].ruleName }}</strong>
+        <p>{{ locationsRules[currentPubIndex].ruleDescription }}</p>
+      </div>
+    </div>
 
----base rules ----
-<div *ngFor="let rule of baseRules; let i = index">
-  {{rule.name}}
-  {{rule.description}}
-  <br>
-</div>
----locations ----
-<br>
+    <ng-template #noLocations>
+      <div class="rule-box">
+        <p>No locations have been set for this event yet.</p>
+      </div>
+    </ng-template>
 
-@if (locationsRules && locationsRules[currentPubIndex]) {
-  pub: {{locationsRules[currentPubIndex].order_index}}
-  <br>
-  {{locationsRules[currentPubIndex].pubName}}
-  <br>
-  {{locationsRules[currentPubIndex].ruleName}}
-  <br>
-  {{locationsRules[currentPubIndex].ruleDescription}}
-  <br>
-} @else {
-  <p>Loading rules...</p>
-}
+    <div class="location-nav">
+      <button class="btn btn-secondary" (click)="movePub(-1)" [disabled]="currentPubIndex === 0">&larr; Prev Pub</button>
+      <button class="btn btn-primary" (click)="movePub(1)" [disabled]="!locationsRules || currentPubIndex === locationsRules.length - 1">Next Pub &rarr;</button>
+    </div>
+  </section>
 
-<!-- Disable if we are at the first item (index 0) -->
-<button
-  (click)="movePub(-1)"
-  [disabled]="currentPubIndex === 0">
-  Prev
-</button>
+  <!-- Player Points Card -->
+  <section class="fun-card">
+    <h2>Player Points</h2>
+    <div class="user-grid">
+      <div *ngFor="let user of userDetails" class="player-card">
+        <h4>{{ user.name }}</h4>
+        <div class="points-control">
+          <button class="btn btn-danger btn-circle" (click)="givePoint(-1, user.userID)">-</button>
+          <span class="points-display">{{ user.points || 0 }}</span>
+          <button class="btn btn-success btn-circle" (click)="givePoint(1, user.userID)">+</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!-- Disable if we are at the last item OR data hasn't loaded -->
-<button
-  (click)="movePub(1)"
-  [disabled]="!locationsRules || currentPubIndex === locationsRules.length - 1">
-  Next
-</button>
-
-<br>
-
-<div *ngFor="let user of userDetails; let i = index">
-  {{user.name}} <button (click)="givePoint(1,user.userID)">+</button><button (click)="givePoint(-1,user.userID)">-</button>
-  {{user.points}}
+  <!-- General Rules Card -->
+  <section class="fun-card">
+    <h2>General Rules</h2>
+    <div class="list-container">
+      <div *ngFor="let rule of baseRules" class="list-item">
+        <strong>{{ rule.name }}:</strong>
+        <span class="description-text">{{ rule.description }}</span>
+      </div>
+    </div>
+  </section>
 </div>

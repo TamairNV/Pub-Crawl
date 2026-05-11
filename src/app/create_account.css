@@ -1,0 +1,59 @@
+/* Styles for the Create Account Component */
+
+.create-user-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: #2d3748; /* A slightly lighter shade than the body */
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px; /* Constrain width for better readability on large screens */
+}
+
+h2 {
+  color: var(--primary-text-color);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(246, 224, 94, 0.3); /* A soft glow for the accent color */
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-blue);
+  color: var(--primary-text-color);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+button:hover {
+  background-color: #3182ce; /* A slightly lighter blue on hover */
+}
+
+button:active {
+  transform: scale(0.98); /* A subtle press effect */
+}

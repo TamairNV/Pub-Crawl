@@ -12,7 +12,8 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-event-details',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './event-details.html'
+  templateUrl: './event-details.html',
+  styleUrl: './event-details.css'
 })
 
 export class EventDetailsComponent implements OnInit {

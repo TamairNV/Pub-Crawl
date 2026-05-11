@@ -12,7 +12,8 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-ref',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './eventPlay.html'
+  templateUrl: './eventPlay.html',
+  styleUrl: './eventPlay.css'
 })
 
 

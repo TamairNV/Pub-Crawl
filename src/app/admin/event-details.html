@@ -1,110 +1,131 @@
-<p>Admin Event Panel</p>
-<a [routerLink]="['/ref', currentEventID]">Ref Mode</a>
-<br>
-<a [routerLink]="['/admin-dashboard']">Back</a>
-<div *ngFor="let user of userDetails; let i = index" class="user-row">
-  <strong>{{ user.name }}</strong>:
+<div class="admin-dashboard">
+  <!-- Header -->
+  <header class="admin-header">
+    <h1>Admin Event Panel</h1>
+    <div class="header-actions">
+      <a [routerLink]="['/ref', currentEventID]" class="btn btn-outline">Ref Mode</a>
+      <a [routerLink]="['/admin-dashboard']" class="btn btn-outline">Back</a>
+    </div>
+  </header>
 
-  <ng-container *ngIf="!isEditing[i]; else editTemplate">
-    <span>{{ user.teamName || 'No Team' }}</span>
-    <button (click)="toggleEdit(i)">Update</button>
-  </ng-container>
-  <button class="open-btn" (click)="removeUser(user.userID)">Remove</button>
+  <!-- Users Management Card -->
+  <section class="admin-card">
+    <div class="card-header">
+      <h2>Manage Users</h2>
+      <button class="btn btn-primary" (click)="toggleAddUserMenu()">+ Add User</button>
+    </div>
 
-  <ng-template #editTemplate>
-    <select [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
-      <option *ngFor="let v of teams" [value]="v.id">
-        {{ v.name }}
-      </option>
-      <option disabled>──────────</option>
-      <option value="new">Add New Team...</option>
-    </select>
+    <!-- Existing Users -->
+    <div class="list-container">
+      <div *ngFor="let user of userDetails; let i = index" class="list-item user-row">
+        <div class="item-info">
+          <strong>{{ user.name }}</strong>
 
-    <button (click)="saveTeam()" class="save-btn">Save</button>
-    <button (click)="isEditing[i] = false" class="cancel-btn">Cancel</button>
-  </ng-template>
+          <ng-container *ngIf="!isEditing[i]; else editTemplate">
+            <span class="badge">{{ user.teamName || 'No Team' }}</span>
+            <button class="btn btn-small btn-secondary" (click)="toggleEdit(i)">Update</button>
+          </ng-container>
+        </div>
 
+        <button class="btn btn-small btn-danger" (click)="removeUser(user.userID)">Remove</button>
+
+        <ng-template #editTemplate>
+          <div class="edit-controls">
+            <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
+              <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
+              <option disabled>──────────</option>
+              <option value="new">Add New Team...</option>
+            </select>
+            <button class="btn btn-small btn-success" (click)="saveTeam()">Save</button>
+            <button class="btn btn-small btn-outline" (click)="isEditing[i] = false">Cancel</button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Add User Dropdown Menu -->
+    <div *ngIf="addUserMenu" class="add-user-section form-group">
+      <h3>Add New Users</h3>
+      <div *ngFor="let item of people; let i = index" class="new-user-row">
+        <div class="checkbox-group">
+          <input type="checkbox" [id]="'check-' + i" [name]="'subscribe-' + i" [value]="item.id" [(ngModel)]="selectedPeople[i]">
+          <label [for]="'check-' + i">{{ item.name }}</label>
+        </div>
+
+        <div class="team-select-group">
+          <label [for]="'team-' + i">Team:</label>
+          <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
+            <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
+            <option disabled>──────────</option>
+            <option value="new">Add New Team...</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" (click)="saveNewPlayers()">Add Selected Users</button>
+    </div>
+  </section>
+
+  <!-- Base Rules Card -->
+  <section class="admin-card">
+    <h2>Base Rules</h2>
+
+    <div class="list-container">
+      <div *ngFor="let rule of baseRules; let i = index" class="list-item">
+        <div class="item-info">
+          <strong>{{rule.name}}</strong>
+          <span class="description-text">{{rule.description}}</span>
+        </div>
+        <button class="btn btn-small btn-danger" (click)="removeBaseRule(rule.id)">Remove</button>
+      </div>
+    </div>
+
+    <div class="form-group add-rule-form">
+      <h3>Add New Base Rule</h3>
+      <input type="text" class="form-control" [(ngModel)]="newBaseRule" placeholder="Rule outline (e.g., No Phones)">
+      <textarea [(ngModel)]="newBaseRuleDescription" placeholder="Rule description..." rows="3" class="form-control"></textarea>
+      <button class="btn btn-primary" (click)="saveBaseRule(-1)">Add Base Rule</button>
+    </div>
+  </section>
+
+  <!-- Locations Card -->
+  <section class="admin-card">
+    <h2>Locations</h2>
+
+    <div class="list-container">
+      <div *ngFor="let pub of locationsRules; let i = index" class="list-item">
+        <div class="item-info">
+          <span class="badge badge-gray">{{pub.order_index}}</span>
+          <strong>{{pub.pubName}}</strong> - {{pub.ruleName}}
+          <span class="description-text">{{pub.ruleDescription}}</span>
+        </div>
+        <button class="btn btn-small btn-danger" (click)="removeLocation(pub.id)">Remove</button>
+      </div>
+    </div>
+
+    <div class="form-group add-location-form">
+      <h3>Add New Location</h3>
+      <input type="text" class="form-control" [(ngModel)]="newLocationName" placeholder="Location Name">
+      <input type="text" class="form-control" [(ngModel)]="newBaseRuleLocation" placeholder="Rule outline for location">
+      <textarea [(ngModel)]="newBaseRuleDescriptionLocation" placeholder="Rule description..." rows="3" class="form-control"></textarea>
+      <button class="btn btn-primary" (click)="saveLocation()">Add Location</button>
+    </div>
+  </section>
 </div>
 
-<button (click)="toggleAddUserMenu()">Add User</button>
-<div *ngIf="addUserMenu" >
-  <div *ngFor="let item of people; let i = index">
-    {{ item.name }}
-
-
-    <input type="checkbox" [id]="'check-' + i" [name]="'subscribe-' + i" [value]="item.id" [(ngModel)]="selectedPeople[i]">
-    <label [for]="'check-' + i"></label>
-
-    <label [for]="'team-' + i">Team:</label>
-    <select [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
-
-      <option *ngFor="let v of teams" [value]="v.id">
-        {{ v.name }}
-      </option>
-
-      <option disabled>──────────</option>
-
-
-      <option value="new">Add New Team...</option>
-    </select>
+<!-- Team Popup Modal -->
+<div class="modal-overlay" *ngIf="showNewTeamForm">
+  <div class="team-popup card">
+    <h3>Create New Team</h3>
+    <div class="form-group">
+      <input type="text" class="form-control" [(ngModel)]="newTeamName" placeholder="Team Name">
+      <div class="color-picker-group">
+        <label>Pick a color:</label>
+        <input type="color" class="color-picker" [(ngModel)]="newTeamColor">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" (click)="showNewTeamForm = false">Cancel</button>
+      <button class="btn btn-success" (click)="saveNewTeam()">Save Team</button>
+    </div>
   </div>
-  <button class="open-btn" (click)="saveNewPlayers()">Add New Users</button>
-</div>
-<br>
----base rules ------
-<div *ngFor="let rule of baseRules; let i = index">
-  {{rule.name}} {{rule.description}}  <button class="open-btn" (click)="removeBaseRule(rule.id)">Remove</button>
-
-</div>
-
--------------new base rule----------------
-<br>
-<input type="text" [(ngModel)]="newBaseRule" placeholder="Rule outline">
-<br>
-<br>
-<textarea
-  [(ngModel)]="newBaseRuleDescription"
-  placeholder="Rule description"
-  rows="5"
-  class="custom-textarea">
-</textarea>
-
-<button (click)="saveBaseRule(-1)">Add Base Rule</button>
-<br>
-
-
----locations ------
-<div *ngFor="let pub of locationsRules; let i = index">
-  {{pub.order_index}}
-  {{pub.pubName}}
-  {{pub.ruleName}}
-  {{pub.ruleDescription}}
-  <button class="open-btn" (click)="removeLocation(pub.id)">Remove</button>
-
-</div>
--------------add location----------------
-<br>
-<input type="text" [(ngModel)]="newLocationName" placeholder="Location">
-<br>
-<br>
-<input type="text" [(ngModel)]="newBaseRuleLocation" placeholder="Rule outline">
-<br>
-<br>
-<textarea
-  [(ngModel)]="newBaseRuleDescriptionLocation"
-  placeholder="Rule description"
-  rows="5"
-  class="custom-textarea">
-</textarea>
-
-<button (click)="saveLocation()">Add Location</button>
-
-<div *ngIf="showNewTeamForm" class="team-popup">
-  <input type="text" [(ngModel)]="newTeamName" placeholder="Team Name">
-
-  <label>Pick a color:</label>
-  <input type="color" [(ngModel)]="newTeamColor">
-
-  <button (click)="saveNewTeam()">Save</button>
-  <button (click)="showNewTeamForm = false">Cancel</button>
 </div>

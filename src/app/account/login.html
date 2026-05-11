@@ -1,22 +1,22 @@
 
-<body>
-<div>
+<div class="auth-page-wrapper">
+<div class="auth-card">
+  <h2>Welcome Back!</h2>
 
-  <h2>Login</h2>
-
-  <input type="text" [(ngModel)]="userName" placeholder="Name">
-  <input type="text" [(ngModel)]="userPasskey" placeholder="1234">
-  <label for="camera">Take a photo:</label>
-  <input type="file" id="camera" accept="image/*" capture="environment">
-
-  <button (click)="createUser()">Send User to Flask</button>
-
-  <div>{{ incorrect_login() }}</div>
-
-  <div>
-     <a routerLink="/create-account">Create Account</a>
+  <div class="form-group">
+    <input type="text" class="form-control" [(ngModel)]="userName" placeholder="Username">
   </div>
+
+  <div class="form-group">
+    <input type="text" class="form-control" [(ngModel)]="userPasskey" placeholder="Passkey">
+  </div>
+
+  <button class="btn-primary" (click)="createUser()">Login</button>
+
+  <div class="error-message">{{ incorrect_login() }}</div>
+
+  <div class="divider"></div>
+
+  <a routerLink="/create-account" class="link-as-button">Need an account? Create one</a>
 </div>
-
-</body>
-
+</div>

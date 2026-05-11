@@ -1,0 +1,118 @@
+/* Update this selector to add the side buffer */
+.auth-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+
+  /* This creates the buffer on the sides */
+  padding: 2rem 1.5rem;
+
+  min-height: 80vh;
+  box-sizing: border-box; /* Ensures padding doesn't push the width over 100% */
+}
+
+/* Update the card to handle width better */
+.auth-card {
+  background: #f0f8ff;
+  border: 3px solid #111827;
+  border-radius: 16px;
+  padding: 2.5rem;
+
+  /* This ensures it fills the space but respects the wrapper's padding */
+  width: 100%;
+  max-width: 400px;
+
+  box-shadow: 8px 8px 0px #fbbf24;
+  text-align: center;
+  box-sizing: border-box; /* Crucial for mobile */
+}
+
+/* Mobile-specific tweak to make it look a bit tighter on tiny screens */
+@media (max-width: 400px) {
+  .auth-card {
+    padding: 2.5rem; /* Slightly less internal padding so inputs have more room */
+  }
+
+  .auth-card h2 {
+    font-size: 2.5rem;
+  }
+}
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 1rem;
+  border: 3px solid #111827;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 4px 4px 0px #111827;
+  transform: translate(-2px, -2px);
+}
+
+/* Login/Create Button */
+.btn-primary {
+  width: 100%;
+  padding: 1rem;
+  background: #fbbf24;
+  color: #111827;
+  border: 3px solid #111827;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #111827;
+  transition: all 0.1s ease;
+  margin-top: 1rem;
+}
+
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px #111827;
+}
+
+/* Error Messages */
+.error-message {
+  color: #dc2626;
+  font-weight: 800;
+  margin-top: 1rem;
+  min-height: 1.5rem; /* Prevents card jumping when error appears */
+  font-size: 0.9rem;
+}
+
+/* Divider line inside card */
+.divider {
+  height: 3px;
+  background: #111827;
+  margin: 2rem 0;
+  border-radius: 10px;
+  opacity: 0.2;
+}
+
+/* Secondary Action Link */
+.link-as-button {
+  display: block;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.link-as-button:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}

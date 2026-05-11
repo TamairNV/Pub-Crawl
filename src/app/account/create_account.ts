@@ -8,7 +8,8 @@ import {Router, RouterLink} from '@angular/router';
   selector: 'app-create-account',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './create_account.html'
+  templateUrl: './create_account.html',
+  styleUrl: './login.css'
 })
 export class CreateAccountComponent {
   http = inject(HttpClient);

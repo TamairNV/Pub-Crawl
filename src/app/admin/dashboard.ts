@@ -11,7 +11,8 @@ import { firstValueFrom } from 'rxjs';
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.css'
 })
 export class AdminDashboardComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef) {}
@@ -190,5 +191,3 @@ export class AdminDashboardComponent implements OnInit {
     })
   }
 }
-
-

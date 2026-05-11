@@ -1,7 +1,65 @@
+<style>
+  /* Main Layout Wrapper */
+  .main-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the logo and content */
+    padding-top: 2rem;
+  }
 
-<nav>
-  <h1>Johns Amazing Pub Crawl</h1>
-</nav>
+  /* CRAWLR Logo */
+  h1 {
+    margin: 0;
+    font-family: "Nunito", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 4rem; /* Bumped up the size since it's the main attraction */
+    font-weight: 900;
+    color: #f0f8ff;
+    -webkit-text-stroke: 3px #111827;
+    text-shadow: 4px 4px 0px #111827, 8px 8px 0px #bfdbfe;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    transform: rotate(-2deg);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: default;
+    margin-bottom: 1rem;
+  }
 
+  h1:hover {
+    transform: rotate(2deg) scale(1.05);
+  }
 
-<router-outlet></router-outlet>
+  /* The Fun Break Line */
+  .separator {
+    width: 90%;
+    max-width: 800px;
+    height: 6px;
+    background-color: #111827; /* Bold black */
+    border: none;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 4px 4px 0px #fbbf24; /* Fun yellow shadow */
+  }
+
+  /* Optional: Add a little "dot" at the end of the line for flavor */
+  .separator::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: -4px;
+    width: 14px;
+    height: 14px;
+    background: #fbbf24;
+    border: 3px solid #111827;
+    border-radius: 50%;
+  }
+</style>
+
+<div class="main-container">
+  <h1>CRAWLR</h1>
+
+  <!-- This is your break line -->
+  <div class="separator"></div>
+
+  <router-outlet></router-outlet>
+</div>

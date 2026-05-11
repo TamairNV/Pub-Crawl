@@ -9,7 +9,8 @@ import {AuthService, UserProfile} from '../auth';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './login.html'
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
 export class LoginComponent {
   http = inject(HttpClient);
