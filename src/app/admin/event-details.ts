@@ -89,7 +89,7 @@ export class EventDetailsComponent implements OnInit {
     console.log(this.userDetails)
 
     const data = {user_id : user.userID,event_id: this.currentEventID,new_team_id: new_team_ID }
-    this.http.post('http://localhost:5002/api/update-user-team',data).subscribe({
+    this.http.post('/api/update-user-team',data).subscribe({
       next: (response: any) => {
         if (response.received == "fail") {
           console.log("event error");
@@ -112,7 +112,7 @@ export class EventDetailsComponent implements OnInit {
 
     };
 
-    this.http.post('http://localhost:5002/api/save-new-team',newTeam).subscribe({
+    this.http.post('/api/save-new-team',newTeam).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("event error");
@@ -149,7 +149,7 @@ export class EventDetailsComponent implements OnInit {
     }
 
 
-    this.http.post('http://localhost:5002/api/add-new-rule',data).subscribe({
+    this.http.post('/api/add-new-rule',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("event error");
@@ -176,7 +176,7 @@ export class EventDetailsComponent implements OnInit {
       name : this.newLocationName,
       index : this.locationsRules.length+1
     }
-    this.http.post('http://localhost:5002/api/add-new-location',data).subscribe({
+    this.http.post('/api/add-new-location',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("event error");
@@ -201,7 +201,7 @@ export class EventDetailsComponent implements OnInit {
   getBaseRules(){
 
     const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-base-rules',data).subscribe({
+    this.http.post('/api/get-base-rules',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("rule error");
@@ -218,7 +218,7 @@ export class EventDetailsComponent implements OnInit {
   getLocationRules(){
 
     const data = {event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/get-locations-rules',data).subscribe({
+    this.http.post('/api/get-locations-rules',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {
           console.log("locations error");
@@ -240,7 +240,7 @@ export class EventDetailsComponent implements OnInit {
   }
   people : any = []
   getUsers() {
-    this.http.get('http://localhost:5002/api/get-users')
+    this.http.get('/api/get-users')
       .subscribe({
         next: (response: any) => {
           console.log(response,response.received)
@@ -287,7 +287,7 @@ export class EventDetailsComponent implements OnInit {
 
     console.log("Final payload:", finalData);
 
-    this.http.post('http://localhost:5002/api/save-people-to-event',finalData).subscribe({
+    this.http.post('/api/save-people-to-event',finalData).subscribe({
       next: (response: any) => {
         if (response.received == "False") {
           console.log("People added error");
@@ -303,7 +303,7 @@ export class EventDetailsComponent implements OnInit {
 
   removeUser(id: string){
     const data = {user_id : id, event_id : this.currentEventID}
-    this.http.post('http://localhost:5002/api/remove-user',data).subscribe({
+    this.http.post('/api/remove-user',data).subscribe({
       next: (response: any) => {
         if (response.status == "failed") {
           console.log("user remove error");
@@ -317,7 +317,7 @@ export class EventDetailsComponent implements OnInit {
 
   removeLocation(id: string){
     const data = {pub_id : id}
-    this.http.post('http://localhost:5002/api/remove-location',data).subscribe({
+    this.http.post('/api/remove-location',data).subscribe({
       next: (response: any) => {
         if (response.status == "failed") {
           console.log("pub remove error");
@@ -332,7 +332,7 @@ export class EventDetailsComponent implements OnInit {
 
   removeBaseRule(id: string){
     const data = {rule_id : id}
-    this.http.post('http://localhost:5002/api/remove-base-rule',data).subscribe({
+    this.http.post('/api/remove-base-rule',data).subscribe({
       next: (response: any) => {
         if (response.status == "failed") {
           console.log("rule remove error");
