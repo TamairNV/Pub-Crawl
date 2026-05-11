@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {AuthService, UserProfile} from '../auth';
+import {AuthService} from '../auth';
 
 import { ActivatedRoute } from '@angular/router';
 
