@@ -16,4 +16,5 @@ export const routes: Routes = [
   { path: 'ref/:id', component: RefComponent },
   { path: 'player-dashboard', component: PlayerDashboard },
   { path: 'event-play/:id', component: EventPlay },
+  { path: '**', redirectTo: '/login' }
 ];

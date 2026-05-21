@@ -352,7 +352,7 @@ def get_user_points_sql(event_id):
                  LEFT JOIN Point pt ON p.userID = pt.userID AND p.eventID = pt.eventID
           WHERE p.eventID = %s
           GROUP BY p.userID
-          ORDER BY total_points DESC;
+          ORDER BY total_points ASC;
   """
   try:
     connection = get_db()
