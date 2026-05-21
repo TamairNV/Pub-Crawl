@@ -10,6 +10,8 @@ RUN npm run build --configuration=production
 FROM nginx:alpine
 # Copy the build output to Nginx's html folder
 COPY --from=build /app/dist/Pub-Crawl/browser /usr/share/nginx/html
-# If you have a custom nginx.conf for routing, copy it here:
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Uncommented and active:
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
