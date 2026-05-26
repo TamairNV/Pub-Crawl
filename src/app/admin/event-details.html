@@ -23,11 +23,11 @@
 
           <ng-container *ngIf="!isEditing[i]; else editTemplate">
             <span class="badge">{{ user.teamName || 'No Team' }}</span>
-            <button class="btn btn-small btn-secondary"  style = "font-size: 0.5rem" (click)="toggleEdit(i)">Update</button>
+            <button class="btn btn-small btn-secondary"  style = "font-size: 0.7rem" (click)="toggleEdit(i)">Update</button>
           </ng-container>
         </div>
 
-        <button class="btn btn-small btn-danger" style = "font-size: 0.5rem" (click)="removeUser(user.userID)">Remove</button>
+        <button class="btn btn-small btn-danger" style = "font-size: 0.7rem" (click)="removeUser(user.userID)">Remove</button>
 
         <ng-template #editTemplate>
           <div class="edit-controls">
