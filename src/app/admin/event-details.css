@@ -173,11 +173,14 @@ textarea.form-control {
 
 .btn-secondary {
   background: #bfdbfe; /* Soft blue */
+  font-size: 0.8rem;
 }
 .btn-secondary:hover { background: #93c5fd; }
 
 .btn-danger {
   background: #fca5a5; /* Soft red for destructive actions */
+  font-size: 0.8rem;
+
 }
 .btn-danger:hover { background: #f87171; }
 
