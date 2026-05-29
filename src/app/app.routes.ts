@@ -6,6 +6,7 @@ import {EventDetailsComponent} from './admin/event-details';
 import {RefComponent} from './admin/ref';
 import {PlayerDashboard} from './player/playerDashboard';
 import {EventPlay} from './player/eventPlay';
+import {MapComponent} from './photos/map'
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
@@ -16,5 +17,6 @@ export const routes: Routes = [
   { path: 'ref/:id', component: RefComponent },
   { path: 'player-dashboard', component: PlayerDashboard },
   { path: 'event-play/:id', component: EventPlay },
+  { path: 'map-view/:id', component: MapComponent },
   { path: '**', redirectTo: '/login' }
 ];

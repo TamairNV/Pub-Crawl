@@ -13,5 +13,6 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.14 (CSC2033_Team32_25-26) interpreter library" level="application" />
+    <orderEntry type="library" name="mapkit" level="application" />
   </component>
 </module>
