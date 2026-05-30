@@ -32,7 +32,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   router = inject(Router);
 
   currentUser: any;
-  private currentEventID: string | null | undefined;
+  public currentEventID: string | null | undefined;
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map: any;
@@ -65,18 +65,20 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private initializeMap(): void {
-    console.log("init map")
+    // 1. Initialize MapKit with your token
     mapkit.init({
       authorizationCallback: (done: any) => {
         done('eyJraWQiOiI4UkdKNUJVWjVEIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJNUDlSTVhVWjdNIiwiaWF0IjoxNzgwMDE2NTM4LCJzY29wZSI6Im1hcGtpdF9qcyIsImV4cCI6MTc4MDY0Mjc5OX0.TAVu_CsJU3wS9que6IOyB-C4YSVsoa6umyZR9lgCx1zumYPW2UHx1WfYNjaDeptcQS2wHBqDzjxE0qWaOjRZFw');
       }
     });
 
+    // 2. Render the map inside your HTML div
     this.map = new mapkit.Map(this.mapContainer.nativeElement, {
       center: new mapkit.Coordinate(37.7749, -122.4194), // San Francisco
       showsMapTypeControl: true
     });
 
+    // 3. Add your lines and waypoints
     this.addWaypointsAndLines();
   }
 

@@ -7,6 +7,7 @@ import {RefComponent} from './admin/ref';
 import {PlayerDashboard} from './player/playerDashboard';
 import {EventPlay} from './player/eventPlay';
 import {MapComponent} from './photos/map'
+import {UploadComponent} from './photos/upload';
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
@@ -18,5 +19,6 @@ export const routes: Routes = [
   { path: 'player-dashboard', component: PlayerDashboard },
   { path: 'event-play/:id', component: EventPlay },
   { path: 'map-view/:id', component: MapComponent },
+  { path: 'upload/:id', component: UploadComponent },
   { path: '**', redirectTo: '/login' }
 ];
