@@ -328,7 +328,6 @@ import tempfile
 import subprocess
 from flask import Flask, request, jsonify
 
-UPLOAD_FOLDER = './uploads' # Or whatever your variable is set to
 TEMP_FOLDER = './temp_chunks'
 
 @main.route('/api/upload-footage', methods=['POST'])
