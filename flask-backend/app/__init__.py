@@ -12,7 +12,7 @@ from flask_cors import CORS
 def create_app():
   app = Flask(__name__)
   app.config.from_object(Config)
-
+  app.config['MAX_CONTENT_LENGTH'] = 6000 * 1024 * 1024
 
   CORS(app, origins=["http://localhost:4200"])
   Talisman(app,
