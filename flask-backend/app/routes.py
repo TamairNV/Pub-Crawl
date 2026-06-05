@@ -313,7 +313,7 @@ def process_image(raw_path, final_path):
   with Image.open(raw_path) as img:
     if img.mode in ("RGBA", "P"):
       img = img.convert("RGB")
-    img.save(final_path, "JPEG", quality=85)
+    img.save(final_path, "jpeg", quality=85)
 def process_video(raw_path, final_path):
     cmd = [
       'ffmpeg', '-y', '-i', raw_path,

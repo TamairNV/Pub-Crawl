@@ -6,6 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run build --configuration=production
 
+
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 # Copy the build output to Nginx's html folder
