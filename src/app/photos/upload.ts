@@ -100,7 +100,7 @@ export class UploadComponent implements OnInit {
           // Update the progress bar after every successful chunk
           chunksUploadedSoFar++;
           this.uploadProgress = Math.round((chunksUploadedSoFar / totalChunksAcrossAllFiles) * 100);
-
+          this.cdr.detectChanges()
           // If we hit 100%, tell the user the server is stitching/compressing
           if (this.uploadProgress === 100) {
             this.uploadStatusText = "Processing media on server... this might take a minute ⏳";
