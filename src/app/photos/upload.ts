@@ -85,7 +85,10 @@ export class UploadComponent implements OnInit {
         },
         error: (err) => console.error("Upload failed", err)
       });
+
+    this.router.navigate(['/map-view',this.currentEventID]).then(r => {});
   }
+
 
 
 
