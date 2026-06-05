@@ -1,26 +1,30 @@
-<div class="fun-card">
-  <h2>Upload Media</h2>
-  <button class="btn btn-secondary back-btn" [routerLink]="['/map-view',currentEventID]">
-    ⬅ Back
+<div class="form-group">
+  <input
+    type="file"
+    class="form-control file-input"
+    multiple
+    accept="image/*,video/*"
+    (change)="onFilesSelected($event)"
+    [disabled]="isUploading"
+  >
+
+  <button class="btn btn-primary mt-3" (click)="upload()" *ngIf="!isUploading" [disabled]="!selectedFiles || selectedFiles.length === 0">
+    Upload Files
   </button>
 
-  <div class="rule-box">
-    <p><strong>📸 Heads up:</strong> Please only upload photos you have taken with your camera, otherwise there won't be any timestamp.</p>
+  <div class="progress-container mt-3" *ngIf="isUploading">
+    <p class="status-text"><strong>{{ uploadStatusText }}</strong></p>
+
+    <div class="progress" style="height: 25px;">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+        role="progressbar"
+        [style.width.%]="uploadProgress"
+        [attr.aria-valuenow]="uploadProgress"
+        aria-valuemin="0"
+        aria-valuemax="100">
+        {{ uploadProgress }}%
+      </div>
+    </div>
   </div>
-
-  <div class="form-group">
-    <input
-      type="file"
-      class="form-control file-input"
-      multiple
-      accept="image/*,video/*"
-      (change)="onFilesSelected($event)"
-    >
-
-    <button class="btn btn-primary" (click)="upload()">
-      Upload Files
-    </button>
-  </div>
-
-
 </div>

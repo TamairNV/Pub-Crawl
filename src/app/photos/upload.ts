@@ -28,7 +28,9 @@ export class UploadComponent implements OnInit {
   authService = inject(AuthService);
   http = inject(HttpClient);
   router = inject(Router);
-
+  isUploading: boolean = false;
+  uploadProgress: number = 0;
+  uploadStatusText: string = '';
   currentUser: any;
   protected currentEventID: string | null = null;
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
@@ -52,13 +54,30 @@ export class UploadComponent implements OnInit {
     }
   }
 
+
   async upload() {
-    const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB chunks (well under Cloudflare's 100MB cap)
+    if (!this.selectedFiles || this.selectedFiles.length === 0) return;
+
+    // Lock the UI and reset progress
+    this.isUploading = true;
+    this.uploadProgress = 0;
+
+    const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB chunks
+
+    // Calculate total chunks across ALL selected files for a global progress bar
+    let totalChunksAcrossAllFiles = 0;
+    for (let i = 0; i < this.selectedFiles.length; i++) {
+      totalChunksAcrossAllFiles += Math.ceil(this.selectedFiles[i].size / CHUNK_SIZE);
+    }
+
+    let chunksUploadedSoFar = 0;
 
     for (let i = 0; i < this.selectedFiles.length; i++) {
       const file = this.selectedFiles[i];
       const fileUuid = crypto.randomUUID();
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+      this.uploadStatusText = `Uploading: ${file.name} (${i + 1} of ${this.selectedFiles.length})`;
 
       for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * CHUNK_SIZE;
@@ -76,20 +95,30 @@ export class UploadComponent implements OnInit {
         formData.append('event_id', this.currentEventID);
 
         try {
-          // Await each chunk sequentially so we don't flood the connection
           await this.http.post('/api/upload-footage', formData).toPromise();
-          console.log(`Uploaded chunk ${chunkIndex + 1}/${totalChunks} for ${file.name}`);
+
+          // Update the progress bar after every successful chunk
+          chunksUploadedSoFar++;
+          this.uploadProgress = Math.round((chunksUploadedSoFar / totalChunksAcrossAllFiles) * 100);
+
+          // If we hit 100%, tell the user the server is stitching/compressing
+          if (this.uploadProgress === 100) {
+            this.uploadStatusText = "Processing media on server... this might take a minute ⏳";
+          }
+
         } catch (err) {
           console.error(`Upload failed at chunk ${chunkIndex}`, err);
-          return; // Halt if a chunk fails
+          this.isUploading = false;
+          this.uploadStatusText = "Upload failed! ❌";
+          return;
         }
       }
     }
 
-    // Redirect after all files and chunks are successfully processed
-    this.router.navigate(['/map-view', this.currentEventID]);
+    // Once everything is totally finished and processed
+    this.isUploading = false;
+    this.router.navigate(['/map-view', this.currentEventID]).then(r => {});
   }
-
 
 
 
