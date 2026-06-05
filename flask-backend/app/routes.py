@@ -322,40 +322,64 @@ def process_video(raw_path, final_path):
       final_path
     ]
     subprocess.run(cmd, capture_output=True, check=True)
+import os
+import json
+import tempfile
+import subprocess
+from flask import Flask, request, jsonify
 
-@main.route('/api/upload-footage',methods=['GET', 'POST'])
+UPLOAD_FOLDER = './uploads' # Or whatever your variable is set to
+TEMP_FOLDER = './temp_chunks'
+
+@main.route('/api/upload-footage', methods=['POST'])
 def upload_footage():
+  # 1. Extract chunk controls from form data
+  file_chunk = request.files.get('file_chunk')
+  chunk_index = int(request.form.get('chunk_index', 0))
+  total_chunks = int(request.form.get('total_chunks', 1))
+  file_id = request.form.get('file_uuid') # Maps to your old file_id
+  original_name = request.form.get('original_name')
 
-  event_id = None
-  user_id = None
-  metadata_string = request.form.get('metadata', '[]')
+  # User and Event objects/IDs passed from frontend form data
+  user_id_data = request.form.get('user_id')
+  event_id = request.form.get('event_id')
+
+  # Parse user_id if it was passed as a JSON string/object
   try:
-    metadata_list = json.loads(metadata_string)
-  except json.JSONDecodeError:
-    return jsonify({"error": "Invalid metadata format"}), 400
+    user_id = json.loads(user_id_data) if user_id_data.startswith('{') else {"id": user_id_data}
+  except Exception:
+    user_id = {"id": user_id_data}
 
-  meta_dict = {item.get('original_name'): item for item in metadata_list}
-  files = request.files.getlist('photos')
+  if not file_chunk:
+    return jsonify({"error": "No file chunk provided"}), 400
 
-  if not files:
-    return jsonify({"error": "No files provided"}), 400
+  # 2. Create directory for this specific file's assembly
+  file_temp_dir = os.path.join(TEMP_FOLDER, file_id)
+  os.makedirs(file_temp_dir, exist_ok=True)
 
-  processed_files = []
+  # 3. Save the current piece
+  chunk_path = os.path.join(file_temp_dir, f"chunk_{chunk_index}")
+  file_chunk.save(chunk_path)
 
-  for file in files:
-    if file.filename == '':
-      continue
+  # 4. Check if all pieces have landed
+  if len(os.listdir(file_temp_dir)) == total_chunks:
+    processed_files = []
 
-    file_meta = meta_dict.get(file.filename, {})
-    file_id = file_meta.get('id', 'unknown')
-
-    # Save the incoming raw file to a temporary location
+    # Use a temporary file to hold the reconstructed raw file
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
       temp_raw_path = temp_file.name
-    file.save(temp_raw_path)
 
     try:
-      # Extract Metadata while the file is completely untouched
+      # Stitch chunks together into the single raw file
+      with open(temp_raw_path, 'wb') as target_file:
+        for i in range(total_chunks):
+          single_chunk_path = os.path.join(file_temp_dir, f"chunk_{i}")
+          with open(single_chunk_path, 'rb') as source_chunk:
+            target_file.write(source_chunk.read())
+          os.remove(single_chunk_path) # Clean up individual fragment immediately
+      os.rmdir(file_temp_dir) # Clean up the folder shell
+
+      # --- YOUR EXACT PROCESSING LOGIC BEGINS HERE ---
       exif_result = subprocess.run(
         ['exiftool', '-j', '-c', '%+.6f', temp_raw_path],
         capture_output=True, text=True
@@ -368,46 +392,50 @@ def upload_footage():
       if lat: lat = float(str(lat).replace('+', ''))
       if lng: lng = float(str(lng).replace('+', ''))
 
-      # 3. Determine MIME type and convert/compress to permanent folder
       mime_type = exif_data.get('MIMEType', '')
 
       if mime_type.startswith('image/'):
         filename = f"{file_id}.jpg"
         permanent_path = os.path.join(UPLOAD_FOLDER, filename)
         process_image(temp_raw_path, permanent_path)
-
       elif mime_type.startswith('video/'):
         filename = f"{file_id}.mp4"
         permanent_path = os.path.join(UPLOAD_FOLDER, filename)
         process_video(temp_raw_path, permanent_path)
-
       else:
-        print(f"Unsupported file type: {mime_type}")
-        continue
-      event_id = file_meta.get('event_id')
-      user_id= file_meta.get('user_id')
+        return jsonify({"error": f"Unsupported file type: {mime_type}"}), 400
+
       processed_files.append({
         "id": f"static/uploads/{filename}",
-        "user_id": file_meta.get('user_id'),
-        "event_id": file_meta.get('event_id'),
+        "user_id": user_id,
+        "event_id": event_id,
         "saved_filename": filename,
         "time_taken": date_taken,
         "latitude": lat,
         "longitude": lng
       })
 
+      # Fire your database insert
+      save_photo_ids_sql(user_id['id'], event_id, processed_files)
+
+      return jsonify({
+        "received": "Uploaded",
+        "data": processed_files
+      }), 200
+
     except Exception as e:
-      print(f"Failed to process {file.filename}: {e}")
+      print(f"Failed to process {original_name}: {e}")
+      return jsonify({"error": str(e)}), 500
 
     finally:
       if os.path.exists(temp_raw_path):
         os.remove(temp_raw_path)
-  save_photo_ids_sql(user_id['id'],event_id,processed_files)
 
+  # If it's not the last chunk, return status indicating successful receipt of part
   return jsonify({
-    "received": "Uploaded",
-    "data": processed_files
-  })
+    "received": "Chunk Uploaded",
+    "status": f"Processing chunk {chunk_index + 1}/{total_chunks}"
+  }), 200
 
 @main.route('/api/get-footage',methods=['GET', 'POST'])
 def get_photos():

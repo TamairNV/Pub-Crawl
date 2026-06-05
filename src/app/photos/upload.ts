@@ -30,7 +30,7 @@ export class UploadComponent implements OnInit {
   router = inject(Router);
 
   currentUser: any;
-  protected currentEventID: string | null | undefined;
+  protected currentEventID: string | null = null;
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
@@ -53,42 +53,42 @@ export class UploadComponent implements OnInit {
   }
 
   async upload() {
-    const formData = new FormData();
-    const metadata = [];
+    const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB chunks (well under Cloudflare's 100MB cap)
 
     for (let i = 0; i < this.selectedFiles.length; i++) {
       const file = this.selectedFiles[i];
-      const uuid = crypto.randomUUID();
+      const fileUuid = crypto.randomUUID();
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
-      formData.append('photos', file, file.name);
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, file.size);
+        const chunk = file.slice(start, end);
 
+        const formData = new FormData();
+        formData.append('file_chunk', chunk, file.name);
+        formData.append('chunk_index', chunkIndex.toString());
+        formData.append('total_chunks', totalChunks.toString());
+        formData.append('file_uuid', fileUuid);
+        formData.append('original_name', file.name);
+        formData.append('user_id', this.currentUser);
+        // @ts-ignore
+        formData.append('event_id', this.currentEventID);
 
-      metadata.push({
-        id: uuid,
-        original_name: file.name,
-        user_id: this.currentUser,
-        event_id: this.currentEventID
-      });
+        try {
+          // Await each chunk sequentially so we don't flood the connection
+          await this.http.post('/api/upload-footage', formData).toPromise();
+          console.log(`Uploaded chunk ${chunkIndex + 1}/${totalChunks} for ${file.name}`);
+        } catch (err) {
+          console.error(`Upload failed at chunk ${chunkIndex}`, err);
+          return; // Halt if a chunk fails
+        }
+      }
     }
 
-    formData.append('metadata', JSON.stringify(metadata));
-
-    this.http.post('/api/upload-footage', formData)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          if (response.received == "Uploaded") {
-            console.log("Uploaded");
-          } else {
-            console.log("UH OH");
-          }
-        },
-        error: (err) => console.error("Upload failed", err)
-      });
-
-    this.router.navigate(['/map-view',this.currentEventID]).then(r => {});
+    // Redirect after all files and chunks are successfully processed
+    this.router.navigate(['/map-view', this.currentEventID]);
   }
-
 
 
 
