@@ -90,7 +90,7 @@ export class UploadComponent implements OnInit {
         formData.append('total_chunks', totalChunks.toString());
         formData.append('file_uuid', fileUuid);
         formData.append('original_name', file.name);
-        formData.append('user_id', this.currentUser);
+        formData.append('user_id', typeof this.currentUser === 'string' ? this.currentUser : JSON.stringify(this.currentUser));
         // @ts-ignore
         formData.append('event_id', this.currentEventID);
 
