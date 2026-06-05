@@ -398,7 +398,7 @@ def save_photo_ids_sql(user_id,event_id,photos):
   query = """
   INSERT INTO Photo (id, user_id,event_id,time_taken,latitude,longitude) VALUES(%s,%s,%s,%s,%s,%s)
   """
-
+  print(photos)
   try:
     connection = get_db()
     for photo in photos:

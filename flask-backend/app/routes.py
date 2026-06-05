@@ -332,7 +332,6 @@ TEMP_FOLDER = './temp_chunks'
 
 @main.route('/api/upload-footage', methods=['POST'])
 def upload_footage():
-  # 1. Extract chunk controls from form data
   file_chunk = request.files.get('file_chunk')
   chunk_index = int(request.form.get('chunk_index', 0))
   total_chunks = int(request.form.get('total_chunks', 1))
