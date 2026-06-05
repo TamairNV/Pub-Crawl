@@ -392,3 +392,37 @@ def events_user_is_in_sql(user_id):
   except Exception as e:
     print(f"Query Failed: {e}")
     return False
+
+
+def save_photo_ids_sql(user_id,event_id,photos):
+  query = """
+  INSERT INTO Photo (id, user_id,event_id,time_taken,latitude,longitude) VALUES(%s,%s,%s,%s,%s,%s)
+  """
+
+  try:
+    connection = get_db()
+    for photo in photos:
+      print("saved ")
+      params = [photo['id'],user_id,event_id,photo['time_taken'],photo['latitude'],photo['longitude']]
+
+      out = run_query(connection, query, params)
+    return out
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def get_photos_from_event(event_id):
+  query = """
+  SELECT * FROM Photo WHERE event_id = %s
+
+  """
+
+  try:
+    connection = get_db()
+    params = [event_id]
+    return run_query(connection, query, params)
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+

@@ -1,0 +1,169 @@
+/* Container to keep things centered and padded on mobile */
+.timeline-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Header Buttons */
+.top-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap; /* Lets buttons wrap to next line on tiny screens */
+}
+
+.top-nav .btn {
+  width: auto;
+  flex-grow: 1; /* Makes them fill space nicely on mobile */
+  text-align: center;
+}
+
+/* The Main Timeline Line */
+.timeline-container {
+  margin-left: 1rem;
+  border-left: 4px solid #111827; /* Thick brutalist border */
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* Space between each post */
+  margin-bottom: 3rem;
+}
+
+.timeline-item {
+  position: relative;
+  width: 100%;
+}
+
+/* The Yellow Dot */
+.timeline-marker {
+  position: absolute;
+  /* 24px padding + 2px (half border) + 10px (half dot) = 36px shift left */
+  left: -36px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  background-color: #fbbf24;
+  border: 3px solid #111827;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+/* The Time Pill */
+.time {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111827;
+  background: #bfdbfe; /* Light blue accent */
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: 2px solid #111827;
+  margin-bottom: 1rem;
+  box-shadow: 2px 2px 0px #111827;
+}
+
+/* Media Card Overrides (Re-using your fun-card base, adjusted for mobile) */
+.timeline-content.fun-card {
+  padding: 1rem;
+  margin: 0;
+  box-shadow: 4px 4px 0px #111827;
+  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Image & Video Responsive Styling */
+.media-element {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover; /* Keeps aspect ratios from getting weird */
+  border-radius: 8px;
+  border: 2px solid #111827;
+  display: block;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Video Play Overlay */
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(2px 2px 0px #111827); /* Matched to the theme */
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, transform 0.1s ease;
+}
+
+.video-wrapper:hover .play-overlay {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* Download Button */
+.download-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+/* Force <a> tags in top-nav to look like chunky brutalist buttons */
+.top-nav a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Kills the default underline */
+  color: #111827;        /* Kills the default blue link color */
+  padding: 0.8rem 1.2rem;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  box-sizing: border-box;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+}
+
+/* The click "press down" effect */
+.top-nav a.btn:active {
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+
+/* Outline Variant (White background, black shadow) */
+.btn-outline {
+  background: #ffffff;
+  box-shadow: 3px 3px 0px #111827;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+}
+
+/* Secondary Variant (Blue background, black shadow) */
+.btn-secondary {
+  background: #bfdbfe;
+  box-shadow: 3px 3px 0px #111827;
+}
+
+.btn-secondary:hover {
+  background: #93c5fd;
+}
+
+/* Primary Variant (Yellow background, black shadow) */
+.btn-primary {
+  background: #fbbf24;
+  box-shadow: 3px 3px 0px #111827;
+}
+
+.btn-primary:hover {
+  background: #f59e0b;
+}

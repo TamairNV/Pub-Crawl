@@ -15,13 +15,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, UserProfile } from '../auth';
 import { firstValueFrom } from 'rxjs';
 import { AppComponent } from '../app';
-
+import exifr from 'exifr';
 @Component({
   selector: 'app-map-view',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './upload.html',
-  //styleUrl: './dashboard.css'
+  styleUrl: './upload.css'
 })
 export class UploadComponent implements OnInit {
 
@@ -30,7 +30,7 @@ export class UploadComponent implements OnInit {
   router = inject(Router);
 
   currentUser: any;
-  private currentEventID: string | null | undefined;
+  protected currentEventID: string | null | undefined;
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
@@ -52,8 +52,39 @@ export class UploadComponent implements OnInit {
     }
   }
 
-  upload(){
-    console.log("upload")
+  async upload() {
+    const formData = new FormData();
+    const metadata = [];
+
+    for (let i = 0; i < this.selectedFiles.length; i++) {
+      const file = this.selectedFiles[i];
+      const uuid = crypto.randomUUID();
+
+      formData.append('photos', file, file.name);
+
+
+      metadata.push({
+        id: uuid,
+        original_name: file.name,
+        user_id: this.currentUser,
+        event_id: this.currentEventID
+      });
+    }
+
+    formData.append('metadata', JSON.stringify(metadata));
+
+    this.http.post('/api/upload-footage', formData)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response.received == "Uploaded") {
+            console.log("Uploaded");
+          } else {
+            console.log("UH OH");
+          }
+        },
+        error: (err) => console.error("Upload failed", err)
+      });
   }
 
 

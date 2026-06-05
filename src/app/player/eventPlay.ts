@@ -26,7 +26,7 @@ export class EventPlay implements OnInit {
 
 
   currentUser: any;
-  private currentEventID: string | null | undefined;
+  protected currentEventID: string | null | undefined;
   constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
   eventLoaded = false;
   pointsLoaded = false;
@@ -128,7 +128,7 @@ export class EventPlay implements OnInit {
       };
     });
 
-    this.leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints);
+    this.leaderboardData.sort((a, b) => a.totalPoints - b.totalPoints);
 
     console.log("Final Leaderboard:", this.leaderboardData);
   }

@@ -1,6 +1,41 @@
+<div class="timeline-page">
+  <div class="top-nav">
+    <a *ngIf="currentUser.role == 'ADMIN'" [routerLink]="['/event-details', currentEventID]" class="btn btn-secondary">⬅ Back</a>
+    <a *ngIf="currentUser.role == 'player'" [routerLink]="['/event-play', currentEventID]" class="btn btn-secondary">⬅ Back</a>
+    <a [routerLink]="['/upload', currentEventID]" class="btn btn-primary">Upload Media</a>
+  </div>
 
+  <div class="timeline-container">
+    <div class="timeline-item" *ngFor="let event of media_data; let i = index">
 
-<a [routerLink]="['/upload', currentEventID]" class="btn btn-outline">Map</a>
+      <div class="timeline-marker"></div>
 
-<br>
-<div #mapContainer style="display: block; width: 75vw; height: 600px;"></div>
+      <div class="time">{{ event.time_taken | date:'EEEE, MMM d, h:mm a' }}</div>
+
+      <div class="timeline-content fun-card">
+        <img *ngIf="!isVideo(event.id)"
+             [src]="event.id"
+             alt="Timeline Media"
+             class="media-element">
+
+        <div class="video-wrapper" *ngIf="isVideo(event.id)">
+          <video [src]="event.id"
+                 class="media-element"
+                 muted
+                 loop
+                 #vid
+                 (mouseenter)="vid.play()"
+                 (mouseleave)="vid.pause()"
+                 (click)="vid.muted = !vid.muted">
+          </video>
+          <svg class="play-overlay" viewBox="0 0 24 24">
+            <path fill="white" d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="btn btn-primary download-btn" (click)="downloadAll()">Download All</button>
+</div>

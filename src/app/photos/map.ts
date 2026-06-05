@@ -23,14 +23,14 @@ declare var mapkit: any;
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './map.html',
-  //styleUrl: './dashboard.css'
+  styleUrl: './map.css'
 })
 export class MapComponent implements OnInit, AfterViewInit {
 
   authService = inject(AuthService);
   http = inject(HttpClient);
   router = inject(Router);
-
+  media_data : any[] = []
   currentUser: any;
   public currentEventID: string | null | undefined;
 
@@ -39,6 +39,9 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
+  ngAfterViewInit(): void {
+    }
+
   ngOnInit() {
     this.currentUser = this.authService.getSession()();
 
@@ -46,8 +49,9 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.currentEventID = params.get('id');
       console.log('Loaded event with ID:', this.currentEventID);
     });
+    this.get_footage();
   }
-
+  /**
   ngAfterViewInit(): void {
     // Check if the script is ready right now
     if (typeof mapkit !== 'undefined') {
@@ -72,38 +76,51 @@ export class MapComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // 2. Render the map inside your HTML div
     this.map = new mapkit.Map(this.mapContainer.nativeElement, {
       center: new mapkit.Coordinate(37.7749, -122.4194), // San Francisco
       showsMapTypeControl: true
     });
+  }
+    **/
 
-    // 3. Add your lines and waypoints
-    this.addWaypointsAndLines();
+  private get_footage(): void {
+    const data = {event_id : this.currentEventID}
+    this.http.post('/api/get-footage',data).subscribe({
+      next: (response: any) => {
+        if (response.received == "failed") {
+          console.log("got footage error");
+        }else{
+          console.log("footage got ",response.received)
+          this.media_data = response.received
+          // Ascending order
+          this.media_data.sort((a, b) => new Date(a.time_taken).getTime() - new Date(b.time_taken).getTime());
+          this.cdr.detectChanges();
+        }
+      }
+    })
   }
 
-  private addWaypointsAndLines(): void {
-    // Example Coordinates
-    const startPoint = new mapkit.Coordinate(37.7749, -122.4194);
-    const endPoint = new mapkit.Coordinate(37.8080, -122.4177);
-
-    // Create Pin Waypoints
-    const startPin = new mapkit.MarkerAnnotation(startPoint, { title: "Start", color: "#007AFF" });
-    const endPin = new mapkit.MarkerAnnotation(endPoint, { title: "End", color: "#FF3B30" });
-
-    // Add pins to map
-    this.map.showItems([startPin, endPin]);
-
-    // Create Connecting Line
-    const line = new mapkit.PolylineOverlay([startPoint, endPoint], {
-      style: new mapkit.Style({
-        strokeColor: "#5AC8FA",
-        strokeWidth: 5,
-        lineJoin: "round"
-      })
+  isVideo(filename: string): boolean {
+    // Add other video extensions here if you use things like .webm
+    return filename.toLowerCase().endsWith('.mp4');
+  }
+  downloadAll(): void {
+    this.media_data.forEach((file, index) => {
+      setTimeout(() => {
+        fetch(file.id)
+          .then(response => response.blob())
+          .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = index.toString();
+            link.click();
+            URL.revokeObjectURL(blobUrl); // Clean up memory
+          });
+      }, index * 300); // Slightly longer delay for fetches
     });
-
-    // Add line overlay to map
-    this.map.addOverlay(line);
   }
+
+
+
 }

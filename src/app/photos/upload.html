@@ -1,11 +1,26 @@
+<div class="fun-card">
+  <h2>Upload Media</h2>
+  <button class="btn btn-secondary back-btn" [routerLink]="['/map-view',currentEventID]">
+    ⬅ Back
+  </button>
+
+  <div class="rule-box">
+    <p><strong>📸 Heads up:</strong> Please only upload photos you have taken with your camera, otherwise there won't be any timestamp.</p>
+  </div>
+
+  <div class="form-group">
+    <input
+      type="file"
+      class="form-control file-input"
+      multiple
+      accept="image/*,video/*"
+      (change)="onFilesSelected($event)"
+    >
+
+    <button class="btn btn-primary" (click)="upload()">
+      Upload Files
+    </button>
+  </div>
 
 
-
-
-<input
-  type="file"
-  multiple
-  accept="image/*,video/*"
-  (change)="onFilesSelected($event)"
->
-<button (click)="upload()">Upload Files</button>
+</div>

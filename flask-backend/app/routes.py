@@ -1,6 +1,16 @@
 import flask
+from PIL import Image
 from flask import Blueprint, render_template, jsonify, request
+import os
+import tempfile
+import subprocess
+import uuid
+from werkzeug.utils import secure_filename
+import PIL
+from pillow_heif import register_heif_opener
 
+register_heif_opener()
+UPLOAD_FOLDER = "app/static/uploads"
 
 main = Blueprint('main', __name__)
 from .SQL_manager import *
@@ -294,6 +304,120 @@ def get_user_events():
   user_id = data['user_id']
 
   out = events_user_is_in_sql(user_id)
+  if out:
+    return jsonify({"status": "success", "received": out})
+  else:
+    return jsonify({"status": "failed", "received": out})
+
+def process_image(raw_path, final_path):
+  with Image.open(raw_path) as img:
+    if img.mode in ("RGBA", "P"):
+      img = img.convert("RGB")
+    img.save(final_path, "JPEG", quality=85)
+def process_video(raw_path, final_path):
+    cmd = [
+      'ffmpeg', '-y', '-i', raw_path,
+      '-vcodec', 'libx264', '-vf', 'scale=-2:1080','-crf', '23',
+      '-preset', 'fast', '-acodec', 'aac',
+      final_path
+    ]
+    subprocess.run(cmd, capture_output=True, check=True)
+
+@main.route('/api/upload-footage',methods=['GET', 'POST'])
+def upload_footage():
+
+  event_id = None
+  user_id = None
+  metadata_string = request.form.get('metadata', '[]')
+  try:
+    metadata_list = json.loads(metadata_string)
+  except json.JSONDecodeError:
+    return jsonify({"error": "Invalid metadata format"}), 400
+
+  meta_dict = {item.get('original_name'): item for item in metadata_list}
+  files = request.files.getlist('photos')
+
+  if not files:
+    return jsonify({"error": "No files provided"}), 400
+
+  processed_files = []
+
+  for file in files:
+    if file.filename == '':
+      continue
+
+    file_meta = meta_dict.get(file.filename, {})
+    file_id = file_meta.get('id', 'unknown')
+
+    # Save the incoming raw file to a temporary location
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+      temp_raw_path = temp_file.name
+    file.save(temp_raw_path)
+
+    try:
+      # Extract Metadata while the file is completely untouched
+      exif_result = subprocess.run(
+        ['exiftool', '-j', '-c', '%+.6f', temp_raw_path],
+        capture_output=True, text=True
+      )
+      exif_data = json.loads(exif_result.stdout)[0] if exif_result.stdout else {}
+
+      date_taken = exif_data.get('DateTimeOriginal') or exif_data.get('CreateDate')
+      lat = exif_data.get('GPSLatitude')
+      lng = exif_data.get('GPSLongitude')
+      if lat: lat = float(str(lat).replace('+', ''))
+      if lng: lng = float(str(lng).replace('+', ''))
+
+      # 3. Determine MIME type and convert/compress to permanent folder
+      mime_type = exif_data.get('MIMEType', '')
+
+      if mime_type.startswith('image/'):
+        filename = f"{file_id}.jpg"
+        permanent_path = os.path.join(UPLOAD_FOLDER, filename)
+        process_image(temp_raw_path, permanent_path)
+
+      elif mime_type.startswith('video/'):
+        filename = f"{file_id}.mp4"
+        permanent_path = os.path.join(UPLOAD_FOLDER, filename)
+        process_video(temp_raw_path, permanent_path)
+
+      else:
+        print(f"Unsupported file type: {mime_type}")
+        continue
+      event_id = file_meta.get('event_id')
+      user_id= file_meta.get('user_id')
+      processed_files.append({
+        "id": f"static/uploads/{filename}",
+        "user_id": file_meta.get('user_id'),
+        "event_id": file_meta.get('event_id'),
+        "saved_filename": filename,
+        "time_taken": date_taken,
+        "latitude": lat,
+        "longitude": lng
+      })
+
+    except Exception as e:
+      print(f"Failed to process {file.filename}: {e}")
+
+    finally:
+      if os.path.exists(temp_raw_path):
+        os.remove(temp_raw_path)
+  save_photo_ids_sql(user_id['id'],event_id,processed_files)
+
+  return jsonify({
+    "received": "Uploaded",
+    "data": processed_files
+  })
+
+@main.route('/api/get-footage',methods=['GET', 'POST'])
+def get_photos():
+  data = request.get_json()
+  if not data:
+    return jsonify({"status": "failed", "received": data})
+
+  event_id = data['event_id']
+
+  out = get_photos_from_event(event_id)
   if out:
     return jsonify({"status": "success", "received": out})
   else:
