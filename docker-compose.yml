@@ -21,7 +21,7 @@ services:
       - pub-crawl_default
       - csc2033_team32_25-26_default
     volumes:
-      - ./app/static/uploads:/app/static/uploads
+      - ./uploads:/app/static/uploads
 
   tunnel:
     image: cloudflare/cloudflared:latest

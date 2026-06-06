@@ -10,7 +10,7 @@ import PIL
 from pillow_heif import register_heif_opener
 
 register_heif_opener()
-UPLOAD_FOLDER = "app/static/uploads"
+UPLOAD_FOLDER = '/app/static/uploads'
 
 main = Blueprint('main', __name__)
 from .SQL_manager import *
