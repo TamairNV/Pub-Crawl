@@ -25,7 +25,12 @@ def get_users():
   print(all_users)
   return jsonify(all_users)
 
+from flask import send_from_directory
 
+@main.route('/static/uploads/<filename>')
+def serve_uploaded_media(filename):
+  # This tells Flask exactly where to fetch the files we just saved
+  return send_from_directory('/app/static/uploads', filename)
 
 @main.route('/api/create-user',methods=['POST'])
 def create_user():
