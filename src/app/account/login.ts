@@ -51,7 +51,8 @@ export class LoginComponent {
             if(response.received.role == 'player'){
               this.router.navigate(['/player-dashboard']).then(r => {});
             }else{
-              this.router.navigate(['/admin-dashboard']).then(r => {});
+              this.router.navigate(['/admin-dashboard']).then(r => {
+              });
             }
 
 

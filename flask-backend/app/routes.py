@@ -389,7 +389,9 @@ def upload_footage():
       )
       exif_data = json.loads(exif_result.stdout)[0] if exif_result.stdout else {}
 
-      date_taken = exif_data.get('DateTimeOriginal') or exif_data.get('CreateDate')
+      from datetime import datetime
+
+      date_taken = exif_data.get('DateTimeOriginal') or exif_data.get('CreateDate') or datetime.now().isoformat()
       lat = exif_data.get('GPSLatitude')
       lng = exif_data.get('GPSLongitude')
       if lat: lat = float(str(lat).replace('+', ''))
