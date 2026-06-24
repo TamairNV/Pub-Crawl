@@ -112,7 +112,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   isVideo(filename: string): boolean {
     // Add other video extensions here if you use things like .webm
-    return filename.toLowerCase().endsWith('.mp4');
+    return filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.MP4');
   }
   downloadAll(): void {
     this.media_data.forEach((file, index) => {
