@@ -426,3 +426,12 @@ def get_photos_from_event(event_id):
     print(f"Query Failed: {e}")
     return False
 
+def get_all_photos():
+  query = "SELECT id FROM Photo"
+  try:
+    connection = get_db()
+    return run_query(connection, query, [])
+
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False

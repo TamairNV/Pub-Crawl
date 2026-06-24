@@ -382,7 +382,6 @@ def upload_footage():
           os.remove(single_chunk_path) # Clean up individual fragment immediately
       os.rmdir(file_temp_dir) # Clean up the folder shell
 
-      # --- YOUR EXACT PROCESSING LOGIC BEGINS HERE ---
       exif_result = subprocess.run(
         ['exiftool', '-j', '-c', '%+.6f', temp_raw_path],
         capture_output=True, text=True
