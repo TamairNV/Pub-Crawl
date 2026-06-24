@@ -10,7 +10,7 @@
 
       <div class="timeline-marker"></div>
 
-      <div class="time">{{ event.time_taken | date:'EEEE, MMM d, h:mm a' }}</div>
+      <div class="time">{{ event.time_taken ? (event.time_taken | date :'EEEE, MMM d, h:mm a') : 'Unknown Date' }}</div>
 
       <div class="timeline-content fun-card">
         <img *ngIf="!isVideo(event.id)"
