@@ -84,20 +84,30 @@ export class MapComponent implements OnInit, AfterViewInit {
     **/
 
   private get_footage(): void {
-    const data = {event_id : this.currentEventID}
-    this.http.post('/api/get-footage',data).subscribe({
+    const data = { event_id: this.currentEventID };
+
+    this.http.post('/api/get-footage', data).subscribe({
       next: (response: any) => {
-        if (response.received == "failed") {
+        if (response.status === "failed") {
           console.log("got footage error");
-        }else{
-          console.log("footage got ",response.received)
-          this.media_data = response.received
-          // Ascending order
-          this.media_data.sort((a, b) => new Date(a.time_taken).getTime() - new Date(b.time_taken).getTime());
+        } else {
+          console.log("footage got ", response.received);
+
+          this.media_data = response.received.map((item: any) => ({
+            ...item,
+            time_taken: item.time_taken === '0000-00-00 00:00:00' ? null : item.time_taken
+          }));
+
+          this.media_data.sort((a, b) => {
+            const timeA = a.time_taken ? new Date(a.time_taken).getTime() : 0;
+            const timeB = b.time_taken ? new Date(b.time_taken).getTime() : 0;
+            return timeA - timeB;
+          });
+
           this.cdr.detectChanges();
         }
       }
-    })
+    });
   }
 
   isVideo(filename: string): boolean {
