@@ -44,18 +44,17 @@
       </div>
     </div>
 
-    <!-- Add User Dropdown Menu -->
     <div *ngIf="addUserMenu" class="add-user-section form-group">
       <h3>Add New Users</h3>
       <div *ngFor="let item of people; let i = index" class="new-user-row">
         <div class="checkbox-group">
-          <input type="checkbox" [id]="'check-' + i" [name]="'subscribe-' + i" [value]="item.id" [(ngModel)]="selectedPeople[i]">
+          <input type="checkbox" [id]="'check-' + i" [(ngModel)]="newPlayerSelected[i]">
           <label [for]="'check-' + i">{{ item.name }}</label>
         </div>
 
         <div class="team-select-group">
           <label [for]="'team-' + i">Team:</label>
-          <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
+          <select class="form-control" [(ngModel)]="newPlayerTeamIDs[i]" (change)="onTeamChange($event)">
             <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
             <option disabled>──────────</option>
             <option value="new">Add New Team...</option>

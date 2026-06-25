@@ -31,6 +31,8 @@ export class EventDetailsComponent implements OnInit {
     });
 
   }
+  public newPlayerSelected: boolean[] = [];
+  public newPlayerTeamIDs: any[] = [];
   currentEventID: string | null = ''
   http = inject(HttpClient);
   router = inject(Router);
@@ -239,63 +241,51 @@ export class EventDetailsComponent implements OnInit {
   }
   people : any = []
   getUsers() {
-    this.http.get('/api/get-users')
-      .subscribe({
-        next: (response: any) => {
-          console.log(response,response.received)
-          if (response.received == "Wrong") {
-          } else {
-            console.log('Users retrieved successfully!', response);
-
-            this.people = []
-            for (let i = 0; i < response.length; i++) {
-              let isAlreadyPicked = false
-              for (let j = 0; j < this.userDetails.length; j++) {
-                  if(response[i]['id'] == this.userDetails[j]['userID']){
-                    isAlreadyPicked = true
-                    break
-                  }
-              }
-              if(!isAlreadyPicked){
-                this.people.push(response[i])
+    this.http.get('/api/get-users').subscribe({
+      next: (response: any) => {
+        if (response.received !== "Wrong") {
+          this.people = [];
+          for (let i = 0; i < response.length; i++) {
+            let isAlreadyPicked = false;
+            for (let j = 0; j < this.userDetails.length; j++) {
+              if(response[i]['id'] == this.userDetails[j]['userID']){
+                isAlreadyPicked = true;
+                break;
               }
             }
-
-            this.cdr.detectChanges();
+            if(!isAlreadyPicked){
+              this.people.push(response[i]);
+            }
           }
-        },
-        error: (err) => {
-          console.error('Flask request failed:', err);
-        }
-      });
 
+          this.newPlayerSelected = new Array(this.people.length).fill(false);
+          this.newPlayerTeamIDs = new Array(this.people.length).fill('');
+
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
   saveNewPlayers(){
-
     const finalData = this.people
-      .map((person: { id: any; name: any; }, index: number) => {
+      .map((person: any, index: number) => {
         return {
           userId: person.id,
           userName: person.name,
-          isSelected: this.selectedPeople[index],
-          teamId: this.selectedTeamIDs[index],
+          isSelected: this.newPlayerSelected[index], // <-- Updated
+          teamId: this.newPlayerTeamIDs[index],      // <-- Updated
           eventId : this.currentEventID
         };
       })
-      .filter((entry: { isSelected: any; }) => entry.isSelected);
-
-    console.log("Final payload:", finalData);
+      .filter((entry: any) => entry.isSelected);
 
     this.http.post('/api/save-people-to-event',finalData).subscribe({
       next: (response: any) => {
-        if (response.received == "False") {
-          console.log("People added error");
-        }else{
+        if (response.received != "False") {
           this.toggleAddUserMenu();
           this.getEventDetails();
-          this.cdr.detectChanges();
-          console.log("Full Event Created")}
+        }
       }
     })
   }
