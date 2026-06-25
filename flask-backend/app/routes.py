@@ -126,18 +126,19 @@ def get_events():
 def get_event_details():
   data = request.get_json()
   if not data:
-    return jsonify({"status": "failed", "received": data})
+    return jsonify({"status": "failed", "received": "failed"})
 
   event_id = data['event_id']
 
   people = get_users_in_event_sql(event_id)
   teams = get_teams_in_event_sql(event_id)
 
-  if teams and people:
+  if people is not False and teams is not False:
     response = {'users' : people, "teams" : teams}
     return jsonify({"status": "success", "received": response})
   else:
-    return jsonify({"status": "failed", "received": [people,teams]})
+
+    return jsonify({"status": "failed", "received": "failed"})
 
 
 @main.route('/api/update-user-team',methods=['GET', 'POST'])
