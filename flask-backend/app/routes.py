@@ -132,7 +132,7 @@ def get_event_details():
 
   people = get_users_in_event_sql(event_id)
   teams = get_teams_in_event_sql(event_id)
-
+  print(people,teams)
   if people is not False and teams is not False:
     response = {'users' : people, "teams" : teams}
     return jsonify({"status": "success", "received": response})
