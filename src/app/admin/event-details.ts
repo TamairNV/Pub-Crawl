@@ -64,9 +64,9 @@ export class EventDetailsComponent implements OnInit {
         if (response.received == "failed") {
           console.log("event error");
         }else{
-          this.userDetails = response.received.users
+          this.userDetails = response.received.users || [];
 
-          this.teams = response.received.teams
+          this.teams = response.received.teams || [];
           this.isEditing = new Array(this.userDetails.length).fill(false);
           this.cdr.detectChanges();
           console.log("Event got",response.received)}
@@ -247,7 +247,7 @@ export class EventDetailsComponent implements OnInit {
           if (response.received == "Wrong") {
           } else {
             console.log('Users retrieved successfully!', response);
-            this.userDetails = response
+
             this.people = []
             for (let i = 0; i < response.length; i++) {
               let isAlreadyPicked = false
