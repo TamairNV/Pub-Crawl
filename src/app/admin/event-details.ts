@@ -247,6 +247,7 @@ export class EventDetailsComponent implements OnInit {
           if (response.received == "Wrong") {
           } else {
             console.log('Users retrieved successfully!', response);
+            this.userDetails = response
             this.people = []
             for (let i = 0; i < response.length; i++) {
               let isAlreadyPicked = false
