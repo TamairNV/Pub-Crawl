@@ -24,11 +24,12 @@ export class EventDetailsComponent implements OnInit {
       const eventId = params.get('id');
       this.currentEventID = eventId
       console.log('Loaded event with ID:', eventId);
+      this.getEventDetails();
+      this.getLocationRules();
+      this.getBaseRules();
 
     });
-    this.getEventDetails();
-    this.getLocationRules();
-    this.getBaseRules();
+
   }
   currentEventID: string | null = ''
   http = inject(HttpClient);
@@ -67,7 +68,9 @@ export class EventDetailsComponent implements OnInit {
           this.userDetails = response.received.users || [];
 
           this.teams = response.received.teams || [];
-          this.isEditing = new Array(this.userDetails.length).fill(false);
+          if (this.isEditing.length === 0 || this.isEditing.length !== this.userDetails.length) {
+            this.isEditing = new Array(this.userDetails.length).fill(false);
+          }
           this.cdr.detectChanges();
           console.log("Event got",response.received)}
       }
@@ -104,28 +107,24 @@ export class EventDetailsComponent implements OnInit {
   }
 
   saveNewTeam(){
-
     const newTeam = {
       name: this.newTeamName,
       colour: this.newTeamColor,
       event_id : this.currentEventID
-
     };
 
     this.http.post('/api/save-new-team',newTeam).subscribe({
       next: (response: any) => {
-        if (response.received == "failed") {
-          console.log("event error");
-        }else{
+        if (response.received != "failed") {
+          this.showNewTeamForm = false;
 
-          console.log("New Team Created",response.received)
-          this.showNewTeamForm = false
+          this.newTeamName = '';
+          this.newTeamColor = '';
 
-          this.getEventDetails()
+
+          this.getEventDetails();
           this.getLocationRules();
           this.getBaseRules();
-          this.cdr.detectChanges();
-
         }
       }
     })
