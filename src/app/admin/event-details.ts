@@ -70,6 +70,7 @@ export class EventDetailsComponent implements OnInit {
           this.userDetails = response.received.users || [];
 
           this.teams = response.received.teams || [];
+          console.log("FLASK SENT THESE TEAMS:", this.teams);
           if (this.isEditing.length === 0 || this.isEditing.length !== this.userDetails.length) {
             this.isEditing = new Array(this.userDetails.length).fill(false);
           }
