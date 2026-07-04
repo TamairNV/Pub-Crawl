@@ -14,4 +14,8 @@ COPY . .
 EXPOSE 8001
 
 # Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8001", "run:app", "--timeout", "600", "--access-logfile", "-", "--error-logfile", "-"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", \
+     "--workers", "4", "--threads", "4", \
+     "--timeout", "900", "--graceful-timeout", "30", \
+     "--access-logfile", "-", "--error-logfile", "-", \
+     "run:app"]

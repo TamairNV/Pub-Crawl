@@ -334,112 +334,148 @@ import tempfile
 import subprocess
 from flask import Flask, request, jsonify
 
+
 TEMP_FOLDER = './temp_chunks'
+
+# Track background processing jobs so the frontend can poll
+_processing_jobs = {}   # file_id -> {"status": "processing"|"done"|"error", "data": [...], "error": str}
+_jobs_lock = threading.Lock()
+
 
 @main.route('/api/upload-footage', methods=['POST'])
 def upload_footage():
   file_chunk = request.files.get('file_chunk')
   chunk_index = int(request.form.get('chunk_index', 0))
   total_chunks = int(request.form.get('total_chunks', 1))
-  file_id = request.form.get('file_uuid') # Maps to your old file_id
+  file_id = request.form.get('file_uuid')
   original_name = request.form.get('original_name')
 
-  # User and Event objects/IDs passed from frontend form data
   user_id_data = request.form.get('user_id')
   event_id = request.form.get('event_id')
 
-  # Parse user_id if it was passed as a JSON string/object
   try:
-    user_id = json.loads(user_id_data) if user_id_data.startswith('{') else {"id": user_id_data}
+    user_id = json.loads(user_id_data) if user_id_data and user_id_data.startswith('{') else {"id": user_id_data}
   except Exception:
     user_id = {"id": user_id_data}
 
   if not file_chunk:
     return jsonify({"error": "No file chunk provided"}), 400
 
-  # 2. Create directory for this specific file's assembly
   file_temp_dir = os.path.join(TEMP_FOLDER, file_id)
   os.makedirs(file_temp_dir, exist_ok=True)
 
-  # 3. Save the current piece
   chunk_path = os.path.join(file_temp_dir, f"chunk_{chunk_index}")
+  # Overwrite-on-retry: safe because filename encodes the index
   file_chunk.save(chunk_path)
 
-  # 4. Check if all pieces have landed
-  if len(os.listdir(file_temp_dir)) == total_chunks:
-    processed_files = []
+  # Manifest records exactly which indices have landed
+  manifest_path = os.path.join(file_temp_dir, "manifest.json")
+  with _jobs_lock:
+    received = set()
+    if os.path.exists(manifest_path):
+      try:
+        with open(manifest_path) as f:
+          received = set(json.load(f))
+      except Exception:
+        received = set()
+    received.add(chunk_index)
+    with open(manifest_path, "w") as f:
+      json.dump(sorted(received), f)
 
-    # Use a temporary file to hold the reconstructed raw file
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-      temp_raw_path = temp_file.name
+  all_received = len(received) == total_chunks
+  if not all_received:
+    return jsonify({
+      "received": "Chunk Uploaded",
+      "status": f"{len(received)}/{total_chunks}"
+    }), 200
 
-    try:
-      # Stitch chunks together into the single raw file
-      with open(temp_raw_path, 'wb') as target_file:
-        for i in range(total_chunks):
-          single_chunk_path = os.path.join(file_temp_dir, f"chunk_{i}")
-          with open(single_chunk_path, 'rb') as source_chunk:
-            target_file.write(source_chunk.read())
-          os.remove(single_chunk_path) # Clean up individual fragment immediately
-      os.rmdir(file_temp_dir) # Clean up the folder shell
+  # Last chunk: launch assembly + processing in the background, respond NOW
+  with _jobs_lock:
+    _processing_jobs[file_id] = {"status": "processing", "data": [], "error": None}
 
-      exif_result = subprocess.run(
-        ['exiftool', '-j', '-c', '%+.6f', temp_raw_path],
-        capture_output=True, text=True
-      )
-      exif_data = json.loads(exif_result.stdout)[0] if exif_result.stdout else {}
+  threading.Thread(
+    target=_assemble_and_process,
+    args=(file_id, total_chunks, user_id, event_id, original_name),
+    daemon=True
+  ).start()
 
-      from datetime import datetime
-      date_taken = exif_data.get('DateTimeOriginal') or exif_data.get('CreateDate') or datetime.now().isoformat()
-      lat = exif_data.get('GPSLatitude')
-      lng = exif_data.get('GPSLongitude')
-      if lat: lat = float(str(lat).replace('+', ''))
-      if lng: lng = float(str(lng).replace('+', ''))
-
-      mime_type = exif_data.get('MIMEType', '')
-
-      if mime_type.startswith('image/'):
-        filename = f"{file_id}.jpg"
-        permanent_path = os.path.join(UPLOAD_FOLDER, filename)
-        process_image(temp_raw_path, permanent_path)
-      elif mime_type.startswith('video/'):
-        filename = f"{file_id}.mp4"
-        permanent_path = os.path.join(UPLOAD_FOLDER, filename)
-        process_video(temp_raw_path, permanent_path)
-      else:
-        return jsonify({"error": f"Unsupported file type: {mime_type}"}), 400
-
-      processed_files.append({
-        "id": f"static/uploads/{filename}",
-        "user_id": user_id,
-        "event_id": event_id,
-        "saved_filename": filename,
-        "time_taken": date_taken,
-        "latitude": lat,
-        "longitude": lng
-      })
-
-      # Fire your database insert
-      save_photo_ids_sql(user_id['id'], event_id, processed_files)
-
-      return jsonify({
-        "received": "Uploaded",
-        "data": processed_files
-      }), 200
-
-    except Exception as e:
-      print(f"Failed to process {original_name}: {e}")
-      return jsonify({"error": str(e)}), 500
-
-    finally:
-      if os.path.exists(temp_raw_path):
-        os.remove(temp_raw_path)
-
-  # If it's not the last chunk, return status indicating successful receipt of part
   return jsonify({
-    "received": "Chunk Uploaded",
-    "status": f"Processing chunk {chunk_index + 1}/{total_chunks}"
+    "received": "All chunks received, processing started",
+    "file_uuid": file_id,
+    "status": "processing"
   }), 200
+
+
+def _assemble_and_process(file_id, total_chunks, user_id, event_id, original_name):
+  file_temp_dir = os.path.join(TEMP_FOLDER, file_id)
+  temp_raw_path = None
+  try:
+    with tempfile.NamedTemporaryFile(delete=False) as tf:
+      temp_raw_path = tf.name
+
+    with open(temp_raw_path, 'wb') as target:
+      for i in range(total_chunks):
+        p = os.path.join(file_temp_dir, f"chunk_{i}")
+        with open(p, 'rb') as src:
+          # Stream copy instead of read() to keep memory flat
+          shutil.copyfileobj(src, target, length=8 * 1024 * 1024)
+        os.remove(p)
+    os.remove(os.path.join(file_temp_dir, "manifest.json"))
+    os.rmdir(file_temp_dir)
+
+    exif_result = subprocess.run(
+      ['exiftool', '-j', '-c', '%+.6f', temp_raw_path],
+      capture_output=True, text=True
+    )
+    exif_data = json.loads(exif_result.stdout)[0] if exif_result.stdout else {}
+
+    date_taken = exif_data.get('DateTimeOriginal') or exif_data.get('CreateDate') or datetime.now().isoformat()
+    lat = exif_data.get('GPSLatitude')
+    lng = exif_data.get('GPSLongitude')
+    if lat: lat = float(str(lat).replace('+', ''))
+    if lng: lng = float(str(lng).replace('+', ''))
+
+    mime_type = exif_data.get('MIMEType', '')
+    if mime_type.startswith('image/'):
+      filename, permanent_path = f"{file_id}.jpg", os.path.join(UPLOAD_FOLDER, f"{file_id}.jpg")
+      process_image(temp_raw_path, permanent_path)
+    elif mime_type.startswith('video/'):
+      filename, permanent_path = f"{file_id}.mp4", os.path.join(UPLOAD_FOLDER, f"{file_id}.mp4")
+      process_video(temp_raw_path, permanent_path)
+    else:
+      raise ValueError(f"Unsupported file type: {mime_type}")
+
+    processed_files = [{
+      "id": f"static/uploads/{filename}",
+      "user_id": user_id,
+      "event_id": event_id,
+      "saved_filename": filename,
+      "time_taken": date_taken,
+      "latitude": lat,
+      "longitude": lng
+    }]
+    save_photo_ids_sql(user_id['id'], event_id, processed_files)
+
+    with _jobs_lock:
+      _processing_jobs[file_id] = {"status": "done", "data": processed_files, "error": None}
+
+  except Exception as e:
+    print(f"Failed to process {original_name}: {e}")
+    with _jobs_lock:
+      _processing_jobs[file_id] = {"status": "error", "data": [], "error": str(e)}
+  finally:
+    if temp_raw_path and os.path.exists(temp_raw_path):
+      os.remove(temp_raw_path)
+
+
+@main.route('/api/upload-status', methods=['GET'])
+def upload_status():
+  file_id = request.args.get('file_uuid')
+  if not file_id:
+    return jsonify({"error": "file_uuid required"}), 400
+  with _jobs_lock:
+    job = _processing_jobs.get(file_id, {"status": "unknown"})
+  return jsonify({"file_uuid": file_id, **job}), 200
 
 @main.route('/api/get-footage',methods=['GET', 'POST'])
 def get_photos():
