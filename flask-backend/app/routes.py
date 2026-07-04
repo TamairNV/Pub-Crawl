@@ -324,13 +324,21 @@ def process_image(raw_path, final_path):
       img = img.convert("RGB")
     img.save(final_path, "jpeg", quality=85)
 def process_video(raw_path, final_path):
-    cmd = [
-      'ffmpeg', '-y', '-i', raw_path,
-      '-vcodec', 'libx264', '-vf', 'scale=-2:1080','-crf', '23',
-      '-preset', 'fast', '-acodec', 'aac',
-      final_path
-    ]
-    subprocess.run(cmd, capture_output=True, check=True)
+  cmd = [
+    'ffmpeg', '-y', '-i', raw_path,
+    '-vf', 'scale=-2:1080,format=yuv420p',
+    '-c:v', 'libx264',
+    '-profile:v', 'baseline',
+    '-level',   '4.0',
+    '-pix_fmt', 'yuv420p',
+    '-crf', '23',
+    '-preset', 'fast',
+    '-maxrate', '8M', '-bufsize', '16M',
+    '-c:a', 'aac', '-b:a', '128k', '-ac', '2', '-ar', '44100',
+    '-movflags', '+faststart',
+    final_path
+  ]
+  subprocess.run(cmd, capture_output=True, check=True)
 import os
 import json
 import tempfile
