@@ -1,3 +1,6 @@
+import shutil
+import threading
+
 import flask
 from PIL import Image
 from flask import Blueprint, render_template, jsonify, request
