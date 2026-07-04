@@ -53,7 +53,7 @@ export class UploadComponent implements OnInit {
   }
 
   // Keep each request WELL under the Cloudflare 100 MB body cap
-  private readonly CHUNK_SIZE     = 16 * 1024 * 1024; // 16 MB
+  private readonly CHUNK_SIZE     = 50 * 1024 * 1024; // 16 MB
   private readonly MAX_PARALLEL    = 3;                // concurrent chunks per file
   private readonly MAX_RETRIES     = 5;
 
