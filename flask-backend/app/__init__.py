@@ -5,6 +5,9 @@ from flask_talisman import Talisman
 
 
 
+import dotenv
+dotenv.load_dotenv()
+
 from .config import Config
 
 from flask_cors import CORS
@@ -17,6 +20,7 @@ def create_app():
   CORS(app, origins=["http://localhost:4200"])
   Talisman(app,
            force_https=False,
+           session_cookie_secure=Config.SESSION_COOKIE_SECURE,
            strict_transport_security=False,
            content_security_policy={
              'default-src': "'self'",
