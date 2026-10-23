@@ -110,6 +110,14 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
   }
 
+  fullImage: string | null = null;
+
+  // Small preview made by the server; the full file only loads when tapped
+  thumbUrl(path: string): string {
+    const name = path.split('/').pop()!.replace(/\.[^.]+$/, '.jpg');
+    return `static/uploads/thumbs/${name}`;
+  }
+
   isVideo(filename: string): boolean {
     // Add other video extensions here if you use things like .webm
     return filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.MP4');

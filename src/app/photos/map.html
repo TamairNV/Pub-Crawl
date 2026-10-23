@@ -14,12 +14,16 @@
 
       <div class="timeline-content fun-card">
         <img *ngIf="!isVideo(event.id)"
-             [src]="event.id"
+             [src]="thumbUrl(event.id)"
+             loading="lazy"
              alt="Timeline Media"
-             class="media-element">
+             class="media-element"
+             (click)="fullImage = event.id">
 
         <div class="video-wrapper" *ngIf="isVideo(event.id)">
           <video [src]="event.id"
+                 [poster]="thumbUrl(event.id)"
+                 preload="none"
                  class="media-element"
                  muted
                  loop
@@ -35,6 +39,10 @@
       </div>
 
     </div>
+  </div>
+
+  <div class="lightbox" *ngIf="fullImage" (click)="fullImage = null">
+    <img [src]="fullImage" alt="Full size photo">
   </div>
 
   <button class="btn btn-primary download-btn" (click)="downloadAll()">Download All</button>
