@@ -3,7 +3,8 @@ import threading
 
 import flask
 from PIL import Image
-from flask import Blueprint, render_template, jsonify, request
+from functools import wraps
+from flask import Blueprint, render_template, jsonify, request, session, abort
 import os
 import tempfile
 import subprocess
@@ -17,12 +18,37 @@ UPLOAD_FOLDER = '/app/static/uploads'
 
 main = Blueprint('main', __name__)
 from .SQL_manager import *
+
+
+def is_admin():
+  return str(session.get('role', '')).lower() == 'admin'
+
+def can_view_event(event_id):
+  return is_admin() or is_user_in_event_sql(session['user_id'], event_id)
+
+def login_required(f):
+  @wraps(f)
+  def wrapper(*args, **kwargs):
+    if 'user_id' not in session:
+      return jsonify({"status": "failed", "received": "Not logged in"}), 401
+    return f(*args, **kwargs)
+  return wrapper
+
+def admin_required(f):
+  @wraps(f)
+  @login_required
+  def wrapper(*args, **kwargs):
+    if not is_admin():
+      return jsonify({"status": "failed", "received": "Forbidden"}), 403
+    return f(*args, **kwargs)
+  return wrapper
 @main.route('/api/BOB')
 def index():
   data = "BOB"
   return jsonify(data)
 
 @main.route('/api/get-users')
+@admin_required
 def get_users():
   all_users = get_all_users_sql()
   print(all_users)
@@ -31,9 +57,18 @@ def get_users():
 from flask import send_from_directory
 
 @main.route('/static/uploads/<filename>')
+@login_required
 def serve_uploaded_media(filename):
-  # This tells Flask exactly where to fetch the files we just saved
+  # Only people in the photo's crawl (or admins) can open it
+  event_id = get_photo_event_sql(f"static/uploads/{filename}")
+  if event_id is None or not can_view_event(event_id):
+    return jsonify({"status": "failed", "received": "Not found"}), 404
   return send_from_directory('/app/static/uploads', filename)
+
+@main.route('/api/logout-user',methods=['POST'])
+def logout_user():
+  session.clear()
+  return jsonify({"status": "success", "received": "Logged out"})
 
 @main.route('/api/create-user',methods=['POST'])
 def create_user():
@@ -62,7 +97,12 @@ def login_user():
     return jsonify({"status": "failed", "received": "Wrong"})
 
   if user[0]['password'] == user_data['passkey']:
-    return jsonify({"status": "success", "received": user[0]})
+    session.clear()
+    session.permanent = True
+    session['user_id'] = user[0]['id']
+    session['role'] = user[0]['role']
+    profile = {"id": user[0]['id'], "name": user[0]['name'], "role": user[0]['role']}
+    return jsonify({"status": "success", "received": profile})
   else:
     return jsonify({"status": "failed", "received": "Wrong"})
 
@@ -354,6 +394,7 @@ _jobs_lock = threading.Lock()
 
 
 @main.route('/api/upload-footage', methods=['POST'])
+@login_required
 def upload_footage():
   file_chunk = request.files.get('file_chunk')
   chunk_index = int(request.form.get('chunk_index', 0))
@@ -364,10 +405,16 @@ def upload_footage():
   user_id_data = request.form.get('user_id')
   event_id = request.form.get('event_id')
 
+  user_id = {"id": session['user_id']}
+
   try:
-    user_id = json.loads(user_id_data) if user_id_data and user_id_data.startswith('{') else {"id": user_id_data}
-  except Exception:
-    user_id = {"id": user_id_data}
+    file_id = str(uuid.UUID(file_id))
+  except (TypeError, ValueError):
+    return jsonify({"error": "Invalid file_uuid"}), 400
+  if any(os.path.exists(os.path.join(UPLOAD_FOLDER, f"{file_id}{ext}")) for ext in ('.jpg', '.mp4')):
+    return jsonify({"error": "File already exists"}), 409
+  if not event_id or not can_view_event(event_id):
+    return jsonify({"error": "Forbidden"}), 403
 
   if not file_chunk:
     return jsonify({"error": "No file chunk provided"}), 400
@@ -480,6 +527,7 @@ def _assemble_and_process(file_id, total_chunks, user_id, event_id, original_nam
 
 
 @main.route('/api/upload-status', methods=['GET'])
+@login_required
 def upload_status():
   file_id = request.args.get('file_uuid')
   if not file_id:
@@ -489,12 +537,15 @@ def upload_status():
   return jsonify({"file_uuid": file_id, **job}), 200
 
 @main.route('/api/get-footage',methods=['GET', 'POST'])
+@login_required
 def get_photos():
   data = request.get_json()
   if not data:
     return jsonify({"status": "failed", "received": data})
 
   event_id = data['event_id']
+  if not can_view_event(event_id):
+    return jsonify({"status": "failed", "received": "Forbidden"}), 403
 
   out = get_photos_from_event(event_id)
   if out:

@@ -52,7 +52,7 @@ from datetime import datetime
 
 
 def get_all_users_sql():
-  query = "SELECT * FROM User"
+  query = "SELECT id, name, role, teamID, created_at, updated_at FROM User"
   try:
     connection = get_db()
     params = []
@@ -435,3 +435,23 @@ def get_all_photos():
   except Exception as e:
     print(f"Query Failed: {e}")
     return False
+
+
+def is_user_in_event_sql(user_id, event_id):
+  query = "SELECT 1 FROM Participant WHERE userID = %s AND eventID = %s LIMIT 1"
+  try:
+    connection = get_db()
+    return bool(run_query(connection, query, [user_id, event_id]))
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def get_photo_event_sql(photo_id):
+  query = "SELECT event_id FROM Photo WHERE id = %s LIMIT 1"
+  try:
+    connection = get_db()
+    out = run_query(connection, query, [photo_id])
+    return out[0]['event_id'] if out else None
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return None
