@@ -28,6 +28,10 @@ export class RefComponent implements OnInit {
   currentUser: any;
   constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
   ngOnInit() {
+    if (!this.authService.getSession()()) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.route.paramMap.subscribe(params => {
       const eventId = params.get('id');
       this.currentEventID = eventId
