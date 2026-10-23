@@ -65,6 +65,24 @@ def serve_uploaded_media(filename):
     return jsonify({"status": "failed", "received": "Not found"}), 404
   return send_from_directory('/app/static/uploads', filename)
 
+@main.route('/static/uploads/thumbs/<filename>')
+@login_required
+def serve_thumbnail(filename):
+  # Small preview of a photo, or a still frame of a video, made on first request
+  stem = os.path.splitext(filename)[0]
+  for ext in ('.jpg', '.mp4'):
+    event_id = get_photo_event_sql(f"static/uploads/{stem}{ext}")
+    if event_id is not None:
+      break
+  if event_id is None or not can_view_event(event_id):
+    return jsonify({"status": "failed", "received": "Not found"}), 404
+  thumb_name = make_thumbnail(f"{stem}{ext}")
+  if not thumb_name:
+    return send_from_directory(UPLOAD_FOLDER, f"{stem}{ext}")
+  response = send_from_directory(THUMB_FOLDER, thumb_name)
+  response.headers['Cache-Control'] = 'private, max-age=604800'
+  return response
+
 @main.route('/api/logout-user',methods=['POST'])
 def logout_user():
   session.clear()
@@ -358,6 +376,46 @@ def get_user_events():
   else:
     return jsonify({"status": "failed", "received": out})
 
+THUMB_FOLDER = os.path.join(UPLOAD_FOLDER, 'thumbs')
+THUMB_SIZE = 640
+
+def make_thumbnail(media_name):
+  # Returns the thumbnail's file name, creating it if needed; None if it can't be made
+  stem, ext = os.path.splitext(media_name)
+  thumb_name = f"{stem}.jpg"
+  thumb_path = os.path.join(THUMB_FOLDER, thumb_name)
+  if os.path.exists(thumb_path):
+    return thumb_name
+  source = os.path.join(UPLOAD_FOLDER, media_name)
+  if not os.path.exists(source):
+    return None
+  os.makedirs(THUMB_FOLDER, exist_ok=True)
+  # Write to a temp name first so two workers can't serve a half-written file
+  tmp_path = f"{thumb_path}.{uuid.uuid4().hex}.tmp"
+  try:
+    if ext.lower() == '.mp4':
+      for seek in ('1', '0'):
+        subprocess.run(['ffmpeg', '-y', '-ss', seek, '-i', source, '-frames:v', '1',
+                        '-vf', f"scale='min({THUMB_SIZE},iw)':-2", '-q:v', '5', '-f', 'mjpeg', tmp_path],
+                       capture_output=True)
+        if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
+          break
+    else:
+      with Image.open(source) as img:
+        img = img.convert('RGB')
+        img.thumbnail((THUMB_SIZE, THUMB_SIZE))
+        img.save(tmp_path, 'jpeg', quality=70)
+    if not os.path.exists(tmp_path) or os.path.getsize(tmp_path) == 0:
+      return None
+    os.replace(tmp_path, thumb_path)
+    return thumb_name
+  except Exception as e:
+    print(f"Thumbnail failed for {media_name}: {e}")
+    return None
+  finally:
+    if os.path.exists(tmp_path):
+      os.remove(tmp_path)
+
 def process_image(raw_path, final_path):
   with Image.open(raw_path) as img:
     if img.mode in ("RGBA", "P"):
@@ -513,6 +571,7 @@ def _assemble_and_process(file_id, total_chunks, user_id, event_id, original_nam
       "longitude": lng
     }]
     save_photo_ids_sql(user_id['id'], event_id, processed_files)
+    make_thumbnail(filename)
 
     with _jobs_lock:
       _processing_jobs[file_id] = {"status": "done", "data": processed_files, "error": None}
