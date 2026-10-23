@@ -3,7 +3,7 @@
   <header class="ref-header">
     <a [routerLink]="['/event-details', currentEventID]" class="btn btn-outline">&larr; Back to Event Details</a>
     <h1>Referee Mode</h1>
-    <p class="user-badge">Viewing as: <strong>{{ currentUser.name }}</strong></p>
+    <p class="user-badge">Viewing as: <strong>{{ currentUser?.name }}</strong></p>
   </header>
 
   <!-- Location & Rules Card -->
