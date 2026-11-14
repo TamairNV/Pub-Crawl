@@ -455,3 +455,34 @@ def get_photo_event_sql(photo_id):
   except Exception as e:
     print(f"Query Failed: {e}")
     return None
+
+
+# ---- Current location of a crawl ----
+# The ref moves the crawl from pub to pub; players read it from here.
+# Needs: ALTER TABLE Event ADD COLUMN current_pub_id VARCHAR(64) NULL DEFAULT NULL;
+
+def get_current_pub_sql(event_id):
+  # Returns {"pub_id": id or None}, or False if the query failed
+  query = "SELECT current_pub_id FROM Event WHERE id = %s LIMIT 1"
+  try:
+    connection = get_db()
+    out = run_query(connection, query, [event_id])
+    return {"pub_id": out[0]['current_pub_id'] if out else None}
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
+def set_current_pub_sql(event_id, pub_id):
+  # Only accepts a pub that belongs to this event
+  query = """
+          UPDATE Event SET current_pub_id = %s
+          WHERE id = %s
+            AND EXISTS (SELECT 1 FROM Pub WHERE id = %s AND eventID = %s)
+  """
+  try:
+    connection = get_db()
+    run_query(connection, query, [pub_id, event_id, pub_id, event_id])
+    return True
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False

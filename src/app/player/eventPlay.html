@@ -5,6 +5,24 @@
     <h2>Live Leaderboard</h2>
   </div>
 
+  <!-- Where the crawl is now (the ref moves this on) -->
+  <div class="dashboard-card">
+    <h3>Current Location</h3>
+    <div *ngIf="currentStop; else noStop">
+      <div class="pub-title">
+        <span class="badge">{{ currentStop.order_index }}</span>
+        <h4>{{ currentStop.pubName }}</h4>
+      </div>
+      <div *ngFor="let rule of currentStop.rules" class="rule-box">
+        <strong>Rule: {{ rule.ruleName }}</strong>
+        <p>{{ rule.ruleDescription }}</p>
+      </div>
+    </div>
+    <ng-template #noStop>
+      <div class="rule-box"><p>No locations have been set for this event yet.</p></div>
+    </ng-template>
+  </div>
+
   <div *ngIf="leaderboardData.length > 0; else loading">
     <div *ngFor="let team of leaderboardData; let i = index" class="dashboard-card">
       <h3 [style.color]="team.colour">
@@ -25,4 +43,18 @@
       <p>Please wait while we calculate the scores.</p>
     </div>
   </ng-template>
+
+  <!-- Rules that apply all night -->
+  <div class="dashboard-card">
+    <h3>General Rules</h3>
+    <div *ngIf="baseRules.length > 0; else noRules" class="list-container">
+      <div *ngFor="let rule of baseRules" class="list-item">
+        <strong>{{ rule.name }}:</strong>
+        <span class="description-text">{{ rule.description }}</span>
+      </div>
+    </div>
+    <ng-template #noRules>
+      <p>No general rules have been set yet.</p>
+    </ng-template>
+  </div>
 </div>
