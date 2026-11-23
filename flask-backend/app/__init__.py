@@ -94,6 +94,9 @@ def create_app():
 
   @app.errorhandler(Exception)
   def handle_unexpected_error(error):
+    from werkzeug.exceptions import HTTPException
+    if isinstance(error, HTTPException):
+      return error
     current_app.logger.warning("Unexpected error: %s", error)
     return render_template('errors/500.html'), 500
 
