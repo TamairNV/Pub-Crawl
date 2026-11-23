@@ -119,6 +119,24 @@ export class EventPlay implements OnInit, OnDestroy {
   }
   leaderboardData: any[] = [];
 
+  myTeamId(): string | null {
+    const me = (this.userDetails || []).find((u: any) => u.userID === this.currentUser?.id);
+    return me ? me.teamID : null;
+  }
+
+  myTeam() {
+    const id = this.myTeamId();
+    const i = this.leaderboardData.findIndex(t => t.teamID === id);
+    if (i < 0) return null;
+    const team = this.leaderboardData[i];
+    const me = team.members.find((m: any) => m.userID === this.currentUser?.id);
+    return { rank: i + 1, team, mePoints: me ? me.points : 0 };
+  }
+
+  scrollToStop() {
+    document.getElementById('current-stop')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   generateLeaderboard() {
     this.leaderboardData = this.teams.map((team: any) => {
 
@@ -149,7 +167,9 @@ export class EventPlay implements OnInit, OnDestroy {
       };
     });
 
-    this.leaderboardData.sort((a, b) => a.totalPoints - b.totalPoints);
+    // Most points first (matches the ref's Team Standings)
+    this.leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints);
+    this.leaderboardData.forEach(t => t.members.sort((x: any, y: any) => y.points - x.points));
 
     console.log("Final Leaderboard:", this.leaderboardData);
   }

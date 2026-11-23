@@ -124,9 +124,24 @@ export class RefComponent implements OnInit, OnDestroy {
   }
 
 
+  // Mobile: filter players by team / name, and show the tap straight away (the server confirms after)
+  teamFilter = '';
+  playerSearch = '';
+  bumped: any = null;
+  shownPlayers() {
+    const q = this.playerSearch.trim().toLowerCase();
+    return (this.userDetails || []).filter((u: any) =>
+      (!this.teamFilter || u.teamID === this.teamFilter) && (!q || String(u.name).toLowerCase().includes(q)));
+  }
+  trackUser(_: number, u: any) { return u.userID; }
+
   givePoint(n: any,id : String){
-    console.log(this.currentUser.id)
-    const data = {event_id : this.currentEventID, points : n, user_id :id,ref_id : this.currentUser.id}
+    const row = (this.userDetails || []).find((u: any) => u.userID === id);
+    if (row) { row.points = (row.points || 0) + n; }
+    this.bumped = id;
+    setTimeout(() => { if (this.bumped === id) { this.bumped = null; this.cdr.detectChanges(); } }, 350);
+    try { navigator.vibrate?.(15); } catch {}
+    const data = {event_id : this.currentEventID, points : n, user_id :id}
     this.http.post('/api/give-user-points',data).subscribe({
       next: (response: any) => {
         if (response.received == "failed") {

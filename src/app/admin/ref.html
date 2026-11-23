@@ -1,10 +1,20 @@
 <div class="ref-dashboard">
   <!-- Header -->
   <header class="ref-header">
-    <a [routerLink]="['/event-details', currentEventID]" class="btn btn-outline">&larr; Back to Event Details</a>
-    <h1>Referee Mode</h1>
-    <p class="user-badge">Viewing as: <strong>{{ currentUser?.name }}</strong></p>
+    <a [routerLink]="['/event-details', currentEventID]" class="btn btn-outline btn-back">&larr; Setup</a>
+    <h1>Ref Mode</h1>
+    <p class="user-badge"><strong>{{ currentUser?.name }}</strong></p>
   </header>
+
+  <!-- Sticky: where we are now, with one-thumb prev/next -->
+  <div class="pub-bar" *ngIf="locationsRules?.length">
+    <button type="button" class="pub-bar-btn" (click)="movePub(-1)" [disabled]="currentPubIndex === 0" aria-label="Previous pub">&larr;</button>
+    <div class="pub-bar-name">
+      <small>Pub {{ currentPubIndex + 1 }} of {{ locationsRules.length }}</small>
+      <strong>{{ locationsRules[currentPubIndex]?.pubName }}</strong>
+    </div>
+    <button type="button" class="pub-bar-btn next" (click)="movePub(1)" [disabled]="currentPubIndex === locationsRules.length - 1" aria-label="Next pub">&rarr;</button>
+  </div>
 
   <!-- Location & Rules Card -->
   <section class="fun-card">
@@ -37,9 +47,16 @@
   <!-- Player Points Card -->
   <section class="fun-card">
     <h2>Player Points</h2>
-    <p class="grid-hint">Tap any player's name to assign a task, spin a wheel, confirm completion, or reveal their password.</p>
+    <p class="grid-hint">Tap a name for tasks, wheels and passkeys.</p>
+    <div class="team-filter" *ngIf="teams.length > 1">
+      <button type="button" class="team-chip" [class.on]="teamFilter === ''" (click)="teamFilter = ''">All</button>
+      <button type="button" class="team-chip" *ngFor="let t of teams" [class.on]="teamFilter === t.id" (click)="teamFilter = t.id">
+        <span class="team-dot" [style.background]="t.colour"></span>{{ t.name }}
+      </button>
+    </div>
+    <input *ngIf="userDetails.length > 8" type="search" class="player-search" [(ngModel)]="playerSearch" placeholder="Find a player…">
     <div class="user-grid">
-      <div *ngFor="let user of userDetails" class="player-card">
+      <div *ngFor="let user of shownPlayers(); trackBy: trackUser" class="player-card">
         <button type="button" class="player-name-btn" (click)="openPlayerModal(user)">
           <span class="name-line">
             <span class="team-dot" [style.background]="teamColour(user.teamID)"></span>
@@ -55,9 +72,9 @@
           </span>
         </button>
         <div class="points-control">
-          <button type="button" class="btn btn-danger btn-circle" (click)="givePoint(-1, user.userID)">-</button>
-          <span class="points-display">{{ user.points || 0 }}</span>
-          <button type="button" class="btn btn-success btn-circle" (click)="givePoint(1, user.userID)">+</button>
+          <button type="button" class="btn btn-danger btn-circle" (click)="givePoint(-1, user.userID)" aria-label="Take a point">&minus;</button>
+          <span class="points-display" [class.bump]="bumped === user.userID">{{ user.points || 0 }}</span>
+          <button type="button" class="btn btn-success btn-circle" (click)="givePoint(1, user.userID)" aria-label="Give a point">+</button>
         </div>
       </div>
     </div>

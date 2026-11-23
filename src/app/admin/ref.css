@@ -245,3 +245,57 @@
   font-weight: 800;
   border: 2px solid #111827;
 }
+
+/* ===== Mobile overhaul (2026-11): one thumb, big targets, sticky pub, same bold look ===== */
+.pub-bar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: .6rem;
+  background: #111827; color: #fff;
+  border: 3px solid #111827; border-radius: 14px;
+  box-shadow: 4px 4px 0 #fbbf24;
+  padding: .5rem;
+}
+.pub-bar-name { flex: 1; min-width: 0; text-align: center; display: flex; flex-direction: column; }
+.pub-bar-name small { font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
+.pub-bar-name strong { font-size: 1.25rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pub-bar-btn {
+  flex: none; width: 60px; height: 56px; border-radius: 12px; border: 3px solid #fff;
+  background: #bfdbfe; color: #111827; font-size: 1.8rem; font-weight: 900; cursor: pointer;
+}
+.pub-bar-btn.next { background: #fbbf24; }
+.pub-bar-btn:disabled { opacity: .35; }
+.pub-bar-btn:active:not(:disabled) { transform: translateY(2px); }
+
+.team-filter { display: flex; gap: .5rem; overflow-x: auto; padding: .25rem .1rem .75rem; scrollbar-width: none; }
+.team-chip {
+  flex: none; display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: .4rem .9rem;
+  border: 3px solid #111827; border-radius: 999px; background: #fff; font-weight: 800; font-size: 1rem;
+  color: #111827; cursor: pointer; font-family: inherit;
+}
+.team-chip.on { background: #fbbf24; }
+.player-search {
+  width: 100%; box-sizing: border-box; margin-bottom: 1rem; padding: .8rem 1rem; font-size: max(16px, 1.05rem);
+  border: 3px solid #111827; border-radius: 12px; font-family: inherit; font-weight: 700;
+}
+.points-display.bump { animation: bump .35s ease; }
+@keyframes bump { 40% { transform: scale(1.45); color: #16a34a; } }
+
+@media (max-width: 640px) {
+  .ref-dashboard { margin: .75rem auto 2rem; gap: 1.25rem; padding: 0 .75rem; box-sizing: border-box; width: 100%; }
+  .ref-header { flex-direction: row; justify-content: space-between; gap: .5rem; }
+  .ref-header h1 { font-size: 1.6rem; -webkit-text-stroke: 1.5px #111827; text-shadow: 3px 3px 0 #fbbf24; }
+  .ref-header .btn-back { padding: .55rem .8rem; font-size: .95rem; }
+  .user-badge { margin: 0; padding: .4rem .8rem; font-size: .9rem; max-width: 30vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fun-card { padding: 1rem; }
+  .fun-card h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .location-nav { display: none; } /* the sticky bar does this */
+
+  /* One player per row: name on the left, big − score + on the right */
+  .user-grid { grid-template-columns: 1fr; gap: .6rem; }
+  .player-card { display: flex; align-items: center; gap: .5rem; padding: .5rem; text-align: left; box-shadow: 3px 3px 0 #bfdbfe; }
+  .player-name-btn { flex: 1; min-width: 0; margin: 0; align-items: flex-start; min-height: 56px; justify-content: center; }
+  .player-name { font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .points-control { gap: .35rem; flex: none; }
+  .btn-circle { width: 56px; height: 56px; font-size: 2rem; border-width: 3px; }
+  .points-display { min-width: 2.2ch; text-align: center; font-size: 1.7rem; }
+}

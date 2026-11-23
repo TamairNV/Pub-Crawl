@@ -178,3 +178,48 @@
   color: #b91c1c;
   margin-left: 0.35rem;
 }
+
+/* ===== Mobile overhaul (2026-11): sticky pub, "you" card, big readable scores ===== */
+.header-row { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+.pub-bar {
+  position: sticky; top: 0; z-index: 20; width: 100%;
+  display: flex; align-items: center; gap: .75rem; text-align: left;
+  background: #111827; color: #fff; border: 3px solid #111827; border-radius: 14px;
+  box-shadow: 4px 4px 0 #fbbf24; padding: .6rem .8rem; font-family: inherit; cursor: pointer;
+}
+.pub-bar-num {
+  flex: none; width: 44px; height: 44px; border-radius: 10px; background: #fbbf24; color: #111827;
+  display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem; border: 2px solid #fff;
+}
+.pub-bar-name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pub-bar-name small { color: #fbbf24; font-weight: 800; text-transform: uppercase; font-size: .75rem; letter-spacing: .05em; }
+.pub-bar-name strong { font-size: 1.3rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pub-bar-more { flex: none; font-weight: 800; font-size: .9rem; color: #bfdbfe; }
+
+.me-card {
+  display: flex; align-items: center; gap: 1rem; background: #fbbf24; border: 3px solid #111827;
+  border-radius: 14px; box-shadow: 5px 5px 0 #111827; padding: .8rem 1rem;
+}
+.me-rank { font-size: 2.6rem; font-weight: 900; line-height: 1; color: #111827; }
+.me-info { display: flex; flex-direction: column; font-weight: 800; }
+.me-info strong { font-size: 1.35rem; -webkit-text-stroke: .5px #111827; }
+
+.team-head { display: flex; align-items: center; gap: .6rem; margin: 0 0 .5rem; }
+.team-rank { font-weight: 900; color: #111827; }
+.team-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; -webkit-text-stroke: .8px #111827; }
+.team-pts {
+  flex: none; background: #111827; color: #fbbf24; border-radius: 10px; padding: .2rem .6rem;
+  font-size: 1.4rem; font-weight: 900; -webkit-text-stroke: 0;
+}
+.team-pts small { font-size: .7rem; margin-left: .15rem; color: #fff; }
+.team-card.mine { box-shadow: 6px 6px 0 #111827; border-width: 4px; background: #fffbeb; }
+.player-item.me { background: #fef3c7; border-width: 3px; }
+
+@media (max-width: 640px) {
+  .event-play-container { margin: .75rem auto 2rem; gap: 1rem; padding: 0 .75rem; }
+  .header { gap: .6rem; margin-bottom: 0; }
+  .header h2 { font-size: 1.8rem; -webkit-text-stroke: 1.5px #111827; text-shadow: 3px 3px 0 #fbbf24; }
+  .back-button { padding: .6rem .9rem; }
+  .dashboard-card { padding: 1rem; }
+  .team-head { font-size: 1.25rem; }
+}

@@ -1,12 +1,30 @@
 <div class="event-play-container">
   <div class="header">
-    <a [routerLink]="['/player-dashboard']" class="back-button">&larr; Back to Your Events</a>
-    <a [routerLink]="['/map-view', currentEventID]" class="btn btn-outlinem back-button">Media</a>
+    <div class="header-row">
+      <a [routerLink]="['/player-dashboard']" class="back-button">&larr; Events</a>
+      <a [routerLink]="['/map-view', currentEventID]" class="back-button">📸 Media</a>
+    </div>
     <h2>Live Leaderboard</h2>
   </div>
 
+  <!-- Sticky: the pub we're at now -->
+  <button type="button" class="pub-bar" *ngIf="currentStop" (click)="scrollToStop()">
+    <span class="pub-bar-num">{{ currentStop.order_index }}</span>
+    <span class="pub-bar-name"><small>Now at</small><strong>{{ currentStop.pubName }}</strong></span>
+    <span class="pub-bar-more" *ngIf="currentStop.rules?.[0]?.ruleName">Rule ▾</span>
+  </button>
+
+  <!-- You, at a glance -->
+  <div class="me-card" *ngIf="myTeam() as mine">
+    <div class="me-rank">#{{ mine.rank }}</div>
+    <div class="me-info">
+      <strong [style.color]="mine.team.colour">{{ mine.team.teamName }}</strong>
+      <span>{{ mine.team.totalPoints }} team pts · you {{ mine.mePoints }}</span>
+    </div>
+  </div>
+
   <!-- Where the crawl is now (the ref moves this on) -->
-  <div class="dashboard-card">
+  <div class="dashboard-card" id="current-stop">
     <h3>Current Location</h3>
     <div *ngIf="currentStop; else noStop">
       <div class="pub-title">
@@ -37,13 +55,15 @@
   ></app-player-mini-events>
 
   <div *ngIf="leaderboardData.length > 0; else loading">
-    <div *ngFor="let team of leaderboardData; let i = index" class="dashboard-card">
-      <h3 [style.color]="team.colour">
-        #{{ i + 1 }} {{ team.teamName }} - {{ team.totalPoints }} Points
-        <small class="wheel-adj" *ngIf="team.adjustment !== 0">({{ team.adjustment > 0 ? '+' : '' }}{{ team.adjustment }} wheel)</small>
+    <div *ngFor="let team of leaderboardData; let i = index" class="dashboard-card team-card" [class.mine]="team.teamID === myTeamId()">
+      <h3 class="team-head">
+        <span class="team-rank">#{{ i + 1 }}</span>
+        <span class="team-name" [style.color]="team.colour">{{ team.teamName }}</span>
+        <span class="team-pts">{{ team.totalPoints }}<small>pts</small></span>
       </h3>
+      <small class="wheel-adj" *ngIf="team.adjustment !== 0">({{ team.adjustment > 0 ? '+' : '' }}{{ team.adjustment }} from wheels)</small>
       <ul class="player-list">
-        <li *ngFor="let member of team.members" class="player-item">
+        <li *ngFor="let member of team.members" class="player-item" [class.me]="member.userID === currentUser?.id">
           <span>{{ member.name }}</span>
           <strong>{{ member.points }} pts</strong>
         </li>

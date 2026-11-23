@@ -25,6 +25,13 @@
     margin-bottom: 1rem;
   }
 
+  /* Phones: smaller logo so the crawl itself is on screen */
+  @media (max-width: 640px) {
+    .main-container { padding-top: .75rem; }
+    h1 { font-size: 2.4rem; -webkit-text-stroke: 2px #111827; text-shadow: 3px 3px 0 #111827, 5px 5px 0 #bfdbfe; margin-bottom: .5rem; letter-spacing: 3px; }
+    .separator { height: 4px; }
+  }
+
   h1:hover {
     transform: rotate(2deg) scale(1.05);
   }
