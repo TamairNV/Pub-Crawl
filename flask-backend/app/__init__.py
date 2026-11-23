@@ -51,6 +51,9 @@ def create_app():
 
   app.register_blueprint(main)
 
+  from .join import join
+  app.register_blueprint(join)
+
   from .payments import payments
   app.register_blueprint(payments)
 

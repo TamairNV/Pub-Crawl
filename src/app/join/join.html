@@ -1,0 +1,35 @@
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    <p class="join-kicker">You're invited to</p>
+    <h2 *ngIf="crawl">{{ crawl.name }}</h2>
+    <h2 *ngIf="!crawl && loading">Loading…</h2>
+
+    <ng-container *ngIf="crawl && !crawl.full">
+      <div class="form-group" *ngIf="!crawl.logged_in">
+        <input type="text" class="form-control join-name" [(ngModel)]="name" (keyup.enter)="joinCrawl()"
+               placeholder="Your name" maxlength="40" autocomplete="given-name" autofocus>
+      </div>
+      <p class="join-as" *ngIf="crawl.logged_in">Joining as <strong>{{ signedInName }}</strong></p>
+
+      <div class="team-pick" *ngIf="crawl.teams?.length">
+        <p class="team-pick-label">Pick your team</p>
+        <button type="button" class="team-chip" [class.on]="teamId === null" (click)="teamId = null">Put me anywhere</button>
+        <button type="button" class="team-chip" *ngFor="let t of crawl.teams" [class.on]="teamId === t.id"
+                [style.--team]="t.colour || '#fbbf24'" (click)="teamId = t.id">
+          <span class="dot"></span>{{ t.name }} <small>{{ t.players }}</small>
+        </button>
+      </div>
+
+      <button class="btn-primary join-go" (click)="joinCrawl()" [disabled]="joining">
+        {{ joining ? 'Joining…' : "Let's go 🍻" }}
+      </button>
+      <p class="join-small">No account needed. Stay on this phone and you stay in.</p>
+    </ng-container>
+
+    <p class="error-message" *ngIf="crawl?.full">This crawl is full. Ask your organiser to raise the player limit.</p>
+    <div class="error-message">{{ error }}</div>
+
+    <div class="divider"></div>
+    <a routerLink="/login" class="link-as-button">Have an account? Log in first</a>
+  </div>
+</div>

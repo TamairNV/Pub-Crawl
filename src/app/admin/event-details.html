@@ -77,6 +77,23 @@
   <section class="admin-card" id="players">
     <h2><span class="num">2</span> Players</h2>
 
+    <div class="invite-box" *ngIf="joinUrl">
+      <h3>Invite with a QR code</h3>
+      <p class="hint">Players scan this, type their name and they're in. No account needed.</p>
+      <img class="invite-qr" [src]="qrSrc" alt="QR code to join this crawl" width="240" height="240">
+      <div class="invite-link">
+        <input class="form-control" readonly [value]="joinUrl" (focus)="$any($event.target).select()">
+        <button type="button" class="btn btn-secondary btn-small" (click)="copyJoinUrl()">{{ copied ? 'Copied ✓' : 'Copy link' }}</button>
+      </div>
+      <div class="inline-form invite-cap">
+        <label>Max players <small>({{ joinPlayers }} in now)</small></label>
+        <input type="number" class="form-control compact" min="1" [max]="joinHardMax" [(ngModel)]="maxPlayers" name="maxPlayers">
+        <button type="button" class="btn btn-small btn-secondary" (click)="savePlayerCap()">Save</button>
+      </div>
+      <button type="button" class="link-btn" *ngIf="canChangeRefs" (click)="regenerateJoinLink()">Make a new link (the old QR stops working)</button>
+      <p class="hint" *ngIf="joinMessage">{{ joinMessage }}</p>
+    </div>
+
     <p class="hint" *ngIf="teams.length === 0">Add a team first, then pick players.</p>
 
     <div class="list-container" *ngIf="userDetails.length">

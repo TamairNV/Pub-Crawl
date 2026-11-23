@@ -83,6 +83,15 @@ export class EventDetailsComponent implements OnInit {
   newRefName = '';
   refMessage = '';
 
+  // QR / link invites
+  joinUrl = '';
+  qrSrc = '';
+  maxPlayers = 60;
+  joinPlayers = 0;
+  joinHardMax = 300;
+  joinMessage = '';
+  copied = false;
+
   ngOnInit() {
     this.http.get('/api/me').subscribe({
       next: (res: any) => {
@@ -103,6 +112,45 @@ export class EventDetailsComponent implements OnInit {
       this.currentEventID = params.get('id');
       this.refreshAll();
       this.loadRefs();
+      this.loadJoinInfo();
+    });
+  }
+
+  loadJoinInfo() {
+    if (!this.currentEventID) return;
+    this.http.post('/api/join-info', { event_id: this.currentEventID }).subscribe({
+      next: (res: any) => {
+        if (res.status !== 'success') return;
+        this.joinUrl = res.received.url;
+        this.maxPlayers = res.received.max_players;
+        this.joinPlayers = res.received.players;
+        this.joinHardMax = res.received.hard_max;
+        this.qrSrc = `/api/join-qr.svg?event_id=${encodeURIComponent(this.currentEventID || '')}&t=${res.received.token.slice(0, 6)}`;
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
+  }
+
+  copyJoinUrl() {
+    navigator.clipboard?.writeText(this.joinUrl).then(() => {
+      this.copied = true; this.cdr.detectChanges();
+      setTimeout(() => { this.copied = false; this.cdr.detectChanges(); }, 2000);
+    });
+  }
+
+  regenerateJoinLink() {
+    if (!confirm('Make a new invite link? The old QR code and link stop working.')) return;
+    this.http.post('/api/regenerate-join-link', { event_id: this.currentEventID }).subscribe({
+      next: () => { this.joinMessage = 'New link made. Share the new QR code.'; this.loadJoinInfo(); },
+      error: (err) => { this.joinMessage = err?.error?.received || 'Could not make a new link.'; this.cdr.detectChanges(); }
+    });
+  }
+
+  savePlayerCap() {
+    this.http.post('/api/set-player-cap', { event_id: this.currentEventID, max_players: this.maxPlayers }).subscribe({
+      next: () => { this.joinMessage = `Player limit set to ${this.maxPlayers}.`; this.cdr.detectChanges(); },
+      error: (err) => { this.joinMessage = err?.error?.received || 'Could not save.'; this.cdr.detectChanges(); }
     });
   }
 

@@ -9,12 +9,14 @@ import {PlayerDashboard} from './player/playerDashboard';
 import {EventPlay} from './player/eventPlay';
 import {MapComponent} from './photos/map'
 import {UploadComponent} from './photos/upload';
+import {JoinComponent} from './join/join';
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
   { path: 'admin-dashboard', component: AdminDashboardComponent }, // Where they go after create_account
   { path: 'admin-restore', component: RestoreCrawlsComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'join/:token', component: JoinComponent },
   { path: '',redirectTo: '/login',pathMatch : 'full' },
   { path: 'event-details/:id', component: EventDetailsComponent },
   { path: 'ref/:id', component: RefComponent },

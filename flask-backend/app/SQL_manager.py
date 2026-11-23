@@ -88,7 +88,8 @@ def select_users_sql(user_ids):
     return False
 
 def is_name_taken(name):
-  query = "SELECT * FROM User WHERE name = %s LIMIT 1"
+  # Guests (QR joiners) don't reserve names
+  query = "SELECT * FROM User WHERE name = %s AND (role IS NULL OR role <> 'guest') LIMIT 1"
   try:
     results = _run(query, [name])
     return bool(results)
@@ -107,7 +108,7 @@ def create_user_sql(name,passkey,role = "player"):
 
 
 def get_user_data_from_name_sql(name):
-  query = "SELECT * FROM User WHERE name = %s LIMIT 1"
+  query = "SELECT * FROM User WHERE name = %s AND (role IS NULL OR role <> 'guest') LIMIT 1"
   try:
     return _run(query, [name])
   except Exception as e:
