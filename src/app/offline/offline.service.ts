@@ -31,6 +31,7 @@ export class OfflineService {
 
   online = signal<boolean>(typeof navigator === 'undefined' ? true : navigator.onLine);
   pending = signal(0);
+  queued = signal<QueuedAction[]>([]);
   mediaWaiting = signal(0);
   lastLive = signal<number | null>(null);   // when we last heard from the server
   syncing = signal(false);
@@ -93,6 +94,17 @@ export class OfflineService {
     this.again = false;
   }
 
+  /** Points taps still waiting to be sent, per player, so screens can add them on top of server totals. */
+  pendingPoints(eventId: string | null | undefined): Record<string, number> {
+    const out: Record<string, number> = {};
+    for (const a of this.queued()) {
+      if (a.url === '/api/give-user-points' && a.body?.event_id === eventId) {
+        out[a.body.user_id] = (out[a.body.user_id] || 0) + (Number(a.body.points) || 0);
+      }
+    }
+    return out;
+  }
+
   // ---- media ----
 
   /** Videos only go up on wifi (or when we can't tell); photos go whenever there's signal. */
@@ -126,7 +138,9 @@ export class OfflineService {
 
   private async refreshCounts() {
     try {
-      this.pending.set((await idbAll(ACTIONS)).length);
+      const acts = await idbAll<QueuedAction>(ACTIONS);
+      this.queued.set(acts);
+      this.pending.set(acts.length);
       this.mediaWaiting.set((await idbAll(MEDIA)).length);
     } catch { /* private mode without IndexedDB */ }
   }

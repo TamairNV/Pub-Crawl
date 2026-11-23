@@ -139,7 +139,7 @@ export class RefComponent implements OnInit, OnDestroy {
 
   givePoint(n: any,id : String){
     const row = (this.userDetails || []).find((u: any) => u.userID === id);
-    if (row) { row.points = (row.points || 0) + n; }
+    if (row) { row.points = (Number(row.points) || 0) + n; }
     this.bumped = id;
     setTimeout(() => { if (this.bumped === id) { this.bumped = null; this.cdr.detectChanges(); } }, 350);
     try { navigator.vibrate?.(15); } catch {}
@@ -167,6 +167,7 @@ export class RefComponent implements OnInit, OnDestroy {
 
   private syncUserPoints() {
     if (!this.userDetails) return;
+    const queued = this.offline.pendingPoints(this.currentEventID);
     for (let i = 0; i < this.userDetails.length; i++) {
       let total = 0;
       for (let j = 0; j < this.points.length; j++) {
@@ -175,7 +176,7 @@ export class RefComponent implements OnInit, OnDestroy {
           break;
         }
       }
-      this.userDetails[i].points = total;
+      this.userDetails[i].points = (Number(total) || 0) + (queued[this.userDetails[i].userID] || 0);
     }
   }
 
