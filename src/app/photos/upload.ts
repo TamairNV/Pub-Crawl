@@ -16,6 +16,7 @@ import { AuthService, UserProfile } from '../auth';
 import { firstValueFrom } from 'rxjs';
 import { AppComponent } from '../app';
 import exifr from 'exifr';
+import { OfflineService, QueuedMedia } from '../offline/offline.service';
 @Component({
   selector: 'app-map-view',
   standalone: true,
@@ -40,8 +41,9 @@ export class UploadComponent implements OnInit {
 
     this.route.paramMap.subscribe(params => {
       this.currentEventID = params.get('id');
-      console.log('Loaded event with ID:', this.currentEventID);
+      this.tryWaiting();
     });
+    window.addEventListener('online', () => this.tryWaiting());
   }
   selectedFiles: File[] = [];
 
@@ -111,8 +113,53 @@ export class UploadComponent implements OnInit {
     throw new Error('Processing timed out on the server');
   }
 
+  // ---- No signal? Keep files on the phone. Videos wait for wifi. ----
+  offline = inject(OfflineService);
+  waiting: QueuedMedia[] = [];
+  waitingNote = '';
+
+  async refreshWaiting() {
+    if (!this.currentEventID) return;
+    try { this.waiting = await this.offline.mediaFor(this.currentEventID); } catch { this.waiting = []; }
+    const vids = this.waiting.filter(m => m.isVideo).length;
+    this.waitingNote = this.waiting.length
+      ? `${this.waiting.length} file${this.waiting.length === 1 ? '' : 's'} saved on this phone` +
+        (vids ? ` (videos go up on wifi)` : '') : '';
+    this.cdr.detectChanges();
+  }
+
   async upload() {
-    if (!this.selectedFiles || this.selectedFiles.length === 0) return;
+    if (!this.selectedFiles || this.selectedFiles.length === 0 || !this.currentEventID) return;
+    const now: File[] = [];
+    let saved = 0;
+    for (const f of this.selectedFiles) {
+      if (this.offline.canUploadNow(f.type.startsWith('video/'))) now.push(f);
+      else { await this.offline.queueMedia(this.currentEventID, f); saved++; }
+    }
+    await this.refreshWaiting();
+    if (!now.length) {
+      this.selectedFiles = [];
+      this.uploadStatusText = `Saved ${saved} on this phone. They'll upload when you're back on signal / wifi.`;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.selectedFiles = now;
+    await this.uploadNow(true);
+  }
+
+  async tryWaiting() {
+    if (this.isUploading || !this.currentEventID) return;
+    await this.refreshWaiting();
+    const ready = this.waiting.filter(m => this.offline.canUploadNow(m.isVideo));
+    if (!ready.length) return;
+    this.selectedFiles = ready.map(m => new File([m.file], m.name, { type: m.type }));
+    const ok = await this.uploadNow(false);
+    if (ok) { for (const m of ready) await this.offline.removeMedia(m.id); }
+    await this.refreshWaiting();
+  }
+
+  private async uploadNow(navigateAfter: boolean): Promise<boolean> {
+    if (!this.selectedFiles || this.selectedFiles.length === 0) return false;
 
     this.isUploading = true;
     this.uploadProgress = 0;
@@ -172,7 +219,7 @@ export class UploadComponent implements OnInit {
 
     const workers = Array.from({ length: this.MAX_PARALLEL }, worker);
     const results = await Promise.all(workers);
-    if (!results.every(Boolean)) return; // a worker bailed out
+    if (!results.every(Boolean)) return false; // a worker bailed out
 
     // All chunks delivered — now wait for each file's server-side transcoding
     this.uploadStatusText = 'Server is stitching & transcoding media… ⏳';
@@ -184,6 +231,7 @@ export class UploadComponent implements OnInit {
     this.isUploading = false;
     this.uploadProgress = 100;
     this.cdr.detectChanges();
-    this.router.navigate(['/map-view', this.currentEventID]).then(r => {});
+    if (navigateAfter) this.router.navigate(['/map-view', this.currentEventID]).then(r => {});
+    return true;
   }
 }

@@ -9,6 +9,12 @@
     <p><strong>📸 Heads up:</strong> Please only upload photos you have taken with your camera, otherwise there won't be any timestamp.</p>
   </div>
 
+  <div class="rule-box" *ngIf="waitingNote">
+    <p><strong>📦 {{ waitingNote }}</strong></p>
+    <button class="btn btn-primary" type="button" (click)="tryWaiting()" [disabled]="isUploading">Upload them now</button>
+  </div>
+  <p class="status-text" *ngIf="!isUploading && uploadStatusText">{{ uploadStatusText }}</p>
+
   <div class="form-group">
     <input
       type="file"

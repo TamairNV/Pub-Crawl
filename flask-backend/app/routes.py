@@ -649,10 +649,16 @@ def give_user_points():
   event_id = data['event_id']
   user_id = data['user_id']
   ref_id = session['user_id']
-  points = data['points']
+  try:
+    points = int(data['points'])
+  except (TypeError, ValueError, KeyError):
+    return jsonify({"status": "failed", "received": "Bad points"}), 400
+  if abs(points) > 100:
+    return jsonify({"status": "failed", "received": "Bad points"}), 400
+  if not is_user_in_event_sql(user_id, event_id):
+    return jsonify({"status": "failed", "received": "Player is not in this crawl"}), 400
 
-
-  out = give_user_points_sql(event_id,user_id,points,ref_id)
+  out = give_user_points_sql(event_id,user_id,points,ref_id,data.get('client_id'))
   if out:
     return jsonify({"status": "success", "received": out})
   else:

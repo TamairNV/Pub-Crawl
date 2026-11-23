@@ -2,6 +2,7 @@ import { Component, inject, OnDestroy, OnInit, ChangeDetectorRef } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OfflineService } from '../offline/offline.service';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth';
 import { RefMiniEventsComponent } from './ref-mini-events';
@@ -38,6 +39,7 @@ export class RefComponent implements OnInit, OnDestroy {
   private pollTimer: any = null;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
+  offline = inject(OfflineService);
   ngOnInit() {
     if (!this.authService.getSession()()) {
       this.router.navigate(['/login']);
@@ -141,18 +143,9 @@ export class RefComponent implements OnInit, OnDestroy {
     this.bumped = id;
     setTimeout(() => { if (this.bumped === id) { this.bumped = null; this.cdr.detectChanges(); } }, 350);
     try { navigator.vibrate?.(15); } catch {}
-    const data = {event_id : this.currentEventID, points : n, user_id :id}
-    this.http.post('/api/give-user-points',data).subscribe({
-      next: (response: any) => {
-        if (response.received == "failed") {
-          console.log("give points error");
-        }else{
-          console.log("points given ",response.received)
-          this.getPoints()
-
-        }
-      }
-    })
+    // Queued in IndexedDB with a client id, so a tap made with no signal is sent (once) later
+    this.offline.send('/api/give-user-points', {event_id : this.currentEventID, points : n, user_id :id})
+      .then(() => { if (this.offline.pending() === 0) this.getPoints(); });
   }
   points  : any = []
   getPoints(){
@@ -253,12 +246,7 @@ export class RefComponent implements OnInit, OnDestroy {
   saveCurrentPub(){
     const stop = this.locationsRules[this.currentPubIndex];
     if (!stop) return;
-    this.http.post('/api/set-current-pub', {event_id: this.currentEventID, pub_id: stop.id}).subscribe({
-      next: (response: any) => {
-        if (response.status !== 'success') console.log("set current pub error", response.received);
-      },
-      error: (err) => console.log("set current pub error", err)
-    });
+    this.offline.send('/api/set-current-pub', {event_id: this.currentEventID, pub_id: stop.id}, `pub:${this.currentEventID}`);
   }
 
   // On load, start where the crawl actually is instead of at the first pub

@@ -584,10 +584,17 @@ def get_user_points_sql(event_id):
     return False
 
 
-def give_user_points_sql(event_id,user_id,points,admin_id):
-  query = "INSERT INTO Point (eventID,refID,userID,point_number) VALUES (%s,%s,%s,%s)"
+def give_user_points_sql(event_id,user_id,points,admin_id,client_id=None):
+  # client_id (from the offline queue) is unique, so a repeat of the same tap is a no-op
+  if client_id:
+    query = "INSERT IGNORE INTO Point (eventID,refID,userID,point_number,client_id) VALUES (%s,%s,%s,%s,%s)"
+    args = [event_id,admin_id,user_id,points,str(client_id)[:36]]
+  else:
+    query = "INSERT INTO Point (eventID,refID,userID,point_number) VALUES (%s,%s,%s,%s)"
+    args = [event_id,admin_id,user_id,points]
   try:
-    return _run(query, [event_id,admin_id,user_id,points])
+    out = _run(query, args)
+    return out if out else (client_id and 'duplicate')
   except Exception as e:
     print(f"Query Failed: {e}")
     return False
