@@ -6,6 +6,6 @@ bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
 
 // Keep the app shell on the phone so it opens with no signal (public/sw.js)
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 }
