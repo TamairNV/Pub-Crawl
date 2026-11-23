@@ -611,3 +611,29 @@ def get_photos():
     return jsonify({"status": "success", "received": out})
   else:
     return jsonify({"status": "failed", "received": out})
+
+
+@main.route('/api/get-current-pub', methods=['POST'])
+@login_required
+def get_current_pub():
+  data = request.get_json(silent=True) or {}
+  event_id = data.get('event_id')
+  if not event_id or not can_view_event(event_id):
+    return jsonify({"status": "failed", "received": "failed"}), 403
+  out = get_current_pub_sql(event_id)
+  if out is False:
+    return jsonify({"status": "failed", "received": "failed"})
+  return jsonify({"status": "success", "received": out})
+
+
+@main.route('/api/set-current-pub', methods=['POST'])
+@admin_required
+def set_current_pub():
+  data = request.get_json(silent=True) or {}
+  event_id = data.get('event_id')
+  pub_id = data.get('pub_id')
+  if not event_id or not pub_id:
+    return jsonify({"status": "failed", "received": "failed"}), 400
+  if not set_current_pub_sql(event_id, pub_id):
+    return jsonify({"status": "failed", "received": "failed"})
+  return jsonify({"status": "success", "received": {"pub_id": pub_id}})

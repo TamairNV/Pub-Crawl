@@ -91,6 +91,7 @@ export class RefComponent implements OnInit {
         }else{
           console.log("locations rules got",response.received)
           this.locationsRules = response.received
+          this.syncCurrentPub();
           this.cdr.detectChanges();
 
         }
@@ -143,6 +144,33 @@ export class RefComponent implements OnInit {
   currentPubIndex = 0
   movePub(n : any){
     this.currentPubIndex += n;
+    this.saveCurrentPub();
+  }
+
+  // Players' pages read the current pub from the server, so tell it whenever the ref moves on
+  saveCurrentPub(){
+    const stop = this.locationsRules[this.currentPubIndex];
+    if (!stop) return;
+    this.http.post('/api/set-current-pub', {event_id: this.currentEventID, pub_id: stop.id}).subscribe({
+      next: (response: any) => {
+        if (response.status !== 'success') console.log("set current pub error", response.received);
+      },
+      error: (err) => console.log("set current pub error", err)
+    });
+  }
+
+  // On load, start where the crawl actually is instead of at the first pub
+  syncCurrentPub(){
+    this.http.post('/api/get-current-pub', {event_id: this.currentEventID}).subscribe({
+      next: (response: any) => {
+        if (response.status !== 'success') return;
+        const i = this.locationsRules.findIndex((l: any) => l.id === response.received.pub_id);
+        if (i >= 0) {
+          this.currentPubIndex = i;
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
 }
