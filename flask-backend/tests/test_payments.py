@@ -65,7 +65,7 @@ def run_script(text):
 @pytest.fixture(scope='session')
 def app():
   run_script(SCHEMA)
-  with open(os.path.join(HERE, '..', '..', 'migrations', '20261123_event_payments.sql')) as f:
+  with open(os.path.join(HERE, '..', '..', 'migrations', '0003_event_payments.sql')) as f:
     migration = f.read()
   run_script(migration)
   run_script(migration)  # must be safe to run twice

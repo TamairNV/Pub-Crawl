@@ -81,7 +81,7 @@ def say(msg):
 
 def setup():
   run_script(SCHEMA)
-  run_script(open('/work/migrations/20261123_event_payments.sql').read())
+  run_script(open('/work/migrations/0003_event_payments.sql').read())
   say('schema + payments migration loaded into the throwaway DB')
 
 

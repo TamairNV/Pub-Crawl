@@ -347,7 +347,7 @@ def delete_event():
     return jsonify({
       "status": "failed",
       "schema_missing": True,
-      "received": "Soft-delete migration needed: run migrations/20261114_soft_delete.sql first.",
+      "received": "Soft-delete migration needed: run migrations/0002_soft_delete.sql first.",
     }), 503
   if out is None:
     return jsonify({"status": "failed", "received": "Event not found"}), 404
@@ -365,7 +365,7 @@ def get_deleted_events():
     return jsonify({
       "status": "failed",
       "schema_missing": True,
-      "received": "Soft-delete migration needed: run migrations/20261114_soft_delete.sql first.",
+      "received": "Soft-delete migration needed: run migrations/0002_soft_delete.sql first.",
     }), 503
   if out is False:
     return jsonify({"status": "failed", "received": "Could not load deleted events"}), 500
@@ -385,7 +385,7 @@ def restore_event():
     return jsonify({
       "status": "failed",
       "schema_missing": True,
-      "received": "Soft-delete migration needed: run migrations/20261114_soft_delete.sql first.",
+      "received": "Soft-delete migration needed: run migrations/0002_soft_delete.sql first.",
     }), 503
   if out is None:
     return jsonify({"status": "failed", "received": "Deleted event not found"}), 404
@@ -407,7 +407,7 @@ def purge_event():
     return jsonify({
       "status": "failed",
       "schema_missing": True,
-      "received": "Soft-delete migration needed: run migrations/20261114_soft_delete.sql first.",
+      "received": "Soft-delete migration needed: run migrations/0002_soft_delete.sql first.",
     }), 503
   if out is None:
     return jsonify({"status": "failed", "received": "Deleted event not found"}), 404

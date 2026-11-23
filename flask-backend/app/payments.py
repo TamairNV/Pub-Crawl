@@ -9,7 +9,7 @@ paid by itself; only the signed webhook does.
 Env (root .env, names in .env.example): STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
 APP_BASE_URL, optional PAYMENTS_ENFORCE=1 (free events limited to FREE_TEAM_LIMIT teams)
 and STRIPE_ALLOW_LIVE=1 (live keys are refused without it).
-Schema: migrations/20261123_event_payments.sql. If it hasn't been run, every route here
+Schema: migrations/0003_event_payments.sql. If it hasn't been run, every route here
 reports payments as unavailable instead of failing.
 """
 import json

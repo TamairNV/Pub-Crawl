@@ -1,0 +1,59 @@
+# Pub Crawl STAGING (compose project pub-crawl-staging). Never points at the live DB.
+# Run from the repo root:  scripts/staging.sh up
+# Secrets live in ~/businesses/pub-crawl-staging/.env (chmod 600, not in git).
+name: pub-crawl-staging
+
+services:
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${STAGING_DB_ROOT_PASSWORD:?}
+      MARIADB_DATABASE: pub_crawl
+      MARIADB_USER: pubcrawl
+      MARIADB_PASSWORD: ${STAGING_DB_PASSWORD:?}
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ../../flask-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PYTHONUNBUFFERED: "1"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: pub_crawl
+      DB_USER: pubcrawl
+      DB_PASSWORD: ${STAGING_DB_PASSWORD:?}
+      SECRET_KEY: ${STAGING_SECRET_KEY:?}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-https://staging.pub-crawler.uk}
+      APP_BASE_URL: ${PUBLIC_BASE_URL:-https://staging.pub-crawler.uk}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_ALLOW_LIVE: ""
+      PAYMENTS_ENFORCE: ${PAYMENTS_ENFORCE:-}
+      APP_ENV: staging
+    volumes:
+      - uploads:/app/static/uploads
+
+  web:
+    build: ../..
+    restart: unless-stopped
+    depends_on: [backend]
+    ports:
+      - "127.0.0.1:${STAGING_PORT:-8109}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  db:
+  uploads:
