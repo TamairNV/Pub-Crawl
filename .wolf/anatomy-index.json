@@ -1,0 +1,3066 @@
+{
+  "version": 1,
+  "meta": {
+    "lastScanned": "2026-11-23T20:28:48.435Z",
+    "fileCount": 93,
+    "hits": 0,
+    "misses": 0,
+    "renderedHash": "46cbcb901ecd3a58650a3e5c4de84a6b108a9bf882832cb116594e72262497b9",
+    "storeUpdatedAt": "2026-11-23T20:28:48.436Z",
+    "rootHash": "66ae6624c4b60642"
+  },
+  "files": {
+    ".dockerignore": {
+      "description": "Docker ignore rules",
+      "tokens": 24,
+      "hash": "61497c6ca4524c72",
+      "size": 90,
+      "mtimeMs": 1795465484529.6902,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    ".editorconfig": {
+      "description": "Editor configuration",
+      "tokens": 84,
+      "hash": "d62fd282eadb5b3f",
+      "size": 314,
+      "mtimeMs": 1778529599657.7185,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    ".gitignore": {
+      "description": "Git ignore rules",
+      "tokens": 193,
+      "hash": "b8bd2a63cc71c980",
+      "size": 721,
+      "mtimeMs": 1795465506339.5242,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    ".prettierrc": {
+      "description": "Prettier configuration",
+      "tokens": 43,
+      "hash": "8cd4a6408c3eadd0",
+      "size": 161,
+      "mtimeMs": 1778529599657.7185,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "AGENT.md": {
+      "description": "Pub Crawl: AGENT.md",
+      "tokens": 3160,
+      "hash": "168d1bd888c0be9a",
+      "size": 12644,
+      "mtimeMs": 1795465706612.0566,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "AGENTS.md": {
+      "description": "Read AGENT.md first",
+      "tokens": 157,
+      "hash": "a84b5b165eeb6fbc",
+      "size": 627,
+      "mtimeMs": 1795465707163.0771,
+      "updatedAt": "2026-11-23T20:28:48.343Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "angular.json": {
+      "description": "",
+      "tokens": 570,
+      "hash": "fbc130e6e509d0b2",
+      "size": 1994,
+      "mtimeMs": 1780691672329.3794,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "CLAUDE.md": {
+      "description": "OpenWolf",
+      "tokens": 105,
+      "hash": "2745bdb1f419a943",
+      "size": 420,
+      "mtimeMs": 1795465727279.4458,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "docker-compose.yml": {
+      "description": "Docker Compose services",
+      "tokens": 234,
+      "hash": "dc722b7e2e05581f",
+      "size": 819,
+      "mtimeMs": 1794000965196.674,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "Dockerfile": {
+      "description": "Docker container definition",
+      "tokens": 104,
+      "hash": "b3c442a1b3c23463",
+      "size": 389,
+      "mtimeMs": 1780693228192.4624,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/app/__init__.py": {
+      "description": "API router",
+      "tokens": 852,
+      "hash": "841c40e71be17307",
+      "size": 2981,
+      "mtimeMs": 1795465484530.6902,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "create_app",
+          "kind": "fn",
+          "startLine": 16,
+          "endLine": 93,
+          "tokens": 781
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "flask-backend/app/config.py",
+        "flask-backend/app/mini_events_manager.py",
+        "flask-backend/app/routes.py"
+      ],
+      "importance": 0.2053
+    },
+    "flask-backend/app/clean_up.py": {
+      "description": "URL configuration",
+      "tokens": 135,
+      "hash": "ecd9691891343b78",
+      "size": 470,
+      "mtimeMs": 1782344755128.4294,
+      "updatedAt": "2026-11-23T20:28:48.344Z",
+      "source": "scan",
+      "imports": [
+        "flask-backend/app/SQL_manager.py"
+      ],
+      "importance": 0.111
+    },
+    "flask-backend/app/config.py": {
+      "description": "Declares Config",
+      "tokens": 112,
+      "hash": "bc8afc2e7df438c5",
+      "size": 390,
+      "mtimeMs": 1795465484530.6902,
+      "updatedAt": "2026-11-23T20:28:48.345Z",
+      "source": "scan",
+      "importance": 0.1691
+    },
+    "flask-backend/app/mini_events_manager.py": {
+      "description": "db_conn, ensure_mini_events_schema, get_wheels_for_event_sql, create_wheel_sql + 5 more",
+      "tokens": 12060,
+      "hash": "c9090dc23bba40b8",
+      "size": 42209,
+      "mtimeMs": 1795465484530.6902,
+      "updatedAt": "2026-11-23T20:28:48.345Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "db_conn",
+          "kind": "fn",
+          "startLine": 18,
+          "endLine": 26,
+          "tokens": 36
+        },
+        {
+          "name": "_select",
+          "kind": "fn",
+          "startLine": 29,
+          "endLine": 32,
+          "tokens": 35
+        },
+        {
+          "name": "_execute",
+          "kind": "fn",
+          "startLine": 35,
+          "endLine": 40,
+          "tokens": 46
+        },
+        {
+          "name": "ensure_mini_events_schema",
+          "kind": "fn",
+          "startLine": 43,
+          "endLine": 171,
+          "tokens": 1506
+        },
+        {
+          "name": "get_wheels_for_event_sql",
+          "kind": "fn",
+          "startLine": 176,
+          "endLine": 206,
+          "tokens": 282
+        },
+        {
+          "name": "create_wheel_sql",
+          "kind": "fn",
+          "startLine": 209,
+          "endLine": 234,
+          "tokens": 240
+        },
+        {
+          "name": "delete_wheel_sql",
+          "kind": "fn",
+          "startLine": 237,
+          "endLine": 246,
+          "tokens": 158
+        },
+        {
+          "name": "add_wheel_item_sql",
+          "kind": "fn",
+          "startLine": 249,
+          "endLine": 296,
+          "tokens": 530
+        },
+        {
+          "name": "update_wheel_item_sql",
+          "kind": "fn",
+          "startLine": 299,
+          "endLine": 331,
+          "tokens": 311
+        },
+        {
+          "name": "delete_wheel_item_sql",
+          "kind": "fn",
+          "startLine": 334,
+          "endLine": 349,
+          "tokens": 121
+        },
+        {
+          "name": "seed_starter_wheel_items_sql",
+          "kind": "fn",
+          "startLine": 352,
+          "endLine": 366,
+          "tokens": 263
+        },
+        {
+          "name": "get_team_adjustments_sql",
+          "kind": "fn",
+          "startLine": 371,
+          "endLine": 390,
+          "tokens": 170
+        },
+        {
+          "name": "_format_effect_summary",
+          "kind": "fn",
+          "startLine": 395,
+          "endLine": 406,
+          "tokens": 170
+        },
+        {
+          "name": "_fetch_task",
+          "kind": "fn",
+          "startLine": 409,
+          "endLine": 440,
+          "tokens": 305
+        },
+        {
+          "name": "get_event_tasks_sql",
+          "kind": "fn",
+          "startLine": 443,
+          "endLine": 484,
+          "tokens": 442
+        },
+        {
+          "name": "assign_player_task_sql",
+          "kind": "fn",
+          "startLine": 487,
+          "endLine": 547,
+          "tokens": 525
+        },
+        {
+          "name": "assign_random_wheel_task_sql",
+          "kind": "fn",
+          "startLine": 550,
+          "endLine": 609,
+          "tokens": 518
+        },
+        {
+          "name": "_other_teams_for_user",
+          "kind": "fn",
+          "startLine": 612,
+          "endLine": 616,
+          "tokens": 104
+        },
+        {
+          "name": "_apply_direct_effect",
+          "kind": "fn",
+          "startLine": 619,
+          "endLine": 655,
+          "tokens": 484
+        },
+        {
+          "name": "confirm_player_task_sql",
+          "kind": "fn",
+          "startLine": 658,
+          "endLine": 727,
+          "tokens": 791
+        },
+        {
+          "name": "spin_task_wheel_sql",
+          "kind": "fn",
+          "startLine": 730,
+          "endLine": 804,
+          "tokens": 637
+        },
+        {
+          "name": "spin_direct_wheel_for_player_sql",
+          "kind": "fn",
+          "startLine": 807,
+          "endLine": 881,
+          "tokens": 816
+        },
+        {
+          "name": "apply_task_target_sql",
+          "kind": "fn",
+          "startLine": 884,
+          "endLine": 935,
+          "tokens": 604
+        },
+        {
+          "name": "claim_task_done_sql",
+          "kind": "fn",
+          "startLine": 938,
+          "endLine": 952,
+          "tokens": 142
+        },
+        {
+          "name": "cancel_player_task_sql",
+          "kind": "fn",
+          "startLine": 955,
+          "endLine": 969,
+          "tokens": 129
+        },
+        {
+          "name": "get_awards_for_event_sql",
+          "kind": "fn",
+          "startLine": 974,
+          "endLine": 984,
+          "tokens": 95
+        },
+        {
+          "name": "create_award_sql",
+          "kind": "fn",
+          "startLine": 987,
+          "endLine": 1014,
+          "tokens": 280
+        },
+        {
+          "name": "delete_award_sql",
+          "kind": "fn",
+          "startLine": 1017,
+          "endLine": 1024,
+          "tokens": 85
+        },
+        {
+          "name": "seed_default_awards_sql",
+          "kind": "fn",
+          "startLine": 1027,
+          "endLine": 1047,
+          "tokens": 244
+        },
+        {
+          "name": "get_awards_settings_sql",
+          "kind": "fn",
+          "startLine": 1050,
+          "endLine": 1066,
+          "tokens": 176
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "def db_conn():\ndef _select(conn, sql, args=None):\ndef _execute(conn, sql, args=None):\ndef ensure_mini_events_schema():\ndef get_wheels_for_event_sql(event_id):\ndef create_wheel_sql(event_id, name, description=''):\ndef delete_wheel_sql(wheel_id, event_id):\ndef add_wheel_item_sql(wheel_id, event_id, label, description='', requires_completion=True, effect_type='add_points', points=1, colour=None):\ndef update_wheel_item_sql(item_id, event_id, label, description='', requires_completion=True, effect_type='add_points', points=1, colour='#fbbf24'):\ndef delete_wheel_item_sql(item_id, event_id):\ndef seed_starter_wheel_items_sql(wheel_id, event_id):\ndef get_team_adjustments_sql(event_id):\ndef _format_effect_summary(effect_type, points, user_name=None, target_team_name=None):\ndef _fetch_task(conn, task_id, event_id):\ndef get_event_tasks_sql(event_id, user_id=None):\ndef assign_player_task_sql(\ndef assign_random_wheel_task_sql(event_id, user_id, assigned_by, wheel_id=None, override_reward_wheel_id=None):\ndef _other_teams_for_user(conn, event_id, user_id):\ndef _apply_direct_effect(conn, event_id, user_id, actor_id, effect_type, points, target_team_id=None, reason=''):\ndef confirm_player_task_sql(task_id, event_id, ref_id, target_team_id=None):\ndef spin_task_wheel_sql(task_id, event_id, actor_user_id, actor_is_admin):\ndef spin_direct_wheel_for_player_sql(event_id, user_id, ref_id, wheel_id):",
+      "imports": [
+        "flask-backend/app/SQL_manager.py"
+      ],
+      "importance": 0.241
+    },
+    "flask-backend/app/routes.py": {
+      "description": "Flask routes: 19 endpoints",
+      "tokens": 12557,
+      "hash": "0d934bb9585ffa2d",
+      "size": 43949,
+      "mtimeMs": 1795465499522.264,
+      "updatedAt": "2026-11-23T20:28:48.346Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "current_role",
+          "kind": "fn",
+          "startLine": 53,
+          "endLine": 61,
+          "tokens": 97
+        },
+        {
+          "name": "is_admin",
+          "kind": "fn",
+          "startLine": 63,
+          "endLine": 64,
+          "tokens": 16
+        },
+        {
+          "name": "is_owner",
+          "kind": "fn",
+          "startLine": 66,
+          "endLine": 67,
+          "tokens": 15
+        },
+        {
+          "name": "can_view_event",
+          "kind": "fn",
+          "startLine": 69,
+          "endLine": 70,
+          "tokens": 30
+        },
+        {
+          "name": "login_required",
+          "kind": "fn",
+          "startLine": 72,
+          "endLine": 78,
+          "tokens": 64
+        },
+        {
+          "name": "admin_required",
+          "kind": "fn",
+          "startLine": 80,
+          "endLine": 87,
+          "tokens": 65
+        },
+        {
+          "name": "owner_required",
+          "kind": "fn",
+          "startLine": 89,
+          "endLine": 96,
+          "tokens": 65
+        },
+        {
+          "name": "me",
+          "kind": "fn",
+          "startLine": 100,
+          "endLine": 106,
+          "tokens": 78
+        },
+        {
+          "name": "manage_users",
+          "kind": "fn",
+          "startLine": 110,
+          "endLine": 114,
+          "tokens": 69
+        },
+        {
+          "name": "set_user_role",
+          "kind": "fn",
+          "startLine": 118,
+          "endLine": 129,
+          "tokens": 181
+        },
+        {
+          "name": "index",
+          "kind": "fn",
+          "startLine": 132,
+          "endLine": 134,
+          "tokens": 15
+        },
+        {
+          "name": "get_users",
+          "kind": "fn",
+          "startLine": 138,
+          "endLine": 141,
+          "tokens": 28
+        },
+        {
+          "name": "reveal_password",
+          "kind": "fn",
+          "startLine": 146,
+          "endLine": 176,
+          "tokens": 336
+        },
+        {
+          "name": "serve_uploaded_media",
+          "kind": "fn",
+          "startLine": 182,
+          "endLine": 187,
+          "tokens": 100
+        },
+        {
+          "name": "serve_thumbnail",
+          "kind": "fn",
+          "startLine": 191,
+          "endLine": 205,
+          "tokens": 196
+        },
+        {
+          "name": "logout_user",
+          "kind": "fn",
+          "startLine": 208,
+          "endLine": 210,
+          "tokens": 30
+        },
+        {
+          "name": "create_user",
+          "kind": "fn",
+          "startLine": 213,
+          "endLine": 223,
+          "tokens": 110
+        },
+        {
+          "name": "login_user",
+          "kind": "fn",
+          "startLine": 227,
+          "endLine": 249,
+          "tokens": 214
+        },
+        {
+          "name": "create_crawl",
+          "kind": "fn",
+          "startLine": 253,
+          "endLine": 265,
+          "tokens": 144
+        },
+        {
+          "name": "get_teams",
+          "kind": "fn",
+          "startLine": 270,
+          "endLine": 277,
+          "tokens": 72
+        },
+        {
+          "name": "save_new_team",
+          "kind": "fn",
+          "startLine": 283,
+          "endLine": 289,
+          "tokens": 74
+        },
+        {
+          "name": "save_people_to_event",
+          "kind": "fn",
+          "startLine": 294,
+          "endLine": 304,
+          "tokens": 86
+        },
+        {
+          "name": "get_events",
+          "kind": "fn",
+          "startLine": 308,
+          "endLine": 313,
+          "tokens": 55
+        },
+        {
+          "name": "_remove_event_media_files",
+          "kind": "fn",
+          "startLine": 316,
+          "endLine": 330,
+          "tokens": 162
+        },
+        {
+          "name": "delete_event",
+          "kind": "fn",
+          "startLine": 335,
+          "endLine": 353,
+          "tokens": 203
+        },
+        {
+          "name": "get_deleted_events",
+          "kind": "fn",
+          "startLine": 358,
+          "endLine": 368,
+          "tokens": 127
+        },
+        {
+          "name": "restore_event",
+          "kind": "fn",
+          "startLine": 373,
+          "endLine": 390,
+          "tokens": 204
+        },
+        {
+          "name": "purge_event",
+          "kind": "fn",
+          "startLine": 395,
+          "endLine": 414,
+          "tokens": 222
+        },
+        {
+          "name": "reset_event",
+          "kind": "fn",
+          "startLine": 419,
+          "endLine": 435,
+          "tokens": 186
+        },
+        {
+          "name": "get_event_details",
+          "kind": "fn",
+          "startLine": 438,
+          "endLine": 454,
+          "tokens": 160
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "def current_role():\ndef is_admin():\ndef is_owner():\ndef can_view_event(event_id):\ndef login_required(f):\ndef admin_required(f):\ndef owner_required(f):\ndef me():\ndef manage_users():\ndef set_user_role():\ndef index():\ndef get_users():\ndef reveal_password():\ndef serve_uploaded_media(filename):\ndef serve_thumbnail(filename):\ndef logout_user():\ndef create_user():\ndef login_user():\ndef create_crawl():\ndef get_teams():\ndef save_new_team():\ndef save_people_to_event():\ndef get_events():\ndef _remove_event_media_files(photo_paths):\ndef delete_event():\ndef get_deleted_events():\ndef restore_event():\ndef purge_event():\ndef reset_event():\ndef get_event_details():",
+      "imports": [
+        "flask-backend/app/SQL_manager.py",
+        "flask-backend/app/mini_events_manager.py"
+      ],
+      "importance": 0.1691
+    },
+    "flask-backend/app/SQL_manager.py": {
+      "description": "get_db, run_query, get_all_users_sql, select_users_sql + 17 more",
+      "tokens": 6374,
+      "hash": "faa7237d4dd46227",
+      "size": 22306,
+      "mtimeMs": 1795465499522.264,
+      "updatedAt": "2026-11-23T20:28:48.346Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "get_db",
+          "kind": "fn",
+          "startLine": 17,
+          "endLine": 35,
+          "tokens": 130
+        },
+        {
+          "name": "run_query",
+          "kind": "fn",
+          "startLine": 37,
+          "endLine": 45,
+          "tokens": 70
+        },
+        {
+          "name": "_close_conn",
+          "kind": "fn",
+          "startLine": 48,
+          "endLine": 54,
+          "tokens": 53
+        },
+        {
+          "name": "_run",
+          "kind": "fn",
+          "startLine": 57,
+          "endLine": 64,
+          "tokens": 66
+        },
+        {
+          "name": "get_all_users_sql",
+          "kind": "fn",
+          "startLine": 73,
+          "endLine": 79,
+          "tokens": 60
+        },
+        {
+          "name": "select_users_sql",
+          "kind": "fn",
+          "startLine": 81,
+          "endLine": 88,
+          "tokens": 74
+        },
+        {
+          "name": "is_name_taken",
+          "kind": "fn",
+          "startLine": 90,
+          "endLine": 97,
+          "tokens": 63
+        },
+        {
+          "name": "create_user_sql",
+          "kind": "fn",
+          "startLine": 99,
+          "endLine": 106,
+          "tokens": 72
+        },
+        {
+          "name": "get_user_data_from_name_sql",
+          "kind": "fn",
+          "startLine": 109,
+          "endLine": 115,
+          "tokens": 59
+        },
+        {
+          "name": "create_event_sql",
+          "kind": "fn",
+          "startLine": 118,
+          "endLine": 128,
+          "tokens": 74
+        },
+        {
+          "name": "has_deleted_at_column",
+          "kind": "fn",
+          "startLine": 133,
+          "endLine": 166,
+          "tokens": 266
+        },
+        {
+          "name": "get_all_events_sql",
+          "kind": "fn",
+          "startLine": 169,
+          "endLine": 187,
+          "tokens": 144
+        },
+        {
+          "name": "soft_delete_event_sql",
+          "kind": "fn",
+          "startLine": 190,
+          "endLine": 217,
+          "tokens": 208
+        },
+        {
+          "name": "get_deleted_events_sql",
+          "kind": "fn",
+          "startLine": 220,
+          "endLine": 236,
+          "tokens": 144
+        },
+        {
+          "name": "restore_event_sql",
+          "kind": "fn",
+          "startLine": 239,
+          "endLine": 266,
+          "tokens": 207
+        },
+        {
+          "name": "delete_event_sql",
+          "kind": "fn",
+          "startLine": 269,
+          "endLine": 318,
+          "tokens": 604
+        },
+        {
+          "name": "reset_event_data_sql",
+          "kind": "fn",
+          "startLine": 321,
+          "endLine": 387,
+          "tokens": 592
+        },
+        {
+          "name": "get_all_teams_sql",
+          "kind": "fn",
+          "startLine": 389,
+          "endLine": 395,
+          "tokens": 57
+        },
+        {
+          "name": "create_new_team_sql",
+          "kind": "fn",
+          "startLine": 397,
+          "endLine": 408,
+          "tokens": 100
+        },
+        {
+          "name": "create_participants",
+          "kind": "fn",
+          "startLine": 411,
+          "endLine": 425,
+          "tokens": 132
+        },
+        {
+          "name": "get_users_in_event_sql",
+          "kind": "fn",
+          "startLine": 428,
+          "endLine": 445,
+          "tokens": 146
+        },
+        {
+          "name": "get_teams_in_event_sql",
+          "kind": "fn",
+          "startLine": 447,
+          "endLine": 453,
+          "tokens": 59
+        },
+        {
+          "name": "update_user_team_sql",
+          "kind": "fn",
+          "startLine": 455,
+          "endLine": 461,
+          "tokens": 78
+        },
+        {
+          "name": "add_new_location_sql",
+          "kind": "fn",
+          "startLine": 463,
+          "endLine": 474,
+          "tokens": 95
+        },
+        {
+          "name": "add_new_rule_sql",
+          "kind": "fn",
+          "startLine": 477,
+          "endLine": 490,
+          "tokens": 141
+        },
+        {
+          "name": "set_pub_rule_sql",
+          "kind": "fn",
+          "startLine": 492,
+          "endLine": 505,
+          "tokens": 140
+        },
+        {
+          "name": "get_all_base_rules_sql",
+          "kind": "fn",
+          "startLine": 507,
+          "endLine": 513,
+          "tokens": 64
+        },
+        {
+          "name": "get_location_rules_sql",
+          "kind": "fn",
+          "startLine": 515,
+          "endLine": 533,
+          "tokens": 151
+        },
+        {
+          "name": "remove_user_sql",
+          "kind": "fn",
+          "startLine": 535,
+          "endLine": 541,
+          "tokens": 67
+        },
+        {
+          "name": "remove_base_rule_sql",
+          "kind": "fn",
+          "startLine": 544,
+          "endLine": 550,
+          "tokens": 55
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "def get_db():\ndef run_query(connection, sql, args=None):\ndef _close_conn(connection):\ndef _run(sql, args=None):\ndef get_all_users_sql():\ndef select_users_sql(user_ids):\ndef is_name_taken(name):\ndef create_user_sql(name,passkey,role = \"player\"):\ndef get_user_data_from_name_sql(name):\ndef create_event_sql(id,name):\ndef has_deleted_at_column(connection=None):\ndef get_all_events_sql():\ndef soft_delete_event_sql(event_id):\ndef get_deleted_events_sql():\ndef restore_event_sql(event_id):\ndef delete_event_sql(event_id, only_deleted=False):\ndef reset_event_data_sql(event_id, clear_media=True):\ndef get_all_teams_sql(eventID):\ndef create_new_team_sql(team_name,team_colour,event_id):\ndef create_participants(people):\ndef get_users_in_event_sql(event_id):\ndef get_teams_in_event_sql(event_id):\ndef update_user_team_sql(event_id,user_id,new_team_id):\ndef add_new_location_sql(name,event_id,index):\ndef add_new_rule_sql(pub_id,name,description,event_id):\ndef set_pub_rule_sql(pub_id, name, description, event_id):\ndef get_all_base_rules_sql(event_id):\ndef get_location_rules_sql(event_id):\ndef remove_user_sql(event_id,user_id):\ndef remove_base_rule_sql(rule_id):",
+      "importance": 0.4821
+    },
+    "flask-backend/app/templates/base.html": {
+      "description": "Title",
+      "tokens": 32,
+      "hash": "12790528e0ab567a",
+      "size": 120,
+      "mtimeMs": 1778529599658.413,
+      "updatedAt": "2026-11-23T20:28:48.346Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/app/templates/errors/400.html": {
+      "description": "",
+      "tokens": 111,
+      "hash": "e8bf96069e1011a7",
+      "size": 415,
+      "mtimeMs": 1778529599658.5618,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/app/templates/errors/403.html": {
+      "description": "",
+      "tokens": 110,
+      "hash": "3d4b740fdf5957f4",
+      "size": 410,
+      "mtimeMs": 1778529599658.6006,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/app/templates/errors/404.html": {
+      "description": "",
+      "tokens": 109,
+      "hash": "64dad1042f8bea15",
+      "size": 406,
+      "mtimeMs": 1778529599658.6006,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/app/templates/errors/500.html": {
+      "description": "",
+      "tokens": 115,
+      "hash": "ee24b1e9119fe13f",
+      "size": 428,
+      "mtimeMs": 1778529599658.6006,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/Dockerfile": {
+      "description": "Docker container definition",
+      "tokens": 155,
+      "hash": "0ada1c92a1cc899a",
+      "size": 579,
+      "mtimeMs": 1783191012858.6646,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/requirements.txt": {
+      "description": "Python dependencies",
+      "tokens": 21,
+      "hash": "84158d03a780cc11",
+      "size": 84,
+      "mtimeMs": 1780692222728.9077,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "flask-backend/run.py": {
+      "description": "API router",
+      "tokens": 72,
+      "hash": "3c032059b91a9071",
+      "size": 251,
+      "mtimeMs": 1778529599658.6006,
+      "updatedAt": "2026-11-23T20:28:48.347Z",
+      "source": "scan",
+      "imports": [
+        "flask-backend/app/__init__.py"
+      ],
+      "importance": 0.111
+    },
+    "GEMINI.md": {
+      "description": "Read AGENT.md first",
+      "tokens": 157,
+      "hash": "a84b5b165eeb6fbc",
+      "size": 627,
+      "mtimeMs": 1795465707158.077,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "HANDOFF-pub-crawl.md": {
+      "description": "Handoff: Pub-Crawl player mode (global rules + current location)",
+      "tokens": 1801,
+      "hash": "c247de21ab419a86",
+      "size": 7219,
+      "mtimeMs": 1795465484560.6914,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "migrations/20261114_mini_events.sql": {
+      "description": "SQL: tables: MiniWheel, MiniWheelItem, PlayerTask, TeamPoint, 2 alter(s)",
+      "tokens": 1124,
+      "hash": "6cd7b95601ef05e9",
+      "size": 3932,
+      "mtimeMs": 1795465484530.6902,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "migrations/20261114_soft_delete.sql": {
+      "description": "SQL: 2 alter(s)",
+      "tokens": 51,
+      "hash": "451e143cd00ca930",
+      "size": 176,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "nginx.conf": {
+      "description": "Nginx configuration",
+      "tokens": 82,
+      "hash": "f251bd29e0036bbc",
+      "size": 304,
+      "mtimeMs": 1779413093200.3489,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 232,
+      "hash": "68b8a9bbfcf56796",
+      "size": 809,
+      "mtimeMs": 1780691672331.3794,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "proxy.conf.json": {
+      "description": "",
+      "tokens": 46,
+      "hash": "afabfa05100d0228",
+      "size": 158,
+      "mtimeMs": 1780691672331.3794,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "Pub-Crawl.iml": {
+      "description": "",
+      "tokens": 207,
+      "hash": "5e382ec0178eaddc",
+      "size": 773,
+      "mtimeMs": 1780691672329.3794,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "README.md": {
+      "description": "Project documentation",
+      "tokens": 366,
+      "hash": "2b5822325d2d2ac7",
+      "size": 1461,
+      "mtimeMs": 1778529599658.0657,
+      "updatedAt": "2026-11-23T20:28:48.348Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/account/create_account.html": {
+      "description": "",
+      "tokens": 232,
+      "hash": "7fac14abc8ad1c6d",
+      "size": 868,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/account/create_account.ts": {
+      "description": "API routes: POST (1 endpoints)",
+      "tokens": 479,
+      "hash": "3fd511b0e39ccb7e",
+      "size": 1676,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.1261
+    },
+    "src/app/account/login.css": {
+      "description": "Styles: 13 rules, 1 media queries",
+      "tokens": 754,
+      "hash": "5d309eedddd9f023",
+      "size": 2638,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/account/login.html": {
+      "description": "",
+      "tokens": 162,
+      "hash": "76b584a00b3606f6",
+      "size": 604,
+      "mtimeMs": 1778529599000,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/account/login.ts": {
+      "description": "API routes: POST (1 endpoints)",
+      "tokens": 576,
+      "hash": "18a8e24c95b7cfcb",
+      "size": 2015,
+      "mtimeMs": 1782320816000,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "LoginComponent",
+          "kind": "class",
+          "startLine": 15,
+          "endLine": 69,
+          "tokens": 440
+        },
+        {
+          "name": "LoginComponent.createUser",
+          "kind": "method",
+          "startLine": 26,
+          "endLine": 68,
+          "tokens": 378
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/admin/admin-shared.css": {
+      "description": "",
+      "tokens": 0,
+      "hash": "e3b0c44298fc1c14",
+      "size": 0,
+      "mtimeMs": 1778529599000,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/dashboard.css": {
+      "description": "Styles: 65 rules, 1 media queries",
+      "tokens": 2567,
+      "hash": "baba503ffc8edf5c",
+      "size": 8983,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.349Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/dashboard.html": {
+      "description": "",
+      "tokens": 1620,
+      "hash": "d99f82fb7042601e",
+      "size": 6073,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/dashboard.ts": {
+      "description": "API routes: GET, POST (9 endpoints)",
+      "tokens": 2076,
+      "hash": "4ea4749018e1225c",
+      "size": 7263,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "AdminDashboardComponent",
+          "kind": "class",
+          "startLine": 17,
+          "endLine": 238,
+          "tokens": 1921
+        },
+        {
+          "name": "AdminDashboardComponent.constructor",
+          "kind": "method",
+          "startLine": 18,
+          "endLine": 18,
+          "tokens": 14
+        },
+        {
+          "name": "AdminDashboardComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 44,
+          "endLine": 65,
+          "tokens": 180
+        },
+        {
+          "name": "AdminDashboardComponent.createCrawl",
+          "kind": "method",
+          "startLine": 68,
+          "endLine": 89,
+          "tokens": 202
+        },
+        {
+          "name": "AdminDashboardComponent.getEvents",
+          "kind": "method",
+          "startLine": 91,
+          "endLine": 104,
+          "tokens": 140
+        },
+        {
+          "name": "AdminDashboardComponent.getDeletedCount",
+          "kind": "method",
+          "startLine": 106,
+          "endLine": 116,
+          "tokens": 89
+        },
+        {
+          "name": "AdminDashboardComponent.askDeleteEvent",
+          "kind": "method",
+          "startLine": 118,
+          "endLine": 121,
+          "tokens": 28
+        },
+        {
+          "name": "AdminDashboardComponent.cancelDeleteEvent",
+          "kind": "method",
+          "startLine": 123,
+          "endLine": 126,
+          "tokens": 27
+        },
+        {
+          "name": "AdminDashboardComponent.confirmDeleteEvent",
+          "kind": "method",
+          "startLine": 128,
+          "endLine": 152,
+          "tokens": 265
+        },
+        {
+          "name": "AdminDashboardComponent.askResetEvent",
+          "kind": "method",
+          "startLine": 154,
+          "endLine": 159,
+          "tokens": 44
+        },
+        {
+          "name": "AdminDashboardComponent.cancelResetEvent",
+          "kind": "method",
+          "startLine": 161,
+          "endLine": 164,
+          "tokens": 27
+        },
+        {
+          "name": "AdminDashboardComponent.confirmResetEvent",
+          "kind": "method",
+          "startLine": 166,
+          "endLine": 190,
+          "tokens": 306
+        },
+        {
+          "name": "AdminDashboardComponent.getManagedUsers",
+          "kind": "method",
+          "startLine": 192,
+          "endLine": 201,
+          "tokens": 74
+        },
+        {
+          "name": "AdminDashboardComponent.filteredUsers",
+          "kind": "method",
+          "startLine": 203,
+          "endLine": 206,
+          "tokens": 49
+        },
+        {
+          "name": "AdminDashboardComponent.roleOf",
+          "kind": "method",
+          "startLine": 208,
+          "endLine": 210,
+          "tokens": 24
+        },
+        {
+          "name": "AdminDashboardComponent.setRole",
+          "kind": "method",
+          "startLine": 212,
+          "endLine": 231,
+          "tokens": 210
+        },
+        {
+          "name": "AdminDashboardComponent.logout",
+          "kind": "method",
+          "startLine": 233,
+          "endLine": 237,
+          "tokens": 47
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export class AdminDashboardComponent implements OnInit {\n  constructor(private cdr: ChangeDetectorRef) {}\n  ngOnInit() {\n  async createCrawl() {\n  getEvents() {\n  getDeletedCount() {\n  askDeleteEvent(event: any) {\n  cancelDeleteEvent() {\n  confirmDeleteEvent() {\n  askResetEvent(event: any) {\n  cancelResetEvent() {\n  confirmResetEvent() {\n  getManagedUsers() {\n  filteredUsers() {\n  roleOf(user: any) {\n  setRole(user: any, role: 'admin' | 'player') {\n  logout() {",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/admin/event-details.css": {
+      "description": "Styles: 84 rules, 1 media queries",
+      "tokens": 2906,
+      "hash": "3c38d97f2ca2edf3",
+      "size": 10170,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/event-details.html": {
+      "description": "",
+      "tokens": 3660,
+      "hash": "c488a35a125e2650",
+      "size": 13749,
+      "mtimeMs": 1795465484532.0803,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/event-details.ts": {
+      "description": "Colours offered for new teams, in order",
+      "tokens": 4682,
+      "hash": "18e5beccf21d286c",
+      "size": 16384,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "EventDetailsComponent",
+          "kind": "class",
+          "startLine": 22,
+          "endLine": 537,
+          "tokens": 4399
+        },
+        {
+          "name": "EventDetailsComponent.constructor",
+          "kind": "method",
+          "startLine": 23,
+          "endLine": 23,
+          "tokens": 23
+        },
+        {
+          "name": "EventDetailsComponent.togglePlayerInspector",
+          "kind": "method",
+          "startLine": 52,
+          "endLine": 54,
+          "tokens": 36
+        },
+        {
+          "name": "EventDetailsComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 79,
+          "endLine": 99,
+          "tokens": 166
+        },
+        {
+          "name": "EventDetailsComponent.openResetModal",
+          "kind": "method",
+          "startLine": 101,
+          "endLine": 105,
+          "tokens": 33
+        },
+        {
+          "name": "EventDetailsComponent.closeResetModal",
+          "kind": "method",
+          "startLine": 107,
+          "endLine": 110,
+          "tokens": 26
+        },
+        {
+          "name": "EventDetailsComponent.confirmResetCrawl",
+          "kind": "method",
+          "startLine": 112,
+          "endLine": 140,
+          "tokens": 300
+        },
+        {
+          "name": "EventDetailsComponent.onMiniCountsChanged",
+          "kind": "method",
+          "startLine": 142,
+          "endLine": 146,
+          "tokens": 50
+        },
+        {
+          "name": "EventDetailsComponent.refreshAll",
+          "kind": "method",
+          "startLine": 148,
+          "endLine": 153,
+          "tokens": 36
+        },
+        {
+          "name": "EventDetailsComponent.scrollTo",
+          "kind": "method",
+          "startLine": 155,
+          "endLine": 157,
+          "tokens": 38
+        },
+        {
+          "name": "EventDetailsComponent.flash",
+          "kind": "method",
+          "startLine": 159,
+          "endLine": 163,
+          "tokens": 55
+        },
+        {
+          "name": "EventDetailsComponent.pubs",
+          "kind": "method",
+          "startLine": 166,
+          "endLine": 168,
+          "tokens": 15
+        },
+        {
+          "name": "EventDetailsComponent.pubsWithRules",
+          "kind": "method",
+          "startLine": 170,
+          "endLine": 172,
+          "tokens": 20
+        },
+        {
+          "name": "EventDetailsComponent.totalRulesCount",
+          "kind": "method",
+          "startLine": 174,
+          "endLine": 176,
+          "tokens": 26
+        },
+        {
+          "name": "EventDetailsComponent.isReady",
+          "kind": "method",
+          "startLine": 178,
+          "endLine": 180,
+          "tokens": 31
+        },
+        {
+          "name": "EventDetailsComponent.teamColour",
+          "kind": "method",
+          "startLine": 182,
+          "endLine": 184,
+          "tokens": 30
+        },
+        {
+          "name": "EventDetailsComponent.teamSize",
+          "kind": "method",
+          "startLine": 186,
+          "endLine": 188,
+          "tokens": 29
+        },
+        {
+          "name": "EventDetailsComponent.getEventDetails",
+          "kind": "method",
+          "startLine": 191,
+          "endLine": 203,
+          "tokens": 138
+        },
+        {
+          "name": "EventDetailsComponent.getBaseRules",
+          "kind": "method",
+          "startLine": 205,
+          "endLine": 212,
+          "tokens": 79
+        },
+        {
+          "name": "EventDetailsComponent.getLocationRules",
+          "kind": "method",
+          "startLine": 214,
+          "endLine": 221,
+          "tokens": 83
+        },
+        {
+          "name": "EventDetailsComponent.getUsers",
+          "kind": "method",
+          "startLine": 223,
+          "endLine": 232,
+          "tokens": 67
+        },
+        {
+          "name": "EventDetailsComponent.nextColour",
+          "kind": "method",
+          "startLine": 235,
+          "endLine": 238,
+          "tokens": 59
+        },
+        {
+          "name": "EventDetailsComponent.addTeam",
+          "kind": "method",
+          "startLine": 240,
+          "endLine": 253,
+          "tokens": 144
+        },
+        {
+          "name": "EventDetailsComponent.quickTeams",
+          "kind": "method",
+          "startLine": 255,
+          "endLine": 263,
+          "tokens": 81
+        },
+        {
+          "name": "EventDetailsComponent.availablePeople",
+          "kind": "method",
+          "startLine": 266,
+          "endLine": 273,
+          "tokens": 98
+        },
+        {
+          "name": "EventDetailsComponent.pickedCount",
+          "kind": "method",
+          "startLine": 275,
+          "endLine": 277,
+          "tokens": 27
+        },
+        {
+          "name": "EventDetailsComponent.pickAllShown",
+          "kind": "method",
+          "startLine": 279,
+          "endLine": 283,
+          "tokens": 35
+        },
+        {
+          "name": "EventDetailsComponent.addPickedPlayers",
+          "kind": "method",
+          "startLine": 285,
+          "endLine": 317,
+          "tokens": 358
+        },
+        {
+          "name": "EventDetailsComponent.changeTeam",
+          "kind": "method",
+          "startLine": 319,
+          "endLine": 325,
+          "tokens": 81
+        },
+        {
+          "name": "EventDetailsComponent.removeUser",
+          "kind": "method",
+          "startLine": 327,
+          "endLine": 331,
+          "tokens": 65
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export class EventDetailsComponent implements OnInit {\n  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}\n  togglePlayerInspector(user: any) {\n  ngOnInit() {\n  openResetModal() {\n  closeResetModal() {\n  confirmResetCrawl() {\n  onMiniCountsChanged(counts: { wheels: number; awards: number }) {\n  refreshAll() {\n  scrollTo(sectionId: string) {\n  flash(text: string) {\n  get pubs() {\n  pubsWithRules() {\n  totalRulesCount() {\n  isReady() {\n  teamColour(teamId: string) {\n  teamSize(teamId: string) {\n  getEventDetails() {\n  getBaseRules() {\n  getLocationRules() {\n  getUsers() {\n  nextColour() {\n  addTeam(name: string = this.newTeamName, colour: string = this.newTeamColor, after?: () => void) {\n  quickTeams(count: number) {\n  availablePeople() {\n  pickedCount() {\n  pickAllShown(value: boolean) {\n  addPickedPlayers() {\n  changeTeam(user: any, newTeamId: string) {\n  removeUser(user: any) {",
+      "imports": [
+        "src/app/admin/mini-events-setup.ts",
+        "src/app/auth.ts",
+        "src/app/shared/password-reveal.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/admin/mini-events-setup.css": {
+      "description": "Styles: 42 rules",
+      "tokens": 1284,
+      "hash": "ab32f7f6fd4e1c5d",
+      "size": 4494,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.350Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/mini-events-setup.html": {
+      "description": "",
+      "tokens": 1806,
+      "hash": "930b66e1a39ac166",
+      "size": 6777,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.351Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/mini-events-setup.ts": {
+      "description": "API routes: POST (9 endpoints)",
+      "tokens": 2483,
+      "hash": "8f44a768cecf95ba",
+      "size": 8688,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.351Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "ItemDraft",
+          "kind": "section",
+          "startLine": 9,
+          "endLine": 16,
+          "tokens": 63
+        },
+        {
+          "name": "MiniEventsSetupComponent",
+          "kind": "class",
+          "startLine": 25,
+          "endLine": 284,
+          "tokens": 2227
+        },
+        {
+          "name": "MiniEventsSetupComponent.ngOnChanges",
+          "kind": "method",
+          "startLine": 50,
+          "endLine": 54,
+          "tokens": 36
+        },
+        {
+          "name": "MiniEventsSetupComponent.flash",
+          "kind": "method",
+          "startLine": 56,
+          "endLine": 65,
+          "tokens": 64
+        },
+        {
+          "name": "MiniEventsSetupComponent.loadMiniEvents",
+          "kind": "method",
+          "startLine": 67,
+          "endLine": 94,
+          "tokens": 308
+        },
+        {
+          "name": "MiniEventsSetupComponent.resetDraft",
+          "kind": "method",
+          "startLine": 96,
+          "endLine": 105,
+          "tokens": 76
+        },
+        {
+          "name": "MiniEventsSetupComponent.draftFor",
+          "kind": "method",
+          "startLine": 107,
+          "endLine": 112,
+          "tokens": 50
+        },
+        {
+          "name": "MiniEventsSetupComponent.describeItem",
+          "kind": "method",
+          "startLine": 114,
+          "endLine": 116,
+          "tokens": 31
+        },
+        {
+          "name": "MiniEventsSetupComponent.createWheel",
+          "kind": "method",
+          "startLine": 118,
+          "endLine": 140,
+          "tokens": 201
+        },
+        {
+          "name": "MiniEventsSetupComponent.deleteWheel",
+          "kind": "method",
+          "startLine": 142,
+          "endLine": 153,
+          "tokens": 111
+        },
+        {
+          "name": "MiniEventsSetupComponent.addWheelItem",
+          "kind": "method",
+          "startLine": 155,
+          "endLine": 197,
+          "tokens": 386
+        },
+        {
+          "name": "MiniEventsSetupComponent.deleteWheelItem",
+          "kind": "method",
+          "startLine": 199,
+          "endLine": 204,
+          "tokens": 68
+        },
+        {
+          "name": "MiniEventsSetupComponent.seedWheelItems",
+          "kind": "method",
+          "startLine": 206,
+          "endLine": 221,
+          "tokens": 168
+        },
+        {
+          "name": "MiniEventsSetupComponent.createAward",
+          "kind": "method",
+          "startLine": 223,
+          "endLine": 246,
+          "tokens": 216
+        },
+        {
+          "name": "MiniEventsSetupComponent.seedAwards",
+          "kind": "method",
+          "startLine": 248,
+          "endLine": 263,
+          "tokens": 157
+        },
+        {
+          "name": "MiniEventsSetupComponent.deleteAward",
+          "kind": "method",
+          "startLine": 265,
+          "endLine": 277,
+          "tokens": 128
+        },
+        {
+          "name": "MiniEventsSetupComponent.targetLabel",
+          "kind": "method",
+          "startLine": 279,
+          "endLine": 283,
+          "tokens": 43
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "interface ItemDraft {\nexport class MiniEventsSetupComponent implements OnChanges {\n  ngOnChanges(changes: SimpleChanges) {\n  private flash(msg: string) {\n  loadMiniEvents() {\n  private resetDraft(wheelId: string, count: number) {\n  draftFor(wheel: MiniWheel): ItemDraft {\n  describeItem(item: WheelItem): string {\n  createWheel() {\n  deleteWheel(wheel: MiniWheel) {\n  addWheelItem(wheel: MiniWheel) {\n  deleteWheelItem(item: WheelItem) {\n  seedWheelItems(wheel: MiniWheel) {\n  createAward() {\n  seedAwards() {\n  deleteAward(award: EventAward) {\n  targetLabel(t: string): string {",
+      "imports": [
+        "src/app/shared/mini-events.types.ts"
+      ],
+      "importance": 0.1467
+    },
+    "src/app/admin/ref-mini-events.css": {
+      "description": "Styles: 69 rules",
+      "tokens": 1952,
+      "hash": "9c154919f7ff48cd",
+      "size": 6831,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.351Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/ref-mini-events.html": {
+      "description": "",
+      "tokens": 4879,
+      "hash": "21432d4a76a7c166",
+      "size": 18351,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.351Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/ref-mini-events.ts": {
+      "description": "API routes: POST (5 endpoints)",
+      "tokens": 5328,
+      "hash": "b84743b3b355a34c",
+      "size": 18647,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SpinModalState",
+          "kind": "section",
+          "startLine": 24,
+          "endLine": 38,
+          "tokens": 98
+        },
+        {
+          "name": "RefMiniEventsComponent",
+          "kind": "class",
+          "startLine": 47,
+          "endLine": 604,
+          "tokens": 5002
+        },
+        {
+          "name": "RefMiniEventsComponent.ngOnChanges",
+          "kind": "method",
+          "startLine": 100,
+          "endLine": 130,
+          "tokens": 317
+        },
+        {
+          "name": "RefMiniEventsComponent.flash",
+          "kind": "method",
+          "startLine": 132,
+          "endLine": 141,
+          "tokens": 64
+        },
+        {
+          "name": "RefMiniEventsComponent.playerPoints",
+          "kind": "method",
+          "startLine": 145,
+          "endLine": 148,
+          "tokens": 44
+        },
+        {
+          "name": "RefMiniEventsComponent.teamStandings",
+          "kind": "method",
+          "startLine": 150,
+          "endLine": 168,
+          "tokens": 195
+        },
+        {
+          "name": "RefMiniEventsComponent.activeTasks",
+          "kind": "method",
+          "startLine": 170,
+          "endLine": 174,
+          "tokens": 54
+        },
+        {
+          "name": "RefMiniEventsComponent.completedTasks",
+          "kind": "method",
+          "startLine": 176,
+          "endLine": 178,
+          "tokens": 33
+        },
+        {
+          "name": "RefMiniEventsComponent.selectedPlayerTasks",
+          "kind": "method",
+          "startLine": 180,
+          "endLine": 183,
+          "tokens": 50
+        },
+        {
+          "name": "RefMiniEventsComponent.rewardBadge",
+          "kind": "method",
+          "startLine": 185,
+          "endLine": 187,
+          "tokens": 40
+        },
+        {
+          "name": "RefMiniEventsComponent.sliceBadge",
+          "kind": "method",
+          "startLine": 189,
+          "endLine": 191,
+          "tokens": 30
+        },
+        {
+          "name": "RefMiniEventsComponent.otherTeamsFor",
+          "kind": "method",
+          "startLine": 193,
+          "endLine": 197,
+          "tokens": 64
+        },
+        {
+          "name": "RefMiniEventsComponent.allWheelSlices",
+          "kind": "method",
+          "startLine": 199,
+          "endLine": 207,
+          "tokens": 96
+        },
+        {
+          "name": "RefMiniEventsComponent.totalWheelSlices",
+          "kind": "method",
+          "startLine": 209,
+          "endLine": 211,
+          "tokens": 35
+        },
+        {
+          "name": "RefMiniEventsComponent.onPrefillChange",
+          "kind": "method",
+          "startLine": 215,
+          "endLine": 229,
+          "tokens": 156
+        },
+        {
+          "name": "RefMiniEventsComponent.assignRandomTask",
+          "kind": "method",
+          "startLine": 231,
+          "endLine": 266,
+          "tokens": 338
+        },
+        {
+          "name": "RefMiniEventsComponent.assignCustomTask",
+          "kind": "method",
+          "startLine": 268,
+          "endLine": 308,
+          "tokens": 436
+        },
+        {
+          "name": "RefMiniEventsComponent.confirmTask",
+          "kind": "method",
+          "startLine": 312,
+          "endLine": 337,
+          "tokens": 240
+        },
+        {
+          "name": "RefMiniEventsComponent.cancelTask",
+          "kind": "method",
+          "startLine": 339,
+          "endLine": 365,
+          "tokens": 219
+        },
+        {
+          "name": "RefMiniEventsComponent.applyTargetTeam",
+          "kind": "method",
+          "startLine": 367,
+          "endLine": 395,
+          "tokens": 274
+        },
+        {
+          "name": "RefMiniEventsComponent.openTaskSpinModal",
+          "kind": "method",
+          "startLine": 397,
+          "endLine": 419,
+          "tokens": 194
+        },
+        {
+          "name": "RefMiniEventsComponent.openDirectSpinModal",
+          "kind": "method",
+          "startLine": 421,
+          "endLine": 441,
+          "tokens": 171
+        },
+        {
+          "name": "RefMiniEventsComponent.triggerSpinModal",
+          "kind": "method",
+          "startLine": 443,
+          "endLine": 484,
+          "tokens": 400
+        },
+        {
+          "name": "RefMiniEventsComponent.onWheelAnimationFinished",
+          "kind": "method",
+          "startLine": 486,
+          "endLine": 492,
+          "tokens": 60
+        },
+        {
+          "name": "RefMiniEventsComponent.closeSpinModal",
+          "kind": "method",
+          "startLine": 494,
+          "endLine": 497,
+          "tokens": 38
+        },
+        {
+          "name": "RefMiniEventsComponent.onProxyVoterChange",
+          "kind": "method",
+          "startLine": 501,
+          "endLine": 503,
+          "tokens": 18
+        },
+        {
+          "name": "RefMiniEventsComponent.jumpToProxyVote",
+          "kind": "method",
+          "startLine": 505,
+          "endLine": 512,
+          "tokens": 82
+        },
+        {
+          "name": "RefMiniEventsComponent.voterVoteCount",
+          "kind": "method",
+          "startLine": 514,
+          "endLine": 517,
+          "tokens": 44
+        },
+        {
+          "name": "RefMiniEventsComponent.currentProxyVoteKey",
+          "kind": "method",
+          "startLine": 519,
+          "endLine": 523,
+          "tokens": 58
+        },
+        {
+          "name": "RefMiniEventsComponent.voterSummaryName",
+          "kind": "method",
+          "startLine": 525,
+          "endLine": 530,
+          "tokens": 76
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "interface SpinModalState {\nexport class RefMiniEventsComponent implements OnChanges {\n  ngOnChanges(changes: SimpleChanges) {\n  private flash(msg: string) {\n  playerPoints(userId: string): number {\n  teamStandings() {\n  get activeTasks(): PlayerTask[] {\n  get completedTasks(): PlayerTask[] {\n  get selectedPlayerTasks(): PlayerTask[] {\n  rewardBadge(task: PlayerTask): string {\n  sliceBadge(item: WheelItem): string {\n  otherTeamsFor(teamId?: string | null): any[] {\n  get allWheelSlices(): { key: string; wheel: MiniWheel; item: WheelItem }[] {\n  get totalWheelSlices(): number {\n  onPrefillChange() {\n  assignRandomTask() {\n  assignCustomTask() {\n  confirmTask(task: PlayerTask, targetTeamId?: string) {\n  cancelTask(task: PlayerTask) {\n  applyTargetTeam(task: PlayerTask, targetTeamId: string) {\n  openTaskSpinModal(task: PlayerTask) {\n  openDirectSpinModal(player: any, wheelId: string) {\n  triggerSpinModal() {\n  onWheelAnimationFinished() {\n  closeSpinModal() {\n  onProxyVoterChange() {\n  jumpToProxyVote(player: any) {\n  voterVoteCount(userId: string): number {\n  currentProxyVoteKey(awardId: string): string {\n  voterSummaryName(): string {",
+      "imports": [
+        "src/app/shared/spin-wheel/spin-wheel.ts",
+        "src/app/shared/password-reveal.ts"
+      ],
+      "importance": 0.1467
+    },
+    "src/app/admin/ref.css": {
+      "description": "Styles: 42 rules",
+      "tokens": 1412,
+      "hash": "145915b5b6944d4a",
+      "size": 4940,
+      "mtimeMs": 1795465484532.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/ref.html": {
+      "description": "",
+      "tokens": 982,
+      "hash": "d0b425bd38d4143f",
+      "size": 3679,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/ref.ts": {
+      "description": "API routes: GET, POST (9 endpoints)",
+      "tokens": 2387,
+      "hash": "1a681a19c6c7fc80",
+      "size": 8361,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "RefComponent",
+          "kind": "class",
+          "startLine": 21,
+          "endLine": 263,
+          "tokens": 2193
+        },
+        {
+          "name": "RefComponent.constructor",
+          "kind": "method",
+          "startLine": 40,
+          "endLine": 40,
+          "tokens": 23
+        },
+        {
+          "name": "RefComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 41,
+          "endLine": 63,
+          "tokens": 189
+        },
+        {
+          "name": "RefComponent.ngOnDestroy",
+          "kind": "method",
+          "startLine": 65,
+          "endLine": 70,
+          "tokens": 34
+        },
+        {
+          "name": "RefComponent.getEventDetails",
+          "kind": "method",
+          "startLine": 72,
+          "endLine": 87,
+          "tokens": 144
+        },
+        {
+          "name": "RefComponent.getBaseRules",
+          "kind": "method",
+          "startLine": 91,
+          "endLine": 106,
+          "tokens": 122
+        },
+        {
+          "name": "RefComponent.getLocationRules",
+          "kind": "method",
+          "startLine": 108,
+          "endLine": 124,
+          "tokens": 138
+        },
+        {
+          "name": "RefComponent.givePoint",
+          "kind": "method",
+          "startLine": 127,
+          "endLine": 141,
+          "tokens": 139
+        },
+        {
+          "name": "RefComponent.getPoints",
+          "kind": "method",
+          "startLine": 143,
+          "endLine": 158,
+          "tokens": 144
+        },
+        {
+          "name": "RefComponent.syncUserPoints",
+          "kind": "method",
+          "startLine": 160,
+          "endLine": 172,
+          "tokens": 113
+        },
+        {
+          "name": "RefComponent.loadLiveState",
+          "kind": "method",
+          "startLine": 174,
+          "endLine": 202,
+          "tokens": 355
+        },
+        {
+          "name": "RefComponent.openPlayerModal",
+          "kind": "method",
+          "startLine": 204,
+          "endLine": 206,
+          "tokens": 19
+        },
+        {
+          "name": "RefComponent.teamColour",
+          "kind": "method",
+          "startLine": 208,
+          "endLine": 211,
+          "tokens": 42
+        },
+        {
+          "name": "RefComponent.playerStatusBadge",
+          "kind": "method",
+          "startLine": 213,
+          "endLine": 228,
+          "tokens": 209
+        },
+        {
+          "name": "RefComponent.movePub",
+          "kind": "method",
+          "startLine": 232,
+          "endLine": 235,
+          "tokens": 24
+        },
+        {
+          "name": "RefComponent.saveCurrentPub",
+          "kind": "method",
+          "startLine": 238,
+          "endLine": 247,
+          "tokens": 122
+        },
+        {
+          "name": "RefComponent.syncCurrentPub",
+          "kind": "method",
+          "startLine": 250,
+          "endLine": 261,
+          "tokens": 118
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export class RefComponent implements OnInit, OnDestroy {\n  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}\n  ngOnInit() {\n  ngOnDestroy() {\n  getEventDetails(){\n  getBaseRules(){\n  getLocationRules(){\n  givePoint(n: any,id : String){\n  getPoints(){\n  private syncUserPoints() {\n  loadLiveState() {\n  openPlayerModal(user: any) {\n  teamColour(teamId: string): string {\n  playerStatusBadge(userId: string): { label: string; urgent: boolean } | null {\n  movePub(n : any){\n  saveCurrentPub(){\n  syncCurrentPub(){",
+      "imports": [
+        "src/app/auth.ts",
+        "src/app/admin/ref-mini-events.ts",
+        "src/app/shared/mini-events.types.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/admin/restore.css": {
+      "description": "Styles: 27 rules",
+      "tokens": 949,
+      "hash": "25ce1af088a0cc22",
+      "size": 3319,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/restore.html": {
+      "description": "",
+      "tokens": 835,
+      "hash": "80ca77460fa89b55",
+      "size": 3131,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/admin/restore.ts": {
+      "description": "API routes: GET, POST (4 endpoints)",
+      "tokens": 1177,
+      "hash": "4992b0c7243e6253",
+      "size": 4117,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "RestoreCrawlsComponent",
+          "kind": "class",
+          "startLine": 14,
+          "endLine": 136,
+          "tokens": 1050
+        },
+        {
+          "name": "RestoreCrawlsComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 30,
+          "endLine": 52,
+          "tokens": 180
+        },
+        {
+          "name": "RestoreCrawlsComponent.loadDeletedEvents",
+          "kind": "method",
+          "startLine": 54,
+          "endLine": 76,
+          "tokens": 222
+        },
+        {
+          "name": "RestoreCrawlsComponent.restoreEvent",
+          "kind": "method",
+          "startLine": 78,
+          "endLine": 100,
+          "tokens": 231
+        },
+        {
+          "name": "RestoreCrawlsComponent.askPurge",
+          "kind": "method",
+          "startLine": 102,
+          "endLine": 105,
+          "tokens": 25
+        },
+        {
+          "name": "RestoreCrawlsComponent.cancelPurge",
+          "kind": "method",
+          "startLine": 107,
+          "endLine": 110,
+          "tokens": 24
+        },
+        {
+          "name": "RestoreCrawlsComponent.confirmPurge",
+          "kind": "method",
+          "startLine": 112,
+          "endLine": 135,
+          "tokens": 251
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/app.config.ts": {
+      "description": "Exports appConfig",
+      "tokens": 144,
+      "hash": "a77fa0ff2db39849",
+      "size": 503,
+      "mtimeMs": 1792796023973.5815,
+      "updatedAt": "2026-11-23T20:28:48.352Z",
+      "source": "scan",
+      "imports": [
+        "src/app/auth.interceptor.ts",
+        "src/app/app.routes.ts"
+      ],
+      "importance": 0.1581
+    },
+    "src/app/app.css": {
+      "description": "",
+      "tokens": 0,
+      "hash": "e3b0c44298fc1c14",
+      "size": 0,
+      "mtimeMs": 1778529599659.7185,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/app.html": {
+      "description": "",
+      "tokens": 432,
+      "hash": "2e6cf84d2365377c",
+      "size": 1619,
+      "mtimeMs": 1780691672331.3794,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/app.routes.ts": {
+      "description": "Exports routes",
+      "tokens": 381,
+      "hash": "5f4e928176065e92",
+      "size": 1333,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "imports": [
+        "src/app/account/create_account.ts",
+        "src/app/account/login.ts",
+        "src/app/admin/dashboard.ts",
+        "src/app/admin/restore.ts",
+        "src/app/admin/event-details.ts",
+        "src/app/admin/ref.ts",
+        "src/app/player/playerDashboard.ts",
+        "src/app/player/eventPlay.ts",
+        "src/app/photos/map.ts",
+        "src/app/photos/upload.ts"
+      ],
+      "importance": 0.1782
+    },
+    "src/app/app.spec.ts": {
+      "description": "",
+      "tokens": 0,
+      "hash": "e3b0c44298fc1c14",
+      "size": 0,
+      "mtimeMs": 1778529599659.7185,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/app.ts": {
+      "description": "Exports AppComponent",
+      "tokens": 84,
+      "hash": "35eb2248a9cfa13d",
+      "size": 291,
+      "mtimeMs": 1778529599659.7185,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.2653
+    },
+    "src/app/auth.interceptor.ts": {
+      "description": "If the server says we're not logged in (e.g. an old saved login from before",
+      "tokens": 211,
+      "hash": "327afaf5d35d529a",
+      "size": 736,
+      "mtimeMs": 1792796023974.409,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.1782
+    },
+    "src/app/auth.spec.ts": {
+      "description": "",
+      "tokens": 95,
+      "hash": "4c8f8f0b11d554e2",
+      "size": 332,
+      "mtimeMs": 1782320816973.47,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.111
+    },
+    "src/app/auth.ts": {
+      "description": "Exports UserProfile, AuthService",
+      "tokens": 245,
+      "hash": "dee80315d3f3514d",
+      "size": 855,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 1
+    },
+    "src/app/create_account.css": {
+      "description": "Styles: 1 rules",
+      "tokens": 444,
+      "hash": "911377e7dc49e19d",
+      "size": 1552,
+      "mtimeMs": 1778529599000,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/photos/map.css": {
+      "description": "Styles: 30 rules",
+      "tokens": 1378,
+      "hash": "52e83855e53b7ba9",
+      "size": 4822,
+      "mtimeMs": 1795465499522.264,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/photos/map.html": {
+      "description": "",
+      "tokens": 559,
+      "hash": "610848b7beb42271",
+      "size": 2104,
+      "mtimeMs": 1795465499522.264,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/photos/map.ts": {
+      "description": "ngAfterViewInit(): void {",
+      "tokens": 1471,
+      "hash": "2afdd9365d646dc1",
+      "size": 5146,
+      "mtimeMs": 1795465484533.6902,
+      "updatedAt": "2026-11-23T20:28:48.353Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "MapComponent",
+          "kind": "class",
+          "startLine": 37,
+          "endLine": 155,
+          "tokens": 1090
+        },
+        {
+          "name": "MapComponent.constructor",
+          "kind": "method",
+          "startLine": 50,
+          "endLine": 50,
+          "tokens": 23
+        },
+        {
+          "name": "MapComponent.ngAfterViewInit",
+          "kind": "method",
+          "startLine": 52,
+          "endLine": 53,
+          "tokens": 10
+        },
+        {
+          "name": "MapComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 55,
+          "endLine": 64,
+          "tokens": 108
+        },
+        {
+          "name": "MapComponent.get_footage",
+          "kind": "method",
+          "startLine": 97,
+          "endLine": 122,
+          "tokens": 243
+        },
+        {
+          "name": "MapComponent.thumbUrl",
+          "kind": "method",
+          "startLine": 127,
+          "endLine": 130,
+          "tokens": 44
+        },
+        {
+          "name": "MapComponent.isVideo",
+          "kind": "method",
+          "startLine": 132,
+          "endLine": 135,
+          "tokens": 59
+        },
+        {
+          "name": "MapComponent.downloadAll",
+          "kind": "method",
+          "startLine": 136,
+          "endLine": 151,
+          "tokens": 158
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "src/app/auth.ts",
+        "src/app/app.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/photos/upload.css": {
+      "description": "Styles: 14 rules",
+      "tokens": 914,
+      "hash": "965dd6b77c424e51",
+      "size": 3197,
+      "mtimeMs": 1780699645837.2207,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/photos/upload.html": {
+      "description": "",
+      "tokens": 285,
+      "hash": "99301e1a7c697fcb",
+      "size": 1070,
+      "mtimeMs": 1780699645837.2207,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/photos/upload.ts": {
+      "description": "Send one chunk, retrying with exponential backoff on transient errors.",
+      "tokens": 1819,
+      "hash": "dfeea7c1d60d6b67",
+      "size": 6377,
+      "mtimeMs": 1783208777493.942,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "UploadComponent",
+          "kind": "class",
+          "startLine": 26,
+          "endLine": 189,
+          "tokens": 1623
+        },
+        {
+          "name": "UploadComponent.constructor",
+          "kind": "method",
+          "startLine": 36,
+          "endLine": 36,
+          "tokens": 23
+        },
+        {
+          "name": "UploadComponent.ngOnInit",
+          "kind": "method",
+          "startLine": 38,
+          "endLine": 45,
+          "tokens": 69
+        },
+        {
+          "name": "UploadComponent.onFilesSelected",
+          "kind": "method",
+          "startLine": 48,
+          "endLine": 53,
+          "tokens": 44
+        },
+        {
+          "name": "UploadComponent.sleep",
+          "kind": "method",
+          "startLine": 60,
+          "endLine": 62,
+          "tokens": 25
+        },
+        {
+          "name": "UploadComponent.sendChunkWithRetry",
+          "kind": "method",
+          "startLine": 65,
+          "endLine": 94,
+          "tokens": 309
+        },
+        {
+          "name": "UploadComponent.pollStatus",
+          "kind": "method",
+          "startLine": 97,
+          "endLine": 112,
+          "tokens": 184
+        },
+        {
+          "name": "UploadComponent.upload",
+          "kind": "method",
+          "startLine": 114,
+          "endLine": 188,
+          "tokens": 754
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "src/app/auth.ts",
+        "src/app/app.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/player/eventPlay.css": {
+      "description": "Styles: 21 rules",
+      "tokens": 916,
+      "hash": "ab8035d5e9494e31",
+      "size": 3203,
+      "mtimeMs": 1795465499523.264,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/eventPlay.html": {
+      "description": "",
+      "tokens": 689,
+      "hash": "f0c43aa96c90165b",
+      "size": 2581,
+      "mtimeMs": 1795465499523.264,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/eventPlay.ts": {
+      "description": "API routes: GET, POST (6 endpoints)",
+      "tokens": 2270,
+      "hash": "f966208b50bc4f69",
+      "size": 7943,
+      "mtimeMs": 1795465499523.264,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "EventPlay",
+          "kind": "class",
+          "startLine": 21,
+          "endLine": 245,
+          "tokens": 2070
+        },
+        {
+          "name": "EventPlay.constructor",
+          "kind": "method",
+          "startLine": 30,
+          "endLine": 30,
+          "tokens": 23
+        },
+        {
+          "name": "EventPlay.ngOnInit",
+          "kind": "method",
+          "startLine": 41,
+          "endLine": 55,
+          "tokens": 126
+        },
+        {
+          "name": "EventPlay.checkAndBuildLeaderboard",
+          "kind": "method",
+          "startLine": 56,
+          "endLine": 61,
+          "tokens": 58
+        },
+        {
+          "name": "EventPlay.getEventDetails",
+          "kind": "method",
+          "startLine": 65,
+          "endLine": 84,
+          "tokens": 180
+        },
+        {
+          "name": "EventPlay.getPoints",
+          "kind": "method",
+          "startLine": 87,
+          "endLine": 105,
+          "tokens": 168
+        },
+        {
+          "name": "EventPlay.syncPointsToUsers",
+          "kind": "method",
+          "startLine": 107,
+          "endLine": 119,
+          "tokens": 127
+        },
+        {
+          "name": "EventPlay.generateLeaderboard",
+          "kind": "method",
+          "startLine": 122,
+          "endLine": 155,
+          "tokens": 330
+        },
+        {
+          "name": "EventPlay.getBaseRules",
+          "kind": "method",
+          "startLine": 167,
+          "endLine": 174,
+          "tokens": 79
+        },
+        {
+          "name": "EventPlay.getLocationRules",
+          "kind": "method",
+          "startLine": 176,
+          "endLine": 183,
+          "tokens": 83
+        },
+        {
+          "name": "EventPlay.loadLiveState",
+          "kind": "method",
+          "startLine": 185,
+          "endLine": 212,
+          "tokens": 310
+        },
+        {
+          "name": "EventPlay.startLocationPolling",
+          "kind": "method",
+          "startLine": 214,
+          "endLine": 218,
+          "tokens": 45
+        },
+        {
+          "name": "EventPlay.stopLocationPolling",
+          "kind": "method",
+          "startLine": 220,
+          "endLine": 225,
+          "tokens": 37
+        },
+        {
+          "name": "EventPlay.ngOnDestroy",
+          "kind": "method",
+          "startLine": 227,
+          "endLine": 229,
+          "tokens": 16
+        },
+        {
+          "name": "EventPlay.updateCurrentStop",
+          "kind": "method",
+          "startLine": 232,
+          "endLine": 243,
+          "tokens": 170
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export class EventPlay implements OnInit, OnDestroy {\n  constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}\n  ngOnInit() {\n  checkAndBuildLeaderboard() {\n  getEventDetails(){\n  getPoints(){\n  private syncPointsToUsers() {\n  generateLeaderboard() {\n  getBaseRules() {\n  getLocationRules() {\n  loadLiveState() {\n  startLocationPolling() {\n  stopLocationPolling() {\n  ngOnDestroy() {\n  updateCurrentStop() {",
+      "imports": [
+        "src/app/auth.ts",
+        "src/app/player/player-mini-events.ts",
+        "src/app/shared/mini-events.types.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/player/player-mini-events.css": {
+      "description": "Styles: 41 rules",
+      "tokens": 1330,
+      "hash": "cf1a90906c7b8241",
+      "size": 4654,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/player-mini-events.html": {
+      "description": "",
+      "tokens": 2147,
+      "hash": "611099e0a339b111",
+      "size": 8088,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.354Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/player-mini-events.ts": {
+      "description": "API routes: POST (4 endpoints)",
+      "tokens": 2636,
+      "hash": "06afd562bf89b00e",
+      "size": 9223,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.355Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "ActiveSpinState",
+          "kind": "section",
+          "startLine": 23,
+          "endLine": 33,
+          "tokens": 69
+        },
+        {
+          "name": "PlayerMiniEventsComponent",
+          "kind": "class",
+          "startLine": 42,
+          "endLine": 310,
+          "tokens": 2363
+        },
+        {
+          "name": "PlayerMiniEventsComponent.ngOnChanges",
+          "kind": "method",
+          "startLine": 67,
+          "endLine": 75,
+          "tokens": 140
+        },
+        {
+          "name": "PlayerMiniEventsComponent.flash",
+          "kind": "method",
+          "startLine": 77,
+          "endLine": 86,
+          "tokens": 64
+        },
+        {
+          "name": "PlayerMiniEventsComponent.activeTasks",
+          "kind": "method",
+          "startLine": 88,
+          "endLine": 92,
+          "tokens": 54
+        },
+        {
+          "name": "PlayerMiniEventsComponent.completedTasks",
+          "kind": "method",
+          "startLine": 94,
+          "endLine": 96,
+          "tokens": 33
+        },
+        {
+          "name": "PlayerMiniEventsComponent.popupTask",
+          "kind": "method",
+          "startLine": 98,
+          "endLine": 107,
+          "tokens": 74
+        },
+        {
+          "name": "PlayerMiniEventsComponent.minimizeTaskPopup",
+          "kind": "method",
+          "startLine": 109,
+          "endLine": 111,
+          "tokens": 32
+        },
+        {
+          "name": "PlayerMiniEventsComponent.reopenTaskPopup",
+          "kind": "method",
+          "startLine": 113,
+          "endLine": 115,
+          "tokens": 31
+        },
+        {
+          "name": "PlayerMiniEventsComponent.rewardBadge",
+          "kind": "method",
+          "startLine": 117,
+          "endLine": 119,
+          "tokens": 40
+        },
+        {
+          "name": "PlayerMiniEventsComponent.wheelForTask",
+          "kind": "method",
+          "startLine": 121,
+          "endLine": 124,
+          "tokens": 50
+        },
+        {
+          "name": "PlayerMiniEventsComponent.otherTeams",
+          "kind": "method",
+          "startLine": 126,
+          "endLine": 132,
+          "tokens": 91
+        },
+        {
+          "name": "PlayerMiniEventsComponent.claimDone",
+          "kind": "method",
+          "startLine": 134,
+          "endLine": 158,
+          "tokens": 205
+        },
+        {
+          "name": "PlayerMiniEventsComponent.startSpinOverlay",
+          "kind": "method",
+          "startLine": 160,
+          "endLine": 177,
+          "tokens": 129
+        },
+        {
+          "name": "PlayerMiniEventsComponent.triggerTaskSpin",
+          "kind": "method",
+          "startLine": 179,
+          "endLine": 218,
+          "tokens": 352
+        },
+        {
+          "name": "PlayerMiniEventsComponent.onSpinAnimationDone",
+          "kind": "method",
+          "startLine": 220,
+          "endLine": 226,
+          "tokens": 58
+        },
+        {
+          "name": "PlayerMiniEventsComponent.closeSpinOverlay",
+          "kind": "method",
+          "startLine": 228,
+          "endLine": 231,
+          "tokens": 38
+        },
+        {
+          "name": "PlayerMiniEventsComponent.applyTargetTeam",
+          "kind": "method",
+          "startLine": 233,
+          "endLine": 261,
+          "tokens": 272
+        },
+        {
+          "name": "PlayerMiniEventsComponent.myVoteKey",
+          "kind": "method",
+          "startLine": 265,
+          "endLine": 269,
+          "tokens": 48
+        },
+        {
+          "name": "PlayerMiniEventsComponent.myVoteLabel",
+          "kind": "method",
+          "startLine": 271,
+          "endLine": 280,
+          "tokens": 116
+        },
+        {
+          "name": "PlayerMiniEventsComponent.castMyVote",
+          "kind": "method",
+          "startLine": 282,
+          "endLine": 309,
+          "tokens": 295
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "interface ActiveSpinState {\nexport class PlayerMiniEventsComponent implements OnChanges {\n  ngOnChanges(changes: SimpleChanges) {\n  private flash(msg: string) {\n  get activeTasks(): PlayerTask[] {\n  get completedTasks(): PlayerTask[] {\n  get popupTask(): PlayerTask | null {\n  minimizeTaskPopup(task: PlayerTask) {\n  reopenTaskPopup(task: PlayerTask) {\n  rewardBadge(task: PlayerTask): string {\n  wheelForTask(task: PlayerTask): MiniWheel | undefined {\n  otherTeams(): any[] {\n  claimDone(task: PlayerTask) {\n  startSpinOverlay(task: PlayerTask) {\n  triggerTaskSpin() {\n  onSpinAnimationDone() {\n  closeSpinOverlay() {\n  applyTargetTeam(task: PlayerTask, targetTeamId: string) {\n  myVoteKey(awardId: string): string {\n  myVoteLabel(awardId: string): string {\n  castMyVote(award: EventAward, selectedKey: string) {",
+      "imports": [
+        "src/app/shared/spin-wheel/spin-wheel.ts"
+      ],
+      "importance": 0.1467
+    },
+    "src/app/player/playerDashboard.css": {
+      "description": "Styles: 18 rules",
+      "tokens": 782,
+      "hash": "f907b1fadaec088f",
+      "size": 2735,
+      "mtimeMs": 1794672988000,
+      "updatedAt": "2026-11-23T20:28:48.355Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/playerDashboard.html": {
+      "description": "",
+      "tokens": 250,
+      "hash": "76d72e76db085621",
+      "size": 934,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.355Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/player/playerDashboard.ts": {
+      "description": "API routes: GET, POST (2 endpoints)",
+      "tokens": 490,
+      "hash": "b5d8837fba176978",
+      "size": 1714,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.355Z",
+      "source": "scan",
+      "imports": [
+        "src/app/auth.ts"
+      ],
+      "importance": 0.1261
+    },
+    "src/app/shared/mini-events.types.ts": {
+      "description": "Exports WheelItem, MiniWheel, PlayerTask, EventAward, formatRewardBadge",
+      "tokens": 588,
+      "hash": "b1d3dcd4ff2d7037",
+      "size": 2058,
+      "mtimeMs": 1795465484534.6902,
+      "updatedAt": "2026-11-23T20:28:48.355Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "WheelItem",
+          "kind": "section",
+          "startLine": 1,
+          "endLine": 11,
+          "tokens": 78
+        },
+        {
+          "name": "MiniWheel",
+          "kind": "section",
+          "startLine": 13,
+          "endLine": 20,
+          "tokens": 45
+        },
+        {
+          "name": "PlayerTask",
+          "kind": "section",
+          "startLine": 22,
+          "endLine": 49,
+          "tokens": 252
+        },
+        {
+          "name": "EventAward",
+          "kind": "section",
+          "startLine": 51,
+          "endLine": 58,
+          "tokens": 52
+        },
+        {
+          "name": "formatRewardBadge",
+          "kind": "fn",
+          "startLine": 60,
+          "endLine": 79,
+          "tokens": 160
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.5605
+    },
+    "src/app/shared/password-reveal.ts": {
+      "description": "API routes: POST (1 endpoints)",
+      "tokens": 657,
+      "hash": "f3984f03b603f209",
+      "size": 2303,
+      "mtimeMs": 1795465484536.0327,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "PasswordRevealComponent",
+          "kind": "class",
+          "startLine": 31,
+          "endLine": 82,
+          "tokens": 426
+        },
+        {
+          "name": "PasswordRevealComponent.ngOnChanges",
+          "kind": "method",
+          "startLine": 43,
+          "endLine": 49,
+          "tokens": 55
+        },
+        {
+          "name": "PasswordRevealComponent.toggleReveal",
+          "kind": "method",
+          "startLine": 51,
+          "endLine": 81,
+          "tokens": 266
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.2091
+    },
+    "src/app/shared/spin-wheel/spin-wheel.css": {
+      "description": "Styles: 15 rules",
+      "tokens": 596,
+      "hash": "c627b7be93e91f05",
+      "size": 2083,
+      "mtimeMs": 1795465484536.0327,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/shared/spin-wheel/spin-wheel.html": {
+      "description": "",
+      "tokens": 254,
+      "hash": "f80fe3180b140600",
+      "size": 951,
+      "mtimeMs": 1795465484536.2463,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/app/shared/spin-wheel/spin-wheel.ts": {
+      "description": "Exports SpinCommand, SpinWheelComponent",
+      "tokens": 2197,
+      "hash": "80a3337776da985b",
+      "size": 7692,
+      "mtimeMs": 1795465484536.2463,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SpinCommand",
+          "kind": "section",
+          "startLine": 16,
+          "endLine": 20,
+          "tokens": 24
+        },
+        {
+          "name": "SpinWheelComponent",
+          "kind": "class",
+          "startLine": 29,
+          "endLine": 254,
+          "tokens": 2045
+        },
+        {
+          "name": "SpinWheelComponent.ngAfterViewInit",
+          "kind": "method",
+          "startLine": 46,
+          "endLine": 48,
+          "tokens": 14
+        },
+        {
+          "name": "SpinWheelComponent.ngOnChanges",
+          "kind": "method",
+          "startLine": 50,
+          "endLine": 58,
+          "tokens": 92
+        },
+        {
+          "name": "SpinWheelComponent.ngOnDestroy",
+          "kind": "method",
+          "startLine": 60,
+          "endLine": 64,
+          "tokens": 27
+        },
+        {
+          "name": "SpinWheelComponent.requestSpin",
+          "kind": "method",
+          "startLine": 66,
+          "endLine": 72,
+          "tokens": 48
+        },
+        {
+          "name": "SpinWheelComponent.describe",
+          "kind": "method",
+          "startLine": 74,
+          "endLine": 76,
+          "tokens": 30
+        },
+        {
+          "name": "SpinWheelComponent.startAnimation",
+          "kind": "method",
+          "startLine": 78,
+          "endLine": 103,
+          "tokens": 240
+        },
+        {
+          "name": "SpinWheelComponent.drawWheel",
+          "kind": "method",
+          "startLine": 105,
+          "endLine": 253,
+          "tokens": 1431
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export interface SpinCommand {\nexport class SpinWheelComponent implements AfterViewInit, OnChanges, OnDestroy {\n  ngAfterViewInit() {\n  ngOnChanges(changes: SimpleChanges) {\n  ngOnDestroy() {\n  requestSpin() {\n  describe(item: WheelItem): string {\n  private startAnimation(index: number, item: WheelItem) {\n  private drawWheel() {",
+      "imports": [
+        "src/app/shared/mini-events.types.ts"
+      ],
+      "importance": 0.298
+    },
+    "src/index.html": {
+      "description": "PubCrawl",
+      "tokens": 108,
+      "hash": "701c60352a582c0e",
+      "size": 403,
+      "mtimeMs": 1795465484536.2463,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "src/main.ts": {
+      "description": "",
+      "tokens": 69,
+      "hash": "fc3a0fd8ba646686",
+      "size": 240,
+      "mtimeMs": 1778529599660.2524,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "imports": [
+        "src/app/app.config.ts",
+        "src/app/app.ts"
+      ],
+      "importance": 0.111
+    },
+    "src/styles.css": {
+      "description": "Styles: 13 rules, 6 vars, 1 media queries",
+      "tokens": 815,
+      "hash": "1364b58ca8eba6b3",
+      "size": 2852,
+      "mtimeMs": 1795465484536.2463,
+      "updatedAt": "2026-11-23T20:28:48.356Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "tsconfig.app.json": {
+      "description": "/*.ts\"",
+      "tokens": 123,
+      "hash": "5fd4b1994fe3c2d0",
+      "size": 429,
+      "mtimeMs": 1778529599660.2524,
+      "updatedAt": "2026-11-23T20:28:48.357Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "tsconfig.json": {
+      "description": "TypeScript configuration",
+      "tokens": 274,
+      "hash": "b6445b51aafffbe2",
+      "size": 957,
+      "mtimeMs": 1778529599660.2524,
+      "updatedAt": "2026-11-23T20:28:48.357Z",
+      "source": "scan",
+      "importance": 0.111
+    },
+    "tsconfig.spec.json": {
+      "description": "/*.d.ts\",",
+      "tokens": 126,
+      "hash": "1e90321d1afed110",
+      "size": 441,
+      "mtimeMs": 1778529599660.2524,
+      "updatedAt": "2026-11-23T20:28:48.357Z",
+      "source": "scan",
+      "importance": 0.111
+    }
+  },
+  "preamble": [
+    "> Project structure index. Auto-maintained by OpenWolf hooks and daemon.",
+    "> Run `openwolf scan` to generate, or wait for the first Claude Code session.",
+    "> Status: Pending initial scan"
+  ]
+}
