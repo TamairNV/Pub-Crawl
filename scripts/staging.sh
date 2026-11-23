@@ -10,8 +10,12 @@ DC=(docker compose -f deploy/staging/docker-compose.yml --env-file "$ENVF")
 DBX=(docker exec -i pub-crawl-staging-db-1 sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" "$@" pub_crawl' sh)
 seed() {
   set -a; . "$ENVF"; set +a
-  sed -e "s/__OWNER_PW__/${STAGING_OWNER_PASSWORD}/g" -e "s/__REF_PW__/${STAGING_REF_PASSWORD}/g" \
-      -e "s/__PLAYER_PW__/${STAGING_PLAYER_PASSWORD}/g" deploy/staging/seed.sql | "${DBX[@]}"
+  # Swap in the passwords with Python (safe for any characters; SQL quotes doubled)
+  python3 -c 'import os,sys
+s=sys.stdin.read()
+for ph,v in (("__OWNER_PW__","STAGING_OWNER_PASSWORD"),("__REF_PW__","STAGING_REF_PASSWORD"),("__PLAYER_PW__","STAGING_PLAYER_PASSWORD")):
+    s=s.replace(ph,os.environ[v].replace("\\","\\\\").replace("\x27","\x27\x27"))
+sys.stdout.write(s)' < deploy/staging/seed.sql | "${DBX[@]}"
   echo seeded
 }
 case "${1:-up}" in
