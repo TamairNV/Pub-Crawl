@@ -22,6 +22,7 @@ from flask import Blueprint, jsonify, request, session
 
 from .SQL_manager import get_db, _close_conn
 from .routes import admin_required, login_required, can_view_event
+from .organisers import event_manager_required
 
 payments = Blueprint('payments', __name__)
 
@@ -118,7 +119,7 @@ def payment_status():
 
 
 @payments.route('/api/payments/checkout', methods=['POST'])
-@admin_required
+@event_manager_required
 def create_checkout():
   if not _stripe_ready():
     return jsonify({"status": "failed", "received": "Payments are not set up"}), 503

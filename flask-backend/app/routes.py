@@ -21,6 +21,9 @@ main = Blueprint('main', __name__)
 from .SQL_manager import *
 from .security import (hash_password, verify_and_upgrade, new_passkey, login_blocked, record_login,
                        too_many_tries, client_ip, MAX_SIGNUPS_PER_IP)
+from .organisers import (event_manager_required, can_manage_event, can_change_refs, is_staff, managed_events_sql,
+                         active_crawl_count, set_event_owner_sql, list_refs_sql, add_ref_sql, remove_ref_sql,
+                         MAX_ACTIVE_CRAWLS_PER_ORGANISER)
 from .mini_events_manager import (
   get_wheels_for_event_sql,
   create_wheel_sql,
@@ -69,7 +72,7 @@ def is_owner():
   return current_role() == 'owner'
 
 def can_view_event(event_id):
-  return is_admin() or is_user_in_event_sql(session['user_id'], event_id)
+  return can_manage_event(event_id) or is_user_in_event_sql(session['user_id'], event_id)
 
 def login_required(f):
   @wraps(f)
@@ -137,7 +140,7 @@ def get_users():
 
 
 @main.route('/api/reset-password', methods=['POST'])
-@admin_required
+@event_manager_required
 def reset_password():
   # Passwords are hashed, so they can't be shown. A ref can give a player a fresh 6-digit passkey instead.
   data = request.get_json(silent=True) or {}
@@ -238,7 +241,7 @@ def login_user():
   return jsonify({"status": "success", "received": profile})
 
 @main.route('/api/create-crawl',methods=['POST'])
-@admin_required
+@login_required
 def create_crawl():
   user_data = request.get_json()
   if not user_data:
@@ -247,15 +250,18 @@ def create_crawl():
   name = str(user_data.get('name', '')).strip()
   if not name:
     return jsonify({"status": "failed", "received": "Name needed"})
-  id = user_data.get('id') or str(uuid.uuid4())
-  out = create_event_sql(id,name)
+  if not is_staff() and active_crawl_count(session['user_id']) >= MAX_ACTIVE_CRAWLS_PER_ORGANISER:
+    return jsonify({"status": "failed", "received": "You have too many crawls. Delete an old one first."}), 429
+  id = str(uuid.uuid4())
+  out = create_event_sql(id, name[:255])
   if out:
+    set_event_owner_sql(id, session['user_id'])
     return jsonify({"status": "success", "received": out['id']})
   return jsonify({"status": "failed", "received": "Could not create crawl"})
 
 
 @main.route('/api/get-teams',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def get_teams():
   data = request.get_json()
   if not data:
@@ -268,7 +274,7 @@ def get_teams():
 
 
 @main.route('/api/save-new-team',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def save_new_team():
   data = request.get_json()
   if not data:
@@ -283,7 +289,7 @@ def save_new_team():
 
 
 @main.route('/api/save-people-to-event',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def save_people_to_event():
   data = request.get_json()
   if not data:
@@ -297,9 +303,14 @@ def save_people_to_event():
     return jsonify({"status": "fail", "received": out})
 
 @main.route('/api/get-events',methods=['GET', 'POST'])
-@admin_required
+@login_required
 def get_events():
-  out = get_all_events_sql()
+  # Staff see every crawl; everyone else sees the crawls they organise or ref
+  try:
+    out = get_all_events_sql() if is_staff() else managed_events_sql(session['user_id'])
+  except Exception as e:
+    print(f"get-events failed: {e}")
+    out = False
   if out is not False:
     return jsonify({"status": "success", "received": out})
   else:
@@ -324,12 +335,14 @@ def _remove_event_media_files(photo_paths):
 
 
 @main.route('/api/delete-event', methods=['POST'])
-@owner_required
+@event_manager_required
 def delete_event():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
   if not event_id:
     return jsonify({"status": "failed", "received": "Bad request"}), 400
+  if not can_change_refs(event_id):
+    return jsonify({"status": "failed", "received": "Only the organiser can delete this crawl"}), 403
 
   out = soft_delete_event_sql(event_id)
   if out == 'schema_missing':
@@ -408,13 +421,15 @@ def purge_event():
 
 
 @main.route('/api/reset-event', methods=['POST'])
-@owner_required
+@event_manager_required
 def reset_event():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
   if not event_id:
     return jsonify({"status": "failed", "received": "Bad request"}), 400
 
+  if not can_change_refs(event_id):
+    return jsonify({"status": "failed", "received": "Only the organiser can reset this crawl"}), 403
   clear_media = bool(data.get('clear_media', True))
   out = reset_event_data_sql(event_id, clear_media=clear_media)
   if out is None:
@@ -448,7 +463,7 @@ def get_event_details():
 
 
 @main.route('/api/update-user-team',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def update_user_team():
   data = request.get_json()
   if not data:
@@ -466,7 +481,7 @@ def update_user_team():
 
 
 @main.route('/api/add-new-location',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def add_new_location():
   data = request.get_json()
   if not data:
@@ -486,7 +501,7 @@ def add_new_location():
 
 
 @main.route('/api/add-new-rule',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def add_new_rule():
   data = request.get_json()
   if not data:
@@ -506,7 +521,7 @@ def add_new_rule():
 
 
 @main.route('/api/set-pub-rule', methods=['POST'])
-@admin_required
+@event_manager_required
 def set_pub_rule():
   data = request.get_json(silent=True) or {}
   pub_id = data.get('pub_id')
@@ -550,7 +565,7 @@ def get_locations_rules():
     return jsonify({"status": "failed", "received": out})
 
 @main.route('/api/remove-user',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def remove_user_from_event():
   data = request.get_json()
   if not data:
@@ -565,7 +580,7 @@ def remove_user_from_event():
 
 
 @main.route('/api/remove-base-rule',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def remove_base_rule():
   data = request.get_json()
   if not data:
@@ -580,7 +595,7 @@ def remove_base_rule():
     return jsonify({"status": "failed", "received": out})
 
 @main.route('/api/remove-location',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def remove_location():
   data = request.get_json()
   if not data:
@@ -597,7 +612,7 @@ def remove_location():
 
 
 @main.route('/api/reorder-locations', methods=['POST'])
-@admin_required
+@event_manager_required
 def reorder_locations():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -625,7 +640,7 @@ def get_user_points():
 
 
 @main.route('/api/give-user-points',methods=['GET', 'POST'])
-@admin_required
+@event_manager_required
 def give_user_points():
   data = request.get_json()
   if not data:
@@ -633,7 +648,7 @@ def give_user_points():
 
   event_id = data['event_id']
   user_id = data['user_id']
-  ref_id = data['ref_id']
+  ref_id = session['user_id']
   points = data['points']
 
 
@@ -644,12 +659,9 @@ def give_user_points():
     return jsonify({"status": "failed", "received": out})
 
 @main.route('/api/get-user-events',methods=['GET', 'POST'])
+@login_required
 def get_user_events():
-  data = request.get_json()
-  if not data:
-    return jsonify({"status": "failed", "received": data})
-
-  user_id = data['user_id']
+  user_id = session['user_id']
 
   out = events_user_is_in_sql(user_id)
   if out is not False:
@@ -821,7 +833,7 @@ def get_current_pub():
 
 
 @main.route('/api/set-current-pub', methods=['POST'])
-@admin_required
+@event_manager_required
 def set_current_pub():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -846,7 +858,7 @@ def get_mini_events():
   wheels = get_wheels_for_event_sql(event_id)
   awards = get_awards_for_event_sql(event_id)
   settings = get_awards_settings_sql(event_id)
-  admin_user = is_admin()
+  admin_user = can_manage_event(event_id)
   votes = get_award_votes_summary_sql(
     event_id,
     session['user_id'],
@@ -884,7 +896,7 @@ def player_live_state():
   wheels = get_wheels_for_event_sql(event_id)
   awards = get_awards_for_event_sql(event_id)
   settings = get_awards_settings_sql(event_id)
-  admin_user = is_admin()
+  admin_user = can_manage_event(event_id)
   votes = get_award_votes_summary_sql(
     event_id,
     session['user_id'],
@@ -918,7 +930,7 @@ def player_live_state():
 
 
 @main.route('/api/ref-live-state', methods=['POST'])
-@admin_required
+@event_manager_required
 def ref_live_state():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -962,7 +974,7 @@ def ref_live_state():
 
 
 @main.route('/api/create-wheel', methods=['POST'])
-@admin_required
+@event_manager_required
 def create_wheel():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -977,7 +989,7 @@ def create_wheel():
 
 
 @main.route('/api/delete-wheel', methods=['POST'])
-@admin_required
+@event_manager_required
 def delete_wheel():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -990,7 +1002,7 @@ def delete_wheel():
 
 
 @main.route('/api/add-wheel-item', methods=['POST'])
-@admin_required
+@event_manager_required
 def add_wheel_item():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1014,7 +1026,7 @@ def add_wheel_item():
 
 
 @main.route('/api/update-wheel-item', methods=['POST'])
-@admin_required
+@event_manager_required
 def update_wheel_item():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1038,7 +1050,7 @@ def update_wheel_item():
 
 
 @main.route('/api/delete-wheel-item', methods=['POST'])
-@admin_required
+@event_manager_required
 def delete_wheel_item():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1051,7 +1063,7 @@ def delete_wheel_item():
 
 
 @main.route('/api/seed-wheel-items', methods=['POST'])
-@admin_required
+@event_manager_required
 def seed_wheel_items():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1065,7 +1077,7 @@ def seed_wheel_items():
 
 
 @main.route('/api/assign-player-task', methods=['POST'])
-@admin_required
+@event_manager_required
 def assign_player_task():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1110,7 +1122,7 @@ def assign_player_task():
 
 
 @main.route('/api/spin-direct-wheel', methods=['POST'])
-@admin_required
+@event_manager_required
 def spin_direct_wheel():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1127,7 +1139,7 @@ def spin_direct_wheel():
 
 
 @main.route('/api/confirm-player-task', methods=['POST'])
-@admin_required
+@event_manager_required
 def confirm_player_task():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1148,7 +1160,7 @@ def confirm_player_task():
 
 
 @main.route('/api/cancel-player-task', methods=['POST'])
-@admin_required
+@event_manager_required
 def cancel_player_task():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1182,7 +1194,7 @@ def spin_task_wheel():
   task_id = data.get('task_id')
   if not event_id or not task_id:
     return jsonify({"status": "failed", "received": "Bad request"}), 400
-  out = spin_task_wheel_sql(task_id, event_id, session['user_id'], is_admin())
+  out = spin_task_wheel_sql(task_id, event_id, session['user_id'], can_manage_event(event_id))
   if out == 'forbidden':
     return jsonify({"status": "failed", "received": "Forbidden"}), 403
   if out == 'empty_wheel':
@@ -1203,7 +1215,7 @@ def apply_task_target():
   target_team_id = data.get('target_team_id')
   if not event_id or not task_id or not target_team_id:
     return jsonify({"status": "failed", "received": "Bad request"}), 400
-  out = apply_task_target_sql(task_id, event_id, target_team_id, session['user_id'], is_admin())
+  out = apply_task_target_sql(task_id, event_id, target_team_id, session['user_id'], can_manage_event(event_id))
   if out == 'forbidden':
     return jsonify({"status": "failed", "received": "Forbidden"}), 403
   if out == 'invalid_team':
@@ -1216,7 +1228,7 @@ def apply_task_target():
 
 
 @main.route('/api/create-award', methods=['POST'])
-@admin_required
+@event_manager_required
 def create_award():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1232,7 +1244,7 @@ def create_award():
 
 
 @main.route('/api/delete-award', methods=['POST'])
-@admin_required
+@event_manager_required
 def delete_award():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1245,7 +1257,7 @@ def delete_award():
 
 
 @main.route('/api/seed-default-awards', methods=['POST'])
-@admin_required
+@event_manager_required
 def seed_default_awards():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1258,7 +1270,7 @@ def seed_default_awards():
 
 
 @main.route('/api/set-awards-settings', methods=['POST'])
-@admin_required
+@event_manager_required
 def set_awards_settings():
   data = request.get_json(silent=True) or {}
   event_id = data.get('event_id')
@@ -1287,7 +1299,7 @@ def cast_award_vote():
   if not event_id or not award_id or not nominee_id:
     return jsonify({"status": "failed", "received": "Bad request"}), 400
 
-  admin_user = is_admin()
+  admin_user = can_manage_event(event_id)
   if voter_user_id != session['user_id'] and not admin_user:
     return jsonify({"status": "failed", "received": "Forbidden"}), 403
   if not can_view_event(event_id):
@@ -1311,3 +1323,39 @@ def cast_award_vote():
   if out is not True:
     return jsonify({"status": "failed", "received": "Could not save vote"})
   return jsonify({"status": "success", "received": {"award_id": award_id, "voter_user_id": voter_user_id}})
+
+
+# ---- per-crawl refs ----
+
+@main.route('/api/event-refs', methods=['POST'])
+@event_manager_required
+def event_refs():
+  event_id = (request.get_json(silent=True) or {}).get('event_id')
+  return jsonify({"status": "success", "received": {
+    "refs": list_refs_sql(event_id), "can_change": can_change_refs(event_id)}})
+
+
+@main.route('/api/add-event-ref', methods=['POST'])
+@event_manager_required
+def add_event_ref():
+  data = request.get_json(silent=True) or {}
+  event_id = data.get('event_id')
+  name = str(data.get('name') or '').strip()
+  if not can_change_refs(event_id):
+    return jsonify({"status": "failed", "received": "Only the organiser can add refs"}), 403
+  user = get_user_data_from_name_sql(name) if name else None
+  if not user:
+    return jsonify({"status": "failed", "received": "No account with that name. They need to sign up first."}), 404
+  add_ref_sql(event_id, user[0]['id'], session['user_id'])
+  return jsonify({"status": "success", "received": list_refs_sql(event_id)})
+
+
+@main.route('/api/remove-event-ref', methods=['POST'])
+@event_manager_required
+def remove_event_ref():
+  data = request.get_json(silent=True) or {}
+  event_id = data.get('event_id')
+  if not can_change_refs(event_id):
+    return jsonify({"status": "failed", "received": "Only the organiser can remove refs"}), 403
+  remove_ref_sql(event_id, data.get('user_id'))
+  return jsonify({"status": "success", "received": list_refs_sql(event_id)})

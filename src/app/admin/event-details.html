@@ -5,7 +5,7 @@
     <div class="header-actions">
       <a [routerLink]="['/ref', currentEventID]" class="btn btn-outline">Ref Mode</a>
       <a [routerLink]="['/map-view', currentEventID]" class="btn btn-outline">Media</a>
-      <button *ngIf="authService.isOwner()" type="button" class="btn btn-danger" (click)="openResetModal()">Reset Scores</button>
+      <button *ngIf="canChangeRefs" type="button" class="btn btn-danger" (click)="openResetModal()">Reset Scores</button>
       <a [routerLink]="['/admin-dashboard']" class="btn btn-outline">Back</a>
     </div>
   </header>
@@ -128,6 +128,27 @@
         </button>
       </div>
     </div>
+  </section>
+
+  <!-- Refs -->
+  <section class="admin-card" id="refs">
+    <h2>Refs <small class="optional">who can run this crawl</small></h2>
+    <div class="list-container" *ngIf="refs.length">
+      <div *ngFor="let r of refs" class="list-item pub-item">
+        <div class="pub-row-main">
+          <div class="item-info">{{ r.name }} <small class="optional">{{ r.kind === 'organiser' ? 'organiser' : 'co-ref' }}</small></div>
+          <div class="row-actions" *ngIf="canChangeRefs && r.kind === 'ref'">
+            <button type="button" class="btn btn-small btn-danger" (click)="removeRef(r)" title="Remove ref">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint" *ngIf="!refs.length">Only staff run this crawl right now.</p>
+    <form class="inline-form" *ngIf="canChangeRefs" (ngSubmit)="addRef()">
+      <input type="text" class="form-control" name="newRefName" [(ngModel)]="newRefName" placeholder="Their username" autocomplete="off">
+      <button type="submit" class="btn btn-primary" [disabled]="!newRefName.trim() || busy">Add ref</button>
+    </form>
+    <p class="error-text" *ngIf="refMessage">{{ refMessage }}</p>
   </section>
 
   <!-- 3. Pubs -->

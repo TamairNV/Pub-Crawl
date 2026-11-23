@@ -1,6 +1,6 @@
 <div class="admin-dashboard">
   <header class="admin-header">
-    <h1>Admin Dashboard</h1>
+    <h1>{{ authService.isAdmin() ? 'Admin Dashboard' : 'Organise' }}</h1>
 
     <div class="header-actions">
       <a *ngIf="authService.isOwner()" [routerLink]="['/admin-restore']" class="btn btn-outline">
@@ -39,7 +39,7 @@
           <div class="row-actions">
             <a [routerLink]="['/event-details', event.id]" class="go">Set up &rarr;</a>
             <button
-              *ngIf="authService.isOwner()"
+              *ngIf="authService.isOwner() || event.is_organiser == 1"
               type="button"
               class="btn btn-small btn-outline"
               (click)="askResetEvent(event)"
@@ -48,7 +48,7 @@
               Reset
             </button>
             <button
-              *ngIf="authService.isOwner()"
+              *ngIf="authService.isOwner() || event.is_organiser == 1"
               type="button"
               class="btn btn-small btn-danger"
               (click)="askDeleteEvent(event)"

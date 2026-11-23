@@ -77,6 +77,12 @@ export class EventDetailsComponent implements OnInit {
   message = '';
   busy = false;
 
+  // Refs: organiser + co-refs
+  refs: any[] = [];
+  canChangeRefs = false;
+  newRefName = '';
+  refMessage = '';
+
   ngOnInit() {
     this.http.get('/api/me').subscribe({
       next: (res: any) => {
@@ -96,6 +102,42 @@ export class EventDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.currentEventID = params.get('id');
       this.refreshAll();
+      this.loadRefs();
+    });
+  }
+
+  loadRefs() {
+    if (!this.currentEventID) return;
+    this.http.post('/api/event-refs', { event_id: this.currentEventID }).subscribe({
+      next: (res: any) => {
+        if (res.status === 'success') {
+          this.refs = res.received.refs || [];
+          this.canChangeRefs = !!res.received.can_change;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  addRef() {
+    const name = this.newRefName.trim();
+    if (!name) return;
+    this.refMessage = '';
+    this.http.post('/api/add-event-ref', { event_id: this.currentEventID, name }).subscribe({
+      next: (res: any) => {
+        if (res.status === 'success') { this.refs = res.received; this.newRefName = ''; }
+        else { this.refMessage = res.received; }
+        this.cdr.detectChanges();
+      },
+      error: (err) => { this.refMessage = err?.error?.received || 'Could not add that ref.'; this.cdr.detectChanges(); }
+    });
+  }
+
+  removeRef(r: any) {
+    this.http.post('/api/remove-event-ref', { event_id: this.currentEventID, user_id: r.id }).subscribe({
+      next: (res: any) => { if (res.status === 'success') { this.refs = res.received; this.cdr.detectChanges(); } },
+      error: (err) => { this.refMessage = err?.error?.received || 'Could not remove that ref.'; this.cdr.detectChanges(); }
     });
   }
 

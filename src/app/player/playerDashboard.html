@@ -5,8 +5,8 @@
 
 
     <h2>Your Events</h2>
-    <div *ngIf="authService.isAdmin()">
-      <a [routerLink]="['/admin-dashboard']" class="link-as-button">Go to Admin Dashboard</a>
+    <div>
+      <a [routerLink]="['/admin-dashboard']" class="link-as-button">{{ authService.isAdmin() ? 'Go to Admin Dashboard' : 'Organise or ref a crawl' }}</a>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
     </div>
     <div *ngIf="events.length === 0" class="event-card">
         <h3>No Events Found</h3>
-        <p>You are not currently part of any events. An admin needs to add you to one.</p>
+        <p>You're not in a crawl yet. Scan your organiser's QR code, or organise your own.</p>
     </div>
   </div>
   <a [routerLink]="['/login']" class="btn btn-secondary">Logout</a>
