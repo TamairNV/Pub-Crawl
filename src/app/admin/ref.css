@@ -299,3 +299,7 @@
   .btn-circle { width: 56px; height: 56px; font-size: 2rem; border-width: 3px; }
   .points-display { min-width: 2.2ch; text-align: center; font-size: 1.7rem; }
 }
+/* keep the scrolling chip row from widening the page */
+.ref-dashboard { width: 100%; box-sizing: border-box; }
+.ref-dashboard > * { min-width: 0; }
+.team-filter { max-width: 100%; }
