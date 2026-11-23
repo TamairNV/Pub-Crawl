@@ -303,3 +303,8 @@
 .ref-dashboard { width: 100%; box-sizing: border-box; }
 .ref-dashboard > * { min-width: 0; }
 .team-filter { max-width: 100%; }
+@media (max-width: 640px) {
+  /* the sticky bar already names the pub; keep just the rule here */
+  .loc-card h2, .loc-card .pub-title { display: none; }
+  .loc-card .rule-box { margin-bottom: 0; }
+}
