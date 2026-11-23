@@ -29,5 +29,14 @@ export class AuthService {
     return this.currentUser;
   }
 
+  isAdmin() {
+    const role = (this.currentUser()?.role || '').toLowerCase();
+    return role === 'admin' || role === 'owner';
+  }
+
+  isOwner() {
+    return (this.currentUser()?.role || '').toLowerCase() === 'owner';
+  }
+
 }
 

@@ -18,6 +18,15 @@ import { AppComponent } from '../app';
 
 declare var mapkit: any;
 
+// Crawl photos now live on the share site, one gallery per crawl
+const SHARE_GALLERIES: Record<string, string> = {
+  "157f218e-f772-4804-a959-aea0e9b40498": "https://share.tamairnv.co.uk/e/ZkWryeYd8qk67rbs", // Beach
+  "2d06af5b-c09c-4257-ac40-4b94468d1128": "https://share.tamairnv.co.uk/e/zGdAtaQD4nEqJ9Kj", // Crawl of John
+  "b9ab12ec-f878-4f09-abea-3978fac9c1ce": "https://share.tamairnv.co.uk/e/48iJbPQNVDZ262d4", // Alan Car 1
+  "f3486c80-d6cb-4027-bac7-d50e5c3272fd": "https://share.tamairnv.co.uk/e/P1DrKSob2zoOPrTh", // Donegal
+  "7c257d7b-451e-47b1-977d-12c3f2a59585": "https://share.tamairnv.co.uk/e/JXbmXwC9WjPpW80b" // Phoebe 21st
+};
+
 @Component({
   selector: 'app-map-view',
   standalone: true,
@@ -33,6 +42,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   media_data : any[] = []
   currentUser: any;
   public currentEventID: string | null | undefined;
+  shareUrl: string | null = null;
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map: any;
@@ -48,8 +58,9 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.route.paramMap.subscribe(params => {
       this.currentEventID = params.get('id');
       console.log('Loaded event with ID:', this.currentEventID);
+      this.shareUrl = (this.currentEventID && SHARE_GALLERIES[this.currentEventID]) || null;
     });
-    this.get_footage();
+    if (!this.shareUrl) this.get_footage();
   }
   /**
   ngAfterViewInit(): void {

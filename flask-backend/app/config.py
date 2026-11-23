@@ -8,5 +8,5 @@ class Config:
   SESSION_COOKIE_HTTPONLY = True
   SESSION_COOKIE_SAMESITE = 'Lax'
   PERMANENT_SESSION_LIFETIME = 60 * 60 * 24 * 30
-  DEBUG = True
-  TESTING = True
+  DEBUG = False
+  TESTING = False

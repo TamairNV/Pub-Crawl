@@ -188,3 +188,53 @@
   max-height: 100%;
   object-fit: contain;
 }
+
+/* Card that points to the share gallery */
+.share-card {
+  background: #ffffff;
+  border: 2px solid #111827;
+  border-radius: 12px;
+  box-shadow: 5px 5px 0px #111827;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #111827;
+  box-sizing: border-box;
+}
+
+.share-card .share-emoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.share-card h2 {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.share-card p {
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.share-card a.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111827;
+  text-decoration: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.share-card a.share-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}

@@ -1,0 +1,123 @@
+<!-- 5. Spin the Wheel Mini Events -->
+<div class="schema-banner" *ngIf="schemaError">{{ schemaError }}</div>
+<section class="admin-card" id="wheels">
+  <h2><span class="num">5</span> Spin the Wheel Mini Events <small class="optional">optional</small></h2>
+  <p class="hint">Create one or more wheels for this crawl. Add tasks and point rewards (or remove points from rival teams).</p>
+
+  <div class="wheels-list" *ngIf="wheels.length">
+    <div *ngFor="let wheel of wheels" class="wheel-card">
+      <div class="wheel-head">
+        <div>
+          <strong>{{ wheel.name }}</strong>
+          <span class="badge">{{ wheel.items.length }} slices</span>
+          <div class="desc" *ngIf="wheel.description">{{ wheel.description }}</div>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="btn btn-small btn-secondary" *ngIf="wheel.items.length === 0" (click)="seedWheelItems(wheel)" [disabled]="busy">
+            + Starter tasks
+          </button>
+          <button type="button" class="btn btn-small btn-danger" (click)="deleteWheel(wheel)" [disabled]="busy" title="Delete wheel">✕</button>
+        </div>
+      </div>
+
+      <div class="slice-list" *ngIf="wheel.items.length">
+        <div *ngFor="let item of wheel.items" class="slice-row">
+          <div class="slice-info">
+            <span class="dot" [style.background]="item.colour"></span>
+            <div>
+              <strong>{{ item.label }}</strong>
+              <div class="meta-pills">
+                <span class="pill" [class.pill-task]="item.requires_completion" [class.pill-instant]="!item.requires_completion">
+                  {{ item.requires_completion ? 'Task (ref confirms)' : 'Instant spin' }}
+                </span>
+                <span class="pill pill-pts">{{ describeItem(item) }}</span>
+              </div>
+              <div class="desc" *ngIf="item.description">{{ item.description }}</div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-small btn-danger" (click)="deleteWheelItem(item)" title="Remove slice">✕</button>
+        </div>
+      </div>
+
+      <form class="slice-form" (ngSubmit)="addWheelItem(wheel)">
+        <input type="text" class="form-control" [name]="'label-' + wheel.id" [(ngModel)]="draftFor(wheel).label"
+               placeholder="Task or outcome (e.g. Swap hats with a stranger)" autocomplete="off">
+        <input type="text" class="form-control" [name]="'desc-' + wheel.id" [(ngModel)]="draftFor(wheel).description"
+               placeholder="Extra details (optional)" autocomplete="off">
+        <div class="form-row">
+          <label class="mini-field">
+            <span>Type</span>
+            <select class="form-control" [name]="'req-' + wheel.id" [(ngModel)]="draftFor(wheel).requires_completion">
+              <option [ngValue]="true">Task to complete (ref confirms)</option>
+              <option [ngValue]="false">Instant on spin</option>
+            </select>
+          </label>
+          <label class="mini-field">
+            <span>Effect</span>
+            <select class="form-control" [name]="'eff-' + wheel.id" [(ngModel)]="draftFor(wheel).effect_choice">
+              <option value="add_points">Give player points (+)</option>
+              <option value="deduct_player">Take points from player (-)</option>
+              <option value="deduct_team">Remove points from another team</option>
+              <option value="steal_team">Steal points from another team</option>
+              <option value="none">Fun dare only (0 pts)</option>
+            </select>
+          </label>
+          <label class="mini-field pts-field" *ngIf="draftFor(wheel).effect_choice !== 'none'">
+            <span>Points</span>
+            <input type="number" class="form-control" min="0" max="50" [name]="'pts-' + wheel.id" [(ngModel)]="draftFor(wheel).points">
+          </label>
+          <label class="mini-field col-field">
+            <span>Colour</span>
+            <input type="color" class="color-picker" [name]="'col-' + wheel.id" [(ngModel)]="draftFor(wheel).colour">
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="!draftFor(wheel).label.trim() || busy">Add to wheel</button>
+      </form>
+    </div>
+  </div>
+
+  <form class="form-group" (ngSubmit)="createWheel()">
+    <h3>Create a new Spin-the-Wheel event</h3>
+    <input type="text" class="form-control" name="wheelName" [(ngModel)]="newWheelName" placeholder="Wheel name (e.g. Gamble Wheel, Chaos Wheel)" autocomplete="off">
+    <input type="text" class="form-control" name="wheelDesc" [(ngModel)]="newWheelDesc" placeholder="Description (optional)" autocomplete="off">
+    <button type="submit" class="btn btn-primary" [disabled]="!newWheelName.trim() || busy">Add wheel event</button>
+  </form>
+</section>
+
+<!-- 6. Awards -->
+<section class="admin-card" id="awards">
+  <h2><span class="num">6</span> Awards <small class="optional">players &amp; refs vote</small></h2>
+  <p class="hint">Best Dressed, Best Group Chemistry, Best Handshake, etc. Players vote on their own page and refs can vote on behalf of anyone.</p>
+
+  <div class="quick-row" *ngIf="awards.length === 0">
+    <button type="button" class="btn btn-small btn-success" (click)="seedAwards()" [disabled]="busy">
+      + Add starter awards (Best Dressed, Group Chemistry, Handshake, Life of the Party)
+    </button>
+  </div>
+
+  <div class="list-container" *ngIf="awards.length">
+    <div *ngFor="let award of awards" class="list-item">
+      <div class="item-info">
+        <strong>{{ award.name }}</strong>
+        <span class="badge">{{ targetLabel(award.target_type) }}</span>
+        <span class="desc" *ngIf="award.description">{{ award.description }}</span>
+      </div>
+      <button type="button" class="btn btn-small btn-danger" (click)="deleteAward(award)" title="Remove award">✕</button>
+    </div>
+  </div>
+
+  <form class="form-group" (ngSubmit)="createAward()">
+    <div class="form-row">
+      <input type="text" class="form-control" name="awardName" [(ngModel)]="newAwardName" placeholder="Award name (e.g. Best Handshake)" autocomplete="off">
+      <select class="form-control target-select" name="awardTarget" [(ngModel)]="newAwardTarget">
+        <option value="player">Vote for: Players</option>
+        <option value="team">Vote for: Teams</option>
+        <option value="either">Vote for: Players or Teams</option>
+      </select>
+    </div>
+    <input type="text" class="form-control" name="awardDesc" [(ngModel)]="newAwardDesc" placeholder="Description (optional)" autocomplete="off">
+    <button type="submit" class="btn btn-primary" [disabled]="!newAwardName.trim() || busy">Add award</button>
+  </form>
+</section>
+
+<div class="mini-toast" *ngIf="toast">{{ toast }}</div>

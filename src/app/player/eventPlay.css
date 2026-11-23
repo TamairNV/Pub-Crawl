@@ -170,3 +170,11 @@
   color: #374151;
   margin-left: 0.5rem;
 }
+
+.wheel-adj {
+  font-size: 0.85rem;
+  font-weight: 800;
+  -webkit-text-stroke: 0;
+  color: #b91c1c;
+  margin-left: 0.35rem;
+}

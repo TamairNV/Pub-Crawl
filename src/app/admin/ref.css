@@ -200,6 +200,41 @@
   margin-left: 0.5rem;
 }
 
+.grid-hint {
+  margin: -0.75rem 0 1rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.player-name-btn {
+  width: 100%;
+  background: #f8fafc;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  padding: 0.5rem 0.55rem;
+  margin-bottom: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: inherit;
+  color: #111827;
+}
+.player-name-btn:hover { background: #fef3c7; }
+.name-line { display: inline-flex; align-items: center; gap: 0.4rem; }
+.team-dot {
+  width: 0.7rem; height: 0.7rem; border-radius: 50%; border: 1.5px solid #111827; flex: none;
+}
+.player-name { font-size: 1.1rem; font-weight: 800; }
+.team-label { font-size: 0.75rem; font-weight: 700; color: #4b5563; }
+.task-pill {
+  font-size: 0.72rem; font-weight: 800; padding: 0.1rem 0.5rem; border-radius: 999px;
+  background: #dbeafe; border: 1.5px solid #111827; margin-top: 0.1rem;
+}
+.task-pill.urgent { background: #fde047; }
+
 /* Badges */
 .badge {
   background: #fbbf24;

@@ -1,0 +1,123 @@
+.wheel-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.wheel-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #111827;
+}
+
+.wheel-stage {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+
+.pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: #ef4444;
+  -webkit-text-stroke: 2px #111827;
+  filter: drop-shadow(0 2px 0 #111827);
+  pointer-events: none;
+}
+
+.wheel-rotator {
+  width: 100%;
+  height: 100%;
+  transition: transform 3.8s cubic-bezier(0.12, 0.86, 0.16, 1);
+  will-change: transform;
+}
+
+.wheel-rotator canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.center-hub {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid #111827;
+  background: #fbbf24;
+  color: #111827;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 0 #111827;
+  box-sizing: border-box;
+}
+
+.center-hub:disabled {
+  background: #fde68a;
+  color: #4b5563;
+  border-color: #374151;
+  cursor: not-allowed;
+}
+
+.spin-btn {
+  padding: 0.65rem 1.4rem;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  background: #fbbf24;
+  color: #111827;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #111827;
+}
+
+.spin-btn:hover:not(:disabled) {
+  background: #f59e0b;
+}
+
+.spin-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.spin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.landed-banner {
+  width: 100%;
+  background: #fef3c7;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.landed-title {
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.landed-effect {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #374151;
+}

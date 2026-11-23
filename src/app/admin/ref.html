@@ -17,7 +17,7 @@
       </div>
 
       <div class="rule-box">
-        <strong>Rule: {{ locationsRules[currentPubIndex].ruleName }}</strong>
+        <strong *ngIf="locationsRules[currentPubIndex].ruleName">Rule: {{ locationsRules[currentPubIndex].ruleName }}</strong>
         <p>{{ locationsRules[currentPubIndex].ruleDescription }}</p>
       </div>
     </div>
@@ -37,17 +37,50 @@
   <!-- Player Points Card -->
   <section class="fun-card">
     <h2>Player Points</h2>
+    <p class="grid-hint">Tap any player's name to assign a task, spin a wheel, confirm completion, or reveal their password.</p>
     <div class="user-grid">
       <div *ngFor="let user of userDetails" class="player-card">
-        <h4>{{ user.name }}</h4>
+        <button type="button" class="player-name-btn" (click)="openPlayerModal(user)">
+          <span class="name-line">
+            <span class="team-dot" [style.background]="teamColour(user.teamID)"></span>
+            <span class="player-name">{{ user.name }}</span>
+          </span>
+          <span class="team-label" *ngIf="user.teamName">{{ user.teamName }}</span>
+          <span
+            class="task-pill"
+            *ngIf="playerStatusBadge(user.userID) as badge"
+            [class.urgent]="badge.urgent"
+          >
+            {{ badge.label }}
+          </span>
+        </button>
         <div class="points-control">
-          <button class="btn btn-danger btn-circle" (click)="givePoint(-1, user.userID)">-</button>
+          <button type="button" class="btn btn-danger btn-circle" (click)="givePoint(-1, user.userID)">-</button>
           <span class="points-display">{{ user.points || 0 }}</span>
-          <button class="btn btn-success btn-circle" (click)="givePoint(1, user.userID)">+</button>
+          <button type="button" class="btn btn-success btn-circle" (click)="givePoint(1, user.userID)">+</button>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Mini Events: Team Standings, Task Queue, Spin Wheels, Player Modal, Awards Proxy Voting -->
+  <app-ref-mini-events
+    [eventId]="currentEventID || null"
+    [currentUser]="currentUser"
+    [users]="userDetails"
+    [teams]="teams"
+    [points]="points"
+    [teamAdjustments]="teamAdjustments"
+    [wheels]="wheels"
+    [tasks]="tasks"
+    [awards]="awards"
+    [awardsSettings]="awardsSettings"
+    [awardsVotes]="awardsVotes"
+    [liveStateError]="liveStateError"
+    [selectedPlayer]="selectedPlayer"
+    (closePlayerModal)="selectedPlayer = null"
+    (stateChanged)="loadLiveState()"
+  ></app-ref-mini-events>
 
   <!-- General Rules Card -->
   <section class="fun-card">

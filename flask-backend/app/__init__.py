@@ -1,5 +1,6 @@
 
 from flask import Flask, current_app, request, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from flask_talisman import Talisman
 
@@ -16,6 +17,7 @@ def create_app():
   app = Flask(__name__)
   app.config.from_object(Config)
   app.config['MAX_CONTENT_LENGTH'] = 6000 * 1024 * 1024
+  app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
   CORS(app, origins=["http://localhost:4200"])
   Talisman(app,
@@ -36,6 +38,8 @@ def create_app():
            }
            )
 
+  from .mini_events_manager import ensure_mini_events_schema
+  ensure_mini_events_schema()
 
   from .routes import main
 

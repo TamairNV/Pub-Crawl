@@ -30,6 +30,15 @@ export class PlayerDashboard implements OnInit {
   ngOnInit() {
     this.currentUser = this.authService.getSession()();
     this.getUserEvents();
+    this.http.get('/api/me').subscribe({
+      next: (response: any) => {
+        if (response.status == 'success' && this.currentUser) {
+          this.authService.setSession({...this.currentUser, role: response.received.role});
+          this.currentUser = this.authService.getSession()();
+          this.cdr.detectChanges();
+        }
+      }
+    })
 
   }
   events : any = []

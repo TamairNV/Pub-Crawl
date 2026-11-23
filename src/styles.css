@@ -11,6 +11,85 @@
   --font-family: "Nunito", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+*,
+*::before,
+*::after {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+[role="button"],
+.btn,
+.link-as-button {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+  select,
+  textarea {
+    font-size: max(16px, 1rem) !important;
+  }
+}
+
+/* Shared admin/ref click-name -> reveal password helpers */
+.name-tap-btn {
+  background: transparent;
+  border: 0;
+  padding: 0.15rem 0;
+  font: inherit;
+  font-weight: 800;
+  color: #111827;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline dotted #6b7280;
+  text-underline-offset: 3px;
+}
+
+.name-tap-btn:hover {
+  color: #1d4ed8;
+}
+
+.pw-reveal-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fefce8;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+}
+
+.pw-secret {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #111827;
+  background: #fde047;
+  border: 2px solid #111827;
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  -webkit-user-select: text;
+  user-select: text;
+  word-break: break-all;
+}
+
+.pw-error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
 body {
   margin: 0;
   padding: 0;

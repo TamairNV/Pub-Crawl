@@ -1,9 +1,9 @@
-import {Component, inject, OnInit, signal,ChangeDetectorRef} from '@angular/core';
+import {Component, inject, OnInit, ChangeDetectorRef} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {UserProfile} from '../auth';
+import {AuthService} from '../auth';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -16,178 +16,223 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AdminDashboardComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef) {}
-  ngOnInit() {
-    this.getUsers()
-    this.getEvents()
-  }
-  isOpen = false;
-  showNewTeamForm = false;
-
-  newTeamColor = ""
-  newTeamName = ""
-  currentEventID = 0
-  eventCreated = signal(false);
-  eventID = crypto.randomUUID();
-  public selectedTeamIDs : any[] = [];
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-  }
   http = inject(HttpClient);
   router = inject(Router);
-  events : any[] = [];
+  authService = inject(AuthService);
 
-  event_name = '';
-  people : any[] = [];
-  selectedPeople : boolean[] = [];
-  teams   : any[] = [];
-  isLoading = false;
+  events: any[] = [];
+  eventName = '';
+  creating = false;
+  createError = '';
 
-  getUsers() {
-    if (this.isLoading) {
+  // Owner only: who is an admin
+  users: any[] = [];
+  userSearch = '';
+  roleMessage = '';
+
+  // Owner only: delete / restore / reset events
+  deletedCount = 0;
+  eventToDelete: any | null = null;
+  deletingEvent = false;
+  deleteMessage = '';
+
+  eventToReset: any | null = null;
+  resettingEvent = false;
+  resetClearMedia = true;
+  resetError = '';
+
+  ngOnInit() {
+    this.getEvents();
+    this.http.get('/api/me').subscribe({
+      next: (response: any) => {
+        const cur = this.authService.getSession()();
+        if (response.status === 'success' && cur) {
+          this.authService.setSession({ ...cur, role: response.received.role });
+        }
+        if (this.authService.isOwner()) {
+          this.getManagedUsers();
+          this.getDeletedCount();
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        if (this.authService.isOwner()) {
+          this.getManagedUsers();
+          this.getDeletedCount();
+        }
+      }
+    });
+  }
+
+  // Step 1 of a new crawl: just a name. Everything else is set up on the crawl's own page.
+  async createCrawl() {
+    const name = this.eventName.trim();
+    if (!name || this.creating) {
       return;
     }
-
-    this.isLoading = true;
-    this.http.get('/api/get-users')
-      .subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          console.log(response,response.received)
-          if (response.received == "Wrong") {
-          } else {
-            console.log('Users retrieved successfully!', response);
-
-            this.people = response
-          }
-        },
-        error: (err) => {
-          this.isLoading = false;
-          console.error('Flask request failed:', err);
-        }
-      });
-
-  }
-
-  getTeams(){
-    const data = {event_id :this.currentEventID}
-    this.http.post('/api/get-teams',data)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response,response.received)
-          if (response.status == "failed" || response.received == undefined) {
-            console.log('getting teams fail!', response);
-          } else {
-            console.log('Teams retrieved successfully!', response);
-            this.teams = response.received
-            this.cdr.detectChanges();
-
-          }
-        },
-        error: (err) => {
-          console.error('Flask request failed:', err);
-        }
-      });
-
-  }
-
-  async createCrawl() {
-    if (this.event_name && !this.eventCreated()) {
-      const data = { name: this.event_name, id: this.eventID };
-      try {
-        const response: any = await firstValueFrom(
-          this.http.post('/api/create-crawl', data)
-        );
-
-        if (response.status === "failed") {
-          console.log('getting teams fail!', response);
-        } else {
-          console.log('Crawl Created successfully!', response.received);
-          this.currentEventID = response.received;
-
-          this.eventCreated.set(true);
-        }
-      } catch (error) {
-        console.error("The server crashed or the network failed:", error);
+    this.creating = true;
+    this.createError = '';
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post('/api/create-crawl', { name, id: crypto.randomUUID() })
+      );
+      if (response.status === 'success') {
+        this.router.navigate(['/event-details', response.received]);
+      } else {
+        this.createError = 'Could not create the crawl. Try again.';
       }
+    } catch (error) {
+      this.createError = 'Could not create the crawl. Are you still logged in as an admin?';
     }
-  }
-
-  onTeamChange(event: any) {
-    const value = event.target.value;
-
-    if (value === 'new') {
-      this.showNewTeamForm = true;
-    }
-  }
-
-  async saveTeam(){
-
-    if(!this.eventCreated){
-      await this.createCrawl()
-      console.log("crawl Created")
-    }
-
-
-    const newTeam = {
-      name: this.newTeamName,
-      colour: this.newTeamColor,
-      event_id : this.eventID
-    };
-    this.http.post('/api/save-new-team',newTeam).subscribe({
-      next: (response: any) => {
-        if (response.received == "Wrong") {
-          console.log("Team adding error");
-        }else{
-
-          this.getTeams()
-
-          console.log("New Team Added")}
-      }
-    })
-    this.showNewTeamForm = false;
+    this.creating = false;
     this.cdr.detectChanges();
-
   }
 
-  savePlayers(){
-    const finalData = this.people
-      .map((person, index) => {
-        return {
-          userId: person.id,
-          userName: person.name,
-          isSelected: this.selectedPeople[index],
-          teamId: this.selectedTeamIDs[index],
-          eventId : this.currentEventID
-        };
-      })
-      .filter(entry => entry.isSelected);
-
-    console.log("Final payload:", finalData);
-
-    this.http.post('/api/save-people-to-event',finalData).subscribe({
-      next: (response: any) => {
-        if (response.received == "False") {
-          console.log("People added error");
-        }else{
-          this.toggleMenu();
-          this.getEvents()
-          console.log("Full Event Created")}
-      }
-    })
-  }
-
-
-  getEvents(){
+  getEvents() {
     this.http.get('/api/get-events').subscribe({
       next: (response: any) => {
-        if (response.received == "fail") {
-          console.log("events error");
-        }else{
-          this.events = response.received
-          console.log(this.events)
+        if (response.status == 'success') {
+          this.events = (response.received || []).slice().sort((a: any, b: any) => {
+            const ta = a?.created_at ? new Date(a.created_at).getTime() : 0;
+            const tb = b?.created_at ? new Date(b.created_at).getTime() : 0;
+            return tb - ta;
+          });
           this.cdr.detectChanges();
-          console.log("Events got")}
+        }
       }
-    })
+    });
+  }
+
+  getDeletedCount() {
+    this.http.get('/api/get-deleted-events').subscribe({
+      next: (response: any) => {
+        if (response.status === 'success') {
+          this.deletedCount = (response.received || []).length;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  askDeleteEvent(event: any) {
+    this.eventToDelete = event;
+    this.deleteMessage = '';
+  }
+
+  cancelDeleteEvent() {
+    if (this.deletingEvent) return;
+    this.eventToDelete = null;
+  }
+
+  confirmDeleteEvent() {
+    if (!this.eventToDelete || this.deletingEvent) return;
+    const target = this.eventToDelete;
+    this.deletingEvent = true;
+    this.deleteMessage = '';
+    this.http.post('/api/delete-event', { event_id: target.id }).subscribe({
+      next: (response: any) => {
+        this.deletingEvent = false;
+        if (response.status === 'success') {
+          this.events = this.events.filter(e => e.id !== target.id);
+          this.deletedCount += 1;
+          this.eventToDelete = null;
+          this.deleteMessage = `Moved "${target.name}" to Restore.`;
+        } else {
+          this.deleteMessage = response.received || 'Could not delete event.';
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.deletingEvent = false;
+        this.deleteMessage = err?.error?.received || 'Could not delete event.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  askResetEvent(event: any) {
+    this.eventToReset = event;
+    this.resetClearMedia = true;
+    this.resetError = '';
+    this.deleteMessage = '';
+  }
+
+  cancelResetEvent() {
+    if (this.resettingEvent) return;
+    this.eventToReset = null;
+  }
+
+  confirmResetEvent() {
+    if (!this.eventToReset || this.resettingEvent) return;
+    const target = this.eventToReset;
+    this.resettingEvent = true;
+    this.resetError = '';
+    this.http.post('/api/reset-event', { event_id: target.id, clear_media: this.resetClearMedia }).subscribe({
+      next: (response: any) => {
+        this.resettingEvent = false;
+        if (response.status === 'success') {
+          const c = response.received || {};
+          this.eventToReset = null;
+          this.deleteMessage =
+            `Reset "${target.name}" (${c.points || 0} pts, ${c.team_points || 0} team pts, ${c.tasks || 0} tasks, ${c.votes || 0} votes${this.resetClearMedia ? `, ${c.photos || 0} media` : ''} cleared).`;
+        } else {
+          this.resetError = response.received || 'Could not reset crawl scores.';
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.resettingEvent = false;
+        this.resetError = err?.error?.received || 'Could not reset crawl scores.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getManagedUsers() {
+    this.http.get('/api/manage-users').subscribe({
+      next: (response: any) => {
+        if (response.status == 'success') {
+          this.users = response.received;
+          this.cdr.detectChanges();
+        }
+      }
+    });
+  }
+
+  filteredUsers() {
+    const q = this.userSearch.trim().toLowerCase();
+    return q ? this.users.filter(u => String(u.name).toLowerCase().includes(q)) : this.users;
+  }
+
+  roleOf(user: any) {
+    return String(user.role || 'player').toLowerCase();
+  }
+
+  setRole(user: any, role: 'admin' | 'player') {
+    this.roleMessage = '';
+    this.http.post('/api/set-user-role', { user_id: user.id, role }).subscribe({
+      next: (response: any) => {
+        if (response.status == 'success') {
+          user.role = response.received.role;
+          this.roleMessage = role === 'admin'
+            ? `${user.name} is now an admin.`
+            : `${user.name} is no longer an admin.`;
+        } else {
+          this.roleMessage = response.received || 'Could not change that role.';
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.roleMessage = err?.error?.received || 'Could not change that role.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  logout() {
+    this.http.post('/api/logout-user', {}).subscribe({ complete: () => {} });
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

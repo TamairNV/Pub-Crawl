@@ -1,0 +1,78 @@
+<div class="restore-page">
+  <header class="restore-header">
+    <h1>Restore Crawls</h1>
+    <div class="header-actions">
+      <a [routerLink]="['/admin-dashboard']" class="btn btn-secondary">&larr; Back to Dashboard</a>
+    </div>
+  </header>
+
+  <section class="admin-card schema-card" *ngIf="schemaMissing">
+    <h2>Database Update Needed</h2>
+    <p class="hint">
+      Soft delete needs the <code>Event.deleted_at</code> column in MariaDB. Run this once on the server:
+    </p>
+    <pre class="sql-cmd">sudo mariadb pub_crawl &lt; /home/tnv/Desktop/Pub-Crawl/migrations/20261114_soft_delete.sql</pre>
+    <button type="button" class="btn btn-primary" (click)="loadDeletedEvents()">Retry</button>
+  </section>
+
+  <section class="admin-card" *ngIf="!schemaMissing">
+    <h2>Deleted Crawls</h2>
+    <p class="hint">
+      Deleted crawls are hidden from everyone until you restore them here or remove them forever.
+    </p>
+
+    <p class="status-msg ok" *ngIf="message">{{ message }}</p>
+    <p class="status-msg err" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div *ngIf="loading" class="empty-box">Loading deleted crawls...</div>
+
+    <div class="list-container" *ngIf="!loading && deletedEvents.length > 0">
+      <div *ngFor="let event of deletedEvents" class="list-item event-row">
+        <div class="event-meta">
+          <strong>{{ event.name }}</strong>
+          <small *ngIf="event.deleted_at">Deleted {{ event.deleted_at | date:'d MMM yyyy, HH:mm' }}</small>
+          <small *ngIf="event.created_at">Created {{ event.created_at | date:'d MMM yyyy, HH:mm' }}</small>
+        </div>
+        <div class="row-actions">
+          <button
+            type="button"
+            class="btn btn-small btn-success"
+            (click)="restoreEvent(event)"
+            [disabled]="busyId === event.id"
+          >
+            {{ busyId === event.id ? 'Restoring...' : 'Restore' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-small btn-danger"
+            (click)="askPurge(event)"
+            [disabled]="busyId === event.id"
+          >
+            Delete Forever
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && deletedEvents.length === 0" class="empty-box">
+      No deleted crawls in trash.
+    </div>
+  </section>
+
+  <div class="modal-overlay" *ngIf="eventToPurge" (click)="cancelPurge()">
+    <div class="popup-card" (click)="$event.stopPropagation()">
+      <h3>Delete Forever?</h3>
+      <p>
+        Permanently delete <strong>{{ eventToPurge.name }}</strong>?
+        This removes all teams, pubs, rules, points, wheels, awards, and uploaded media and cannot be undone.
+      </p>
+      <p class="status-msg err" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelPurge()" [disabled]="purging">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmPurge()" [disabled]="purging">
+          {{ purging ? 'Deleting...' : 'Delete Forever' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

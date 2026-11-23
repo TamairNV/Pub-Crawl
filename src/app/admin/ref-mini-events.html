@@ -1,0 +1,408 @@
+<div class="schema-banner" *ngIf="liveStateError">{{ liveStateError }}</div>
+
+<!-- Team Standings (includes wheel deductions / steals) -->
+<section class="fun-card">
+  <h2>Team Standings</h2>
+  <div class="standings-row" *ngIf="teams.length > 0; else noTeams">
+    <div *ngFor="let t of teamStandings(); let i = index" class="standing-chip">
+      <span class="rank">#{{ i + 1 }}</span>
+      <span class="dot" [style.background]="t.colour"></span>
+      <strong>{{ t.name }}</strong>
+      <span class="pts">{{ t.totalPoints }} pts</span>
+      <span class="adj" *ngIf="t.adjustment !== 0">
+        ({{ t.adjustment > 0 ? '+' : '' }}{{ t.adjustment }} wheel)
+      </span>
+    </div>
+  </div>
+  <ng-template #noTeams>
+    <p class="hint">No teams found for this event.</p>
+  </ng-template>
+</section>
+
+<!-- Active Tasks & Spin Queue -->
+<section class="fun-card">
+  <div class="card-head">
+    <h2>Tasks &amp; Wheel Queue ({{ activeTasks.length }})</h2>
+    <span class="hint-inline">Click any player above to send a task or spin</span>
+  </div>
+
+  <div *ngIf="activeTasks.length > 0; else noActiveTasks" class="task-list">
+    <div *ngFor="let task of activeTasks" class="task-card" [class.claimed]="task.player_claimed_done && task.status === 'pending'">
+      <div class="task-top">
+        <div class="task-who">
+          <span class="dot" [style.background]="task.user_team_colour || '#fbbf24'"></span>
+          <strong>{{ task.user_name }}</strong>
+          <span class="team-tag" *ngIf="task.user_team_name">{{ task.user_team_name }}</span>
+        </div>
+        <div class="badges">
+          <span class="pill pill-claim" *ngIf="task.player_claimed_done && task.status === 'pending'">✋ Player says Done!</span>
+          <span class="pill" *ngIf="task.status === 'ready_to_spin'">🎡 Ready to Spin</span>
+          <span class="pill pill-target" *ngIf="task.status === 'awaiting_target'">🎯 Pick Target Team</span>
+          <span class="pill pill-reward">{{ rewardBadge(task) }}</span>
+        </div>
+      </div>
+
+      <div class="task-body">
+        <div class="task-title">{{ task.title }}</div>
+        <div class="task-desc" *ngIf="task.description">{{ task.description }}</div>
+        <div class="task-desc" *ngIf="task.spun_label && task.status === 'awaiting_target'">
+          Spun: <strong>{{ task.spun_label }}</strong> ({{ task.result_summary }})
+        </div>
+      </div>
+
+      <!-- Pending -> Confirm or Cancel -->
+      <div class="task-actions" *ngIf="task.status === 'pending'">
+        <button class="btn btn-success btn-sm" (click)="confirmTask(task)" [disabled]="busy">
+          ✓ Confirm Completed
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="cancelTask(task)" [disabled]="busy">✕ Cancel</button>
+      </div>
+
+      <!-- Ready to Spin -> Ref spins or player spins -->
+      <div class="task-actions" *ngIf="task.status === 'ready_to_spin'">
+        <button class="btn btn-primary btn-sm" (click)="openTaskSpinModal(task)" [disabled]="busy">
+          🎡 Spin Wheel for {{ task.user_name }}
+        </button>
+        <span class="mini-note">Or player can spin on their page</span>
+        <button class="btn btn-danger btn-sm" (click)="cancelTask(task)" [disabled]="busy">✕</button>
+      </div>
+
+      <!-- Awaiting Target Team -> Ref can pick team on player's behalf -->
+      <div class="task-target" *ngIf="task.status === 'awaiting_target'">
+        <span class="mini-note">Choose team to lose points (or player picks on their phone):</span>
+        <div class="target-btns">
+          <button
+            *ngFor="let t of otherTeamsFor(task.user_team_id)"
+            class="btn btn-target btn-sm"
+            (click)="applyTargetTeam(task, t.id)"
+            [disabled]="busy"
+          >
+            <span class="dot-sm" [style.background]="t.colour || '#fbbf24'"></span>
+            {{ t.name }}
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="cancelTask(task)" [disabled]="busy">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noActiveTasks>
+    <p class="hint">No active tasks yet. Tap a player's name in Player Points above to give a task or spin a wheel!</p>
+  </ng-template>
+
+  <div *ngIf="completedTasks.length > 0" class="history-wrap">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="showCompleted = !showCompleted">
+      {{ showCompleted ? 'Hide' : 'Show' }} Recent Outcomes ({{ completedTasks.length }})
+    </button>
+    <div *ngIf="showCompleted" class="history-list">
+      <div *ngFor="let c of completedTasks.slice(0, 12)" class="history-row">
+        <span><strong>{{ c.user_name }}</strong>: {{ c.spun_label || c.title }}</span>
+        <span class="pill">{{ c.result_summary || 'Completed' }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Awards & Proxy Voting Card -->
+<section class="fun-card" id="ref-awards-section">
+  <div class="card-head">
+    <h2>Awards &amp; Ref Voting</h2>
+    <div class="toggles">
+      <button
+        class="btn btn-sm"
+        [class.btn-success]="awardsSettings.voting_open"
+        [class.btn-danger]="!awardsSettings.voting_open"
+        (click)="toggleAwardsSetting('voting_open')"
+        [disabled]="busy"
+      >
+        Voting: {{ awardsSettings.voting_open ? 'OPEN' : 'CLOSED' }}
+      </button>
+      <button
+        class="btn btn-sm"
+        [class.btn-primary]="awardsSettings.results_visible"
+        [class.btn-secondary]="!awardsSettings.results_visible"
+        (click)="toggleAwardsSetting('results_visible')"
+        [disabled]="busy"
+      >
+        Player Results: {{ awardsSettings.results_visible ? 'VISIBLE' : 'HIDDEN' }}
+      </button>
+    </div>
+  </div>
+
+  <p class="hint">Many players won't log in — choose any player below to cast or update their award votes for them.</p>
+
+  <div *ngIf="awards.length === 0" class="empty-awards">
+    <p class="hint">No award categories set up yet.</p>
+    <button class="btn btn-secondary btn-sm" (click)="seedDefaultAwards()" [disabled]="busy">
+      ✨ Add Starter Awards (Best Dressed, Best Handshake, ...)
+    </button>
+  </div>
+
+  <div *ngIf="awards.length > 0">
+    <div class="proxy-bar">
+      <label for="proxy-voter"><strong>Vote on behalf of:</strong></label>
+      <select id="proxy-voter" class="form-control" [(ngModel)]="proxyVoterId" (ngModelChange)="onProxyVoterChange()">
+        <option *ngFor="let u of users" [value]="u.userID">
+          {{ u.name }} ({{ u.teamName || 'No team' }}) — {{ voterVoteCount(u.userID) }}/{{ awards.length }} voted
+        </option>
+        <option *ngIf="currentUser?.id && !isCurrentUserParticipant()" [value]="currentUser.id">
+          {{ currentUser.name }} (Ref) — {{ voterVoteCount(currentUser.id) }}/{{ awards.length }} voted
+        </option>
+      </select>
+    </div>
+
+    <div class="awards-grid">
+      <div *ngFor="let award of awards" class="award-card">
+        <div class="award-head">
+          <strong>🏆 {{ award.name }}</strong>
+          <span class="pill">{{ award.target_type === 'team' ? 'Team' : award.target_type === 'either' ? 'Player or Team' : 'Player' }}</span>
+        </div>
+        <p class="award-desc" *ngIf="award.description">{{ award.description }}</p>
+
+        <select
+          class="form-control"
+          [ngModel]="currentProxyVoteKey(award.id)"
+          (ngModelChange)="castProxyVote(award, $event)"
+        >
+          <option value="">-- Select {{ voterSummaryName() }}'s vote --</option>
+          <optgroup *ngIf="award.target_type === 'player' || award.target_type === 'either'" label="Players">
+            <option *ngFor="let u of users" [value]="'player:' + u.userID">
+              {{ u.name }} ({{ u.teamName || 'Player' }})
+            </option>
+          </optgroup>
+          <optgroup *ngIf="award.target_type === 'team' || award.target_type === 'either'" label="Teams">
+            <option *ngFor="let t of teams" [value]="'team:' + t.id">
+              {{ t.name }} Team
+            </option>
+          </optgroup>
+        </select>
+
+        <!-- Live Ref Tally -->
+        <div class="tally" *ngIf="awardsVotes?.tally?.[award.id]?.length">
+          <div *ngFor="let entry of awardsVotes.tally[award.id].slice(0, 3); let idx = index" class="tally-row">
+            <span>{{ idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉' }} {{ entry.nominee_name }}</span>
+            <strong>{{ entry.votes }} vote{{ entry.votes === 1 ? '' : 's' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Player Action Modal -->
+<div class="modal-backdrop" *ngIf="selectedPlayer" (click)="closePlayerModal.emit()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <h3>{{ selectedPlayer.name }}</h3>
+        <div class="modal-sub">
+          <span class="pill">{{ selectedPlayer.teamName || 'No team' }}</span>
+          <span class="pill">{{ playerPoints(selectedPlayer.userID) }} pts</span>
+        </div>
+      </div>
+      <button type="button" class="close-btn" (click)="closePlayerModal.emit()">✕</button>
+    </div>
+
+    <app-password-reveal
+      [userId]="selectedPlayer.userID"
+      [eventId]="eventId"
+      btnClass="btn btn-secondary btn-sm"
+    ></app-password-reveal>
+
+    <!-- Player's active tasks -->
+    <div class="modal-section" *ngIf="selectedPlayerTasks.length > 0">
+      <h4>Active Tasks ({{ selectedPlayerTasks.length }})</h4>
+      <div *ngFor="let t of selectedPlayerTasks" class="mini-task">
+        <div>
+          <strong>{{ t.title }}</strong>
+          <span class="pill pill-claim" *ngIf="t.player_claimed_done && t.status === 'pending'">✋ Done!</span>
+          <div class="mini-note">{{ rewardBadge(t) }}</div>
+        </div>
+        <div class="task-actions">
+          <button *ngIf="t.status === 'pending'" class="btn btn-success btn-sm" (click)="confirmTask(t)" [disabled]="busy">✓ Confirm</button>
+          <button *ngIf="t.status === 'ready_to_spin'" class="btn btn-primary btn-sm" (click)="openTaskSpinModal(t)" [disabled]="busy">🎡 Spin</button>
+          <ng-container *ngIf="t.status === 'awaiting_target'">
+            <button *ngFor="let tm of otherTeamsFor(t.user_team_id)" class="btn btn-target btn-sm" (click)="applyTargetTeam(t, tm.id)" [disabled]="busy">
+              -{{ t.spun_points || t.reward_points }} {{ tm.name }}
+            </button>
+          </ng-container>
+          <button class="btn btn-danger btn-sm" (click)="cancelTask(t)" [disabled]="busy">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode tabs -->
+    <div class="tabs">
+      <button type="button" class="tab" [class.active]="modalTab === 'random'" (click)="modalTab = 'random'">🎲 Random Task</button>
+      <button type="button" class="tab" [class.active]="modalTab === 'spin'" (click)="modalTab = 'spin'">🎡 Spin Wheel</button>
+      <button type="button" class="tab" [class.active]="modalTab === 'custom'" (click)="modalTab = 'custom'">📝 Specific / Custom</button>
+    </div>
+
+    <!-- Tab 1: Random Task -->
+    <div *ngIf="modalTab === 'random'" class="tab-panel">
+      <div *ngIf="wheels.length === 0 || totalWheelSlices === 0" class="hint">
+        No wheel tasks exist yet. Add a wheel &amp; slices in Crawl Setup (Step 5), or use the Custom Task tab!
+      </div>
+      <ng-container *ngIf="wheels.length > 0 && totalWheelSlices > 0">
+        <label class="field">
+          <span>Draw random task from:</span>
+          <select class="form-control" [(ngModel)]="randomWheelId">
+            <option value="">Any Wheel ({{ totalWheelSlices }} tasks)</option>
+            <option *ngFor="let w of wheels" [value]="w.id" [disabled]="!w.items.length">
+              {{ w.name }} ({{ w.items.length }} tasks)
+            </option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>When ref confirms completion:</span>
+          <select class="form-control" [(ngModel)]="randomRewardMode">
+            <option value="spin_wheel">Unlock Spin the Wheel (ref or player spins)</option>
+            <option value="item">Apply the task's own points / team effect directly</option>
+          </select>
+        </label>
+
+        <label class="field" *ngIf="randomRewardMode === 'spin_wheel'">
+          <span>Which wheel to spin on confirm:</span>
+          <select class="form-control" [(ngModel)]="randomRewardWheelId">
+            <option *ngFor="let w of wheels" [value]="w.id" [disabled]="!w.items.length">{{ w.name }}</option>
+          </select>
+        </label>
+
+        <button class="btn btn-primary" (click)="assignRandomTask()" [disabled]="busy">
+          🎲 Send Random Task to {{ selectedPlayer.name }}
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Tab 2: Spin Directly -->
+    <div *ngIf="modalTab === 'spin'" class="tab-panel">
+      <div *ngIf="wheels.length === 0 || totalWheelSlices === 0" class="hint">
+        Add a wheel &amp; slices in Crawl Setup (Step 5) first!
+      </div>
+      <ng-container *ngIf="wheels.length > 0 && totalWheelSlices > 0">
+        <label class="field">
+          <span>Select Wheel:</span>
+          <select class="form-control" [(ngModel)]="directSpinWheelId">
+            <option *ngFor="let w of wheels" [value]="w.id" [disabled]="!w.items.length">
+              {{ w.name }} ({{ w.items.length }} slices)
+            </option>
+          </select>
+        </label>
+        <button class="btn btn-primary" (click)="openDirectSpinModal(selectedPlayer, directSpinWheelId)" [disabled]="busy || !directSpinWheelId">
+          🎡 Open &amp; Spin Wheel for {{ selectedPlayer.name }}
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Tab 3: Custom or Specific Slice -->
+    <div *ngIf="modalTab === 'custom'" class="tab-panel">
+      <label class="field" *ngIf="allWheelSlices.length > 0">
+        <span>Quick-fill from wheel item (optional):</span>
+        <select class="form-control" [(ngModel)]="customPrefillKey" (ngModelChange)="onPrefillChange()">
+          <option value="">-- Custom task --</option>
+          <option *ngFor="let s of allWheelSlices" [value]="s.key">
+            [{{ s.wheel.name }}] {{ s.item.label }} ({{ sliceBadge(s.item) }})
+          </option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Task Title:</span>
+        <input class="form-control" [(ngModel)]="customTitle" placeholder="e.g., Get a selfie with the bartender" />
+      </label>
+
+      <label class="field">
+        <span>Details (optional):</span>
+        <input class="form-control" [(ngModel)]="customDesc" placeholder="Show the ref when done" />
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Reward on Confirm:</span>
+          <select class="form-control" [(ngModel)]="customRewardType">
+            <option value="spin_wheel" [disabled]="wheels.length === 0">Unlock Wheel Spin</option>
+            <option value="add_points">Give / Take Player Points</option>
+            <option value="deduct_team">Remove Other Team Points</option>
+            <option value="steal_team">Steal Points from Other Team</option>
+            <option value="none">Fun Dare (0 pts)</option>
+          </select>
+        </label>
+
+        <label class="field small" *ngIf="customRewardType !== 'spin_wheel' && customRewardType !== 'none'">
+          <span>Points:</span>
+          <input type="number" class="form-control" [(ngModel)]="customRewardPoints" />
+        </label>
+
+        <label class="field" *ngIf="customRewardType === 'spin_wheel'">
+          <span>Wheel:</span>
+          <select class="form-control" [(ngModel)]="customRewardWheelId">
+            <option *ngFor="let w of wheels" [value]="w.id">{{ w.name }}</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="btn btn-primary" (click)="assignCustomTask()" [disabled]="busy || !customTitle.trim()">
+        Send Task to {{ selectedPlayer.name }}
+      </button>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" (click)="jumpToProxyVote(selectedPlayer)">
+        🏆 Vote Awards as {{ selectedPlayer.name }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Wheel Spin Overlay Modal -->
+<div class="modal-backdrop" *ngIf="spinModal" (click)="closeSpinModal()">
+  <div class="modal-card spin-modal" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <h3>Spinning for {{ spinModal.playerName }}</h3>
+        <div class="mini-note" *ngIf="spinModal.alreadySpunNote">{{ spinModal.alreadySpunNote }}</div>
+      </div>
+      <button type="button" class="close-btn" (click)="closeSpinModal()" [disabled]="spinModal.spinningBusy && !spinModal.animationDone">✕</button>
+    </div>
+
+    <app-spin-wheel
+      *ngIf="!spinModal.alreadySpunNote"
+      [wheelName]="spinModal.wheelName"
+      [items]="spinModal.items"
+      [disabled]="spinModal.spinningBusy || spinModal.animationDone"
+      [spinCommand]="spinModal.spinCommand"
+      (spinRequested)="triggerSpinModal()"
+      (animationFinished)="onWheelAnimationFinished()"
+    ></app-spin-wheel>
+
+    <div class="spin-outcome" *ngIf="spinModal.animationDone && spinModal.resultTask as rt">
+      <div class="outcome-pill" *ngIf="rt.result_summary">{{ rt.result_summary }}</div>
+
+      <div *ngIf="rt.status === 'awaiting_target'" class="target-box">
+        <p><strong>Pick which team loses {{ rt.spun_points || rt.reward_points }} points:</strong></p>
+        <div class="target-btns">
+          <button
+            *ngFor="let t of otherTeamsFor(rt.user_team_id || spinModal.teamId)"
+            class="btn btn-target btn-sm"
+            (click)="applyTargetTeam(rt, t.id)"
+            [disabled]="busy"
+          >
+            <span class="dot-sm" [style.background]="t.colour || '#fbbf24'"></span>
+            {{ t.name }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="rt.status === 'pending'" class="target-btns">
+        <button class="btn btn-success btn-sm" (click)="confirmTask(rt); closeSpinModal()" [disabled]="busy">
+          ✓ Confirm Task Done Immediately
+        </button>
+      </div>
+
+      <button class="btn btn-secondary btn-sm" (click)="closeSpinModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="mini-toast" *ngIf="toast">{{ toast }}</div>

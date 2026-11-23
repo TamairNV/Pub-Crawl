@@ -1,32 +1,43 @@
-import {Component, inject, OnInit, signal,ChangeDetectorRef} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {AuthService, UserProfile} from '../auth';
-
-import { ActivatedRoute } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../auth';
+import { RefMiniEventsComponent } from './ref-mini-events';
+import { EventAward, MiniWheel, PlayerTask } from '../shared/mini-events.types';
 
 
 @Component({
   selector: 'app-ref',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, RefMiniEventsComponent],
   templateUrl: './ref.html',
   styleUrl: './ref.css'
 })
 
 
 
-export class RefComponent implements OnInit {
+export class RefComponent implements OnInit, OnDestroy {
   protected currentEventID: string | null | undefined;
   http = inject(HttpClient);
   router = inject(Router);
   authService = inject(AuthService);
-  protected userDetails: any;
-  private teams: any;
+  userDetails: any[] = [];
+  teams: any[] = [];
   currentUser: any;
-  constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
+  selectedPlayer: any | null = null;
+
+  wheels: MiniWheel[] = [];
+  tasks: PlayerTask[] = [];
+  teamAdjustments: any[] = [];
+  awards: EventAward[] = [];
+  awardsSettings = { voting_open: true, results_visible: false };
+  awardsVotes: any = { my_votes: {}, tally: {}, votes_by_voter: {} };
+  liveStateError = '';
+  private pollTimer: any = null;
+
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   ngOnInit() {
     if (!this.authService.getSession()()) {
       this.router.navigate(['/login']);
@@ -38,11 +49,24 @@ export class RefComponent implements OnInit {
       this.currentUser = this.authService.getSession()();
       console.log("current User ", this.currentUser)
       console.log('Loaded event with ID:', eventId);
+      this.getEventDetails();
+      this.getBaseRules();
+      this.getLocationRules();
+      this.loadLiveState();
     });
-    this.getEventDetails();
-    this.getBaseRules();
 
-    this.getLocationRules();
+    this.pollTimer = setInterval(() => {
+      if (this.currentEventID) {
+        this.loadLiveState();
+      }
+    }, 4000);
+  }
+
+  ngOnDestroy() {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
+    }
   }
 
   getEventDetails(){
@@ -124,20 +148,83 @@ export class RefComponent implements OnInit {
           console.log("got points error");
         }else{
           console.log("points got ",response.received)
-          this.points = response.received
-          for (let i = 0; i < this.userDetails.length; i++) {
-            for (let j = 0; j < this.points.length; j++) {
-              if(this.points[j].userID == this.userDetails[i].userID){
-                this.userDetails[i].points = this.points[j].total_points
-                break
-              }
-            }
-          }
+          this.points = response.received || [];
+          this.syncUserPoints();
           console.log(this.userDetails)
           this.cdr.detectChanges();
         }
       }
     })
+  }
+
+  private syncUserPoints() {
+    if (!this.userDetails) return;
+    for (let i = 0; i < this.userDetails.length; i++) {
+      let total = 0;
+      for (let j = 0; j < this.points.length; j++) {
+        if (this.points[j].userID == this.userDetails[i].userID) {
+          total = this.points[j].total_points;
+          break;
+        }
+      }
+      this.userDetails[i].points = total;
+    }
+  }
+
+  loadLiveState() {
+    if (!this.currentEventID) return;
+    this.http.post('/api/ref-live-state', { event_id: this.currentEventID }).subscribe({
+      next: (response: any) => {
+        if (response.status !== 'success' || !response.received) {
+          this.liveStateError = response.received || 'Could not load mini events.';
+          this.cdr.detectChanges();
+          return;
+        }
+        this.liveStateError = '';
+        const r = response.received;
+        this.tasks = r.tasks || [];
+        this.wheels = r.wheels || [];
+        this.points = r.points || [];
+        this.teamAdjustments = r.team_adjustments || [];
+        this.awards = r.awards || [];
+        this.awardsSettings = r.awards_settings || { voting_open: true, results_visible: false };
+        this.awardsVotes = r.awards_votes || { my_votes: {}, tally: {}, votes_by_voter: {} };
+        this.syncUserPoints();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.liveStateError = err?.status === 500
+          ? 'Mini-events database tables are not created yet. Run the DB migration script on the server.'
+          : (err?.error?.received || 'Could not load mini events.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openPlayerModal(user: any) {
+    this.selectedPlayer = user;
+  }
+
+  teamColour(teamId: string): string {
+    const t = (this.teams || []).find((x: any) => x.id === teamId);
+    return t?.colour || '#fbbf24';
+  }
+
+  playerStatusBadge(userId: string): { label: string; urgent: boolean } | null {
+    const mine = (this.tasks || []).filter(
+      (t) => t.user_id === userId && (t.status === 'pending' || t.status === 'ready_to_spin' || t.status === 'awaiting_target')
+    );
+    if (!mine.length) return null;
+    if (mine.some((t) => t.player_claimed_done && t.status === 'pending')) {
+      return { label: '✋ Done!', urgent: true };
+    }
+    if (mine.some((t) => t.status === 'ready_to_spin')) {
+      return { label: '🎡 Spin Ready', urgent: true };
+    }
+    if (mine.some((t) => t.status === 'awaiting_target')) {
+      return { label: '🎯 Pick Team', urgent: true };
+    }
+    return { label: `⏳ ${mine.length} task`, urgent: false };
   }
 
 

@@ -24,6 +24,10 @@ export class CreateAccountComponent {
     if (this.isLoading) {
       return;
     }
+    if (!this.userName.trim() || !this.userPasskey) {
+      this.userNameTaken.set('Please enter both a username and a passkey.');
+      return;
+    }
     this.isLoading = true;
     this.userNameTaken.set('');
 

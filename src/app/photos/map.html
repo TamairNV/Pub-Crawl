@@ -1,11 +1,17 @@
 <div class="timeline-page">
   <div class="top-nav">
-    <a *ngIf="currentUser.role == 'ADMIN'" [routerLink]="['/event-details', currentEventID]" class="btn btn-secondary">⬅ Back</a>
-    <a *ngIf="currentUser.role == 'player'" [routerLink]="['/event-play', currentEventID]" class="btn btn-secondary">⬅ Back</a>
-    <a [routerLink]="['/upload', currentEventID]" class="btn btn-primary">Upload Media</a>
+    <a *ngIf="currentUser.role == 'ADMIN' || currentUser.role == 'OWNER'" [routerLink]="['/event-details', currentEventID]" class="btn btn-secondary">⬅ Back</a>
+    <a *ngIf="currentUser.role != 'ADMIN' && currentUser.role != 'OWNER'" [routerLink]="['/event-play', currentEventID]" class="btn btn-secondary">⬅ Back</a>
   </div>
 
-  <div class="timeline-container">
+  <div class="share-card fun-card" *ngIf="shareUrl">
+    <div class="share-emoji">📸</div>
+    <h2>Photos &amp; videos</h2>
+    <p>This crawl's media lives on our share site, where you can browse, view and download everything.</p>
+    <a [href]="shareUrl" target="_blank" rel="noopener" class="btn btn-primary share-btn">Open the gallery ➜</a>
+  </div>
+
+  <div class="timeline-container" *ngIf="!shareUrl">
     <div class="timeline-item" *ngFor="let event of media_data; let i = index">
 
       <div class="timeline-marker"></div>
@@ -45,5 +51,5 @@
     <img [src]="fullImage" alt="Full size photo">
   </div>
 
-  <button class="btn btn-primary download-btn" (click)="downloadAll()">Download All</button>
+  <button *ngIf="!shareUrl" class="btn btn-primary download-btn" (click)="downloadAll()">Download All</button>
 </div>

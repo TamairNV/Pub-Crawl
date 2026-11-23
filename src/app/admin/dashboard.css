@@ -47,7 +47,9 @@
 
 .header-actions {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
   align-items: center;
 }
 
@@ -294,7 +296,8 @@ a.item-info:hover {
 
 .team-popup {
   background: #f0f8ff;
-  padding: 2.5rem;
+  padding: 2rem;
+  box-sizing: border-box;
   border-radius: 12px;
   width: 100%;
   max-width: 400px;
@@ -402,3 +405,25 @@ a.item-info:hover {
   font-weight: 900;
   min-width: 40px;
 }
+
+/* =========================================
+   Simple crawl setup + admin management
+   ========================================= */
+.hint { color: #374151; font-size: 0.95rem; margin: 0 0 1rem 0; }
+.error-text { color: #b91c1c; font-weight: 700; margin-top: 0.75rem; }
+.role-message { font-weight: 700; margin: 0.75rem 0 0 0; }
+.event-row { gap: 0.75rem; }
+.event-link-area { display: flex; flex-direction: column; gap: 0.15rem; text-decoration: none; color: #111827; flex: 1; min-width: 0; }
+.event-link-area:hover { color: #d97706; }
+.event-date { color: #6b7280; font-size: 0.8rem; font-weight: 700; }
+.row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; flex: none; }
+.reset-check { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.9rem; font-weight: 700; cursor: pointer; }
+.go { font-size: 0.9rem; font-weight: 800; color: #111827; text-decoration: none; white-space: nowrap; }
+.go:hover { color: #d97706; }
+.user-list { margin-top: 1rem; max-height: 420px; overflow-y: auto; }
+.btn-small { width: auto; padding: 0.35rem 0.75rem; font-size: 0.85rem; white-space: nowrap; }
+.role-badge {
+  font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+  padding: 0.15rem 0.55rem; border-radius: 12px; border: 1px solid #111827; background: #e5e7eb;
+}
+.role-badge.is-admin { background: #fbbf24; }

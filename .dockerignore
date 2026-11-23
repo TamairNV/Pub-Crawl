@@ -1,3 +1,9 @@
 node_modules
 flask_backend
+flask-backend
+uploads
+app/static/uploads
 .git
+*.key
+*.crt
+.env

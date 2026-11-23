@@ -1,17 +1,17 @@
-import {Component, inject, OnInit, OnDestroy, signal,ChangeDetectorRef} from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {AuthService, UserProfile} from '../auth';
-
-import { ActivatedRoute } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../auth';
+import { PlayerMiniEventsComponent } from './player-mini-events';
+import { EventAward, MiniWheel, PlayerTask } from '../shared/mini-events.types';
 
 
 @Component({
   selector: 'app-ref',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PlayerMiniEventsComponent],
   templateUrl: './eventPlay.html',
   styleUrl: './eventPlay.css'
 })
@@ -30,6 +30,13 @@ export class EventPlay implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,private cdr: ChangeDetectorRef) {}
   eventLoaded = false;
   pointsLoaded = false;
+
+  teamAdjustments: any[] = [];
+  wheels: MiniWheel[] = [];
+  myTasks: PlayerTask[] = [];
+  awards: EventAward[] = [];
+  awardsSettings = { voting_open: true, results_visible: false };
+  awardsVotes: any = { my_votes: {}, tally: {} };
 
   ngOnInit() {
     this.currentUser = this.authService.getSession()();
@@ -66,6 +73,7 @@ export class EventPlay implements OnInit, OnDestroy {
           this.userDetails = response.received.users
           this.teams = response.received.teams
           this.eventLoaded = true;
+          this.syncPointsToUsers();
           console.log("Event got",response.received)}
           this.checkAndBuildLeaderboard();
 
@@ -84,15 +92,8 @@ export class EventPlay implements OnInit, OnDestroy {
           console.log("got points error");
         }else{
           console.log("points got ",response.received)
-          this.points = response.received
-          for (let i = 0; i < this.userDetails.length; i++) {
-            for (let j = 0; j < this.points.length; j++) {
-              if(this.points[j].userID == this.userDetails[i].userID){
-                this.userDetails[i].points = this.points[j].total_points
-                break
-              }
-            }
-          }
+          this.points = response.received || [];
+          this.syncPointsToUsers();
 
           console.log(this.userDetails)
           this.pointsLoaded = true;
@@ -101,6 +102,20 @@ export class EventPlay implements OnInit, OnDestroy {
         }
       }
     })
+  }
+
+  private syncPointsToUsers() {
+    if (!Array.isArray(this.userDetails) || !Array.isArray(this.points)) return;
+    for (let i = 0; i < this.userDetails.length; i++) {
+      let total = 0;
+      for (let j = 0; j < this.points.length; j++) {
+        if (this.points[j].userID == this.userDetails[i].userID) {
+          total = this.points[j].total_points;
+          break;
+        }
+      }
+      this.userDetails[i].points = total;
+    }
   }
   leaderboardData: any[] = [];
 
@@ -120,12 +135,15 @@ export class EventPlay implements OnInit, OnDestroy {
         };
       });
 
-      const totalPoints = mappedMembers.reduce((sum: number, member: any) => sum + member.points, 0);
+      const adjRecord = (this.teamAdjustments || []).find((a: any) => a.team_id === team.id);
+      const adjustment = adjRecord ? (parseInt(adjRecord.adjustment) || 0) : 0;
+      const totalPoints = mappedMembers.reduce((sum: number, member: any) => sum + member.points, 0) + adjustment;
 
       return {
         teamID: team.id,
         teamName: team.name,
         colour: team.colour,
+        adjustment: adjustment,
         totalPoints: totalPoints,
         members: mappedMembers
       };
@@ -139,7 +157,7 @@ export class EventPlay implements OnInit, OnDestroy {
 
   // ---- Rules & current location ----
   // General rules apply all night; location rules belong to one pub.
-  // The ref moves the crawl on, so the current pub comes from the server and is re-checked every 20s.
+  // The ref moves the crawl on, so the current pub, tasks, scores, and awards sync every 4s.
   baseRules: any[] = [];
   locationsRules: any[] = [];
   currentPubId: string | null = null;
@@ -164,15 +182,30 @@ export class EventPlay implements OnInit, OnDestroy {
     });
   }
 
-  getCurrentPub() {
-    this.http.post('/api/get-current-pub', {event_id: this.currentEventID}).subscribe({
+  loadLiveState() {
+    if (!this.currentEventID) return;
+    this.http.post('/api/player-live-state', {event_id: this.currentEventID}).subscribe({
       next: (response: any) => {
-        if (response.status !== 'success') return; // keep showing the last known stop
-        const pubId = response.received?.pub_id ?? null;
+        if (response.status !== 'success' || !response.received) return;
+        const r = response.received;
+        const pubId = r.current_pub_id ?? null;
         if (pubId !== this.currentPubId) {
           this.currentPubId = pubId;
           this.updateCurrentStop();
         }
+        this.myTasks = r.my_tasks || [];
+        this.wheels = r.wheels || [];
+        this.awards = r.awards || [];
+        this.awardsSettings = r.awards_settings || { voting_open: true, results_visible: false };
+        this.awardsVotes = r.awards_votes || { my_votes: {}, tally: {} };
+        this.teamAdjustments = r.team_adjustments || [];
+        if (Array.isArray(r.points)) {
+          this.points = r.points;
+          this.pointsLoaded = true;
+          this.syncPointsToUsers();
+          this.checkAndBuildLeaderboard();
+        }
+        this.cdr.detectChanges();
       },
       error: () => {}
     });
@@ -180,8 +213,8 @@ export class EventPlay implements OnInit, OnDestroy {
 
   startLocationPolling() {
     this.stopLocationPolling();
-    this.getCurrentPub();
-    this.pollTimer = setInterval(() => this.getCurrentPub(), 20000);
+    this.loadLiveState();
+    this.pollTimer = setInterval(() => this.loadLiveState(), 4000);
   }
 
   stopLocationPolling() {

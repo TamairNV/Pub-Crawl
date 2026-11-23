@@ -1,131 +1,261 @@
 <div class="admin-dashboard">
   <!-- Header -->
   <header class="admin-header">
-    <h1>Admin Event Panel</h1>
+    <h1>Crawl Setup</h1>
     <div class="header-actions">
       <a [routerLink]="['/ref', currentEventID]" class="btn btn-outline">Ref Mode</a>
       <a [routerLink]="['/map-view', currentEventID]" class="btn btn-outline">Media</a>
+      <button *ngIf="authService.isOwner()" type="button" class="btn btn-danger" (click)="openResetModal()">Reset Scores</button>
       <a [routerLink]="['/admin-dashboard']" class="btn btn-outline">Back</a>
     </div>
   </header>
 
-  <!-- Users Management Card -->
-  <section class="admin-card">
-    <div class="card-header">
-      <h2>Manage Users</h2>
-      <button class="btn btn-primary" (click)="toggleAddUserMenu()">+ Add User</button>
+  <h2 class="crawl-name" *ngIf="eventName">{{ eventName }}</h2>
+
+  <!-- Progress -->
+  <nav class="steps">
+    <button type="button" class="step" [class.done]="teams.length > 0" (click)="scrollTo('teams')">
+      <span class="step-num">{{ teams.length > 0 ? '✓' : '1' }}</span>
+      <span>Teams <small>{{ teams.length }}</small></span>
+    </button>
+    <button type="button" class="step" [class.done]="userDetails.length > 0" (click)="scrollTo('players')">
+      <span class="step-num">{{ userDetails.length > 0 ? '✓' : '2' }}</span>
+      <span>Players <small>{{ userDetails.length }}</small></span>
+    </button>
+    <button type="button" class="step" [class.done]="pubs.length > 0" (click)="scrollTo('pubs')">
+      <span class="step-num">{{ pubs.length > 0 ? '✓' : '3' }}</span>
+      <span>Pubs <small>{{ pubs.length }}</small></span>
+    </button>
+    <button type="button" class="step" [class.done]="totalRulesCount() > 0" (click)="scrollTo('rules')">
+      <span class="step-num">{{ totalRulesCount() > 0 ? '✓' : '4' }}</span>
+      <span>Rules <small>{{ totalRulesCount() > 0 ? totalRulesCount() : 'optional' }}</small></span>
+    </button>
+    <button type="button" class="step" [class.done]="wheelCount > 0" (click)="scrollTo('wheels')">
+      <span class="step-num">{{ wheelCount > 0 ? '✓' : '5' }}</span>
+      <span>Wheels <small>{{ wheelCount > 0 ? wheelCount : 'optional' }}</small></span>
+    </button>
+    <button type="button" class="step" [class.done]="awardCount > 0" (click)="scrollTo('awards')">
+      <span class="step-num">{{ awardCount > 0 ? '✓' : '6' }}</span>
+      <span>Awards <small>{{ awardCount > 0 ? awardCount : 'optional' }}</small></span>
+    </button>
+  </nav>
+
+  <div class="ready-banner" *ngIf="isReady()">
+    <span>All set: {{ teams.length }} teams, {{ userDetails.length }} players, {{ pubs.length }} pubs.</span>
+    <a [routerLink]="['/ref', currentEventID]" class="btn btn-primary">Start reffing &rarr;</a>
+  </div>
+
+  <!-- 1. Teams -->
+  <section class="admin-card" id="teams">
+    <h2><span class="num">1</span> Teams</h2>
+
+    <div class="team-chips" *ngIf="teams.length">
+      <span *ngFor="let team of teams" class="team-chip">
+        <span class="dot" [style.background]="team.colour"></span>
+        {{ team.name }} <small>{{ teamSize(team.id) }}</small>
+      </span>
     </div>
 
-    <!-- Existing Users -->
-    <div class="list-container">
-      <div *ngFor="let user of userDetails; let i = index" class="list-item user-row">
-        <div class="item-info">
-          <strong>{{ user.name }}</strong>
+    <div class="quick" *ngIf="teams.length === 0">
+      <span>Quick start:</span>
+      <button type="button" class="btn btn-small btn-success" (click)="quickTeams(2)">2 teams</button>
+      <button type="button" class="btn btn-small btn-success" (click)="quickTeams(3)">3 teams</button>
+      <button type="button" class="btn btn-small btn-success" (click)="quickTeams(4)">4 teams</button>
+      <span class="hint">or make your own:</span>
+    </div>
 
-          <ng-container *ngIf="!isEditing[i]; else editTemplate">
-            <span class="badge">{{ user.teamName || 'No Team' }}</span>
-            <button class="btn btn-small btn-secondary"  style = "font-size: 0.7rem" (click)="toggleEdit(i)">Update</button>
-          </ng-container>
-        </div>
+    <form class="inline-form" (ngSubmit)="addTeam()">
+      <input type="color" class="color-picker" name="teamColour" [(ngModel)]="newTeamColor" title="Team colour">
+      <input type="text" class="form-control" name="teamName" [(ngModel)]="newTeamName" placeholder="Team name" autocomplete="off">
+      <button type="submit" class="btn btn-primary" [disabled]="!newTeamName.trim()">Add team</button>
+    </form>
+  </section>
 
-        <button class="btn btn-small btn-danger" style = "font-size: 0.7rem" (click)="removeUser(user.userID)">Remove</button>
+  <!-- 2. Players -->
+  <section class="admin-card" id="players">
+    <h2><span class="num">2</span> Players</h2>
 
-        <ng-template #editTemplate>
-          <div class="edit-controls">
-            <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
-              <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
-              <option disabled>──────────</option>
-              <option value="new">Add New Team...</option>
-            </select>
-            <button class="btn btn-small btn-success" (click)="saveTeam()">Save</button>
-            <button class="btn btn-small btn-outline" (click)="isEditing[i] = false">Cancel</button>
+    <p class="hint" *ngIf="teams.length === 0">Add a team first, then pick players.</p>
+
+    <div class="list-container" *ngIf="userDetails.length">
+      <div *ngFor="let user of userDetails" class="list-item pub-item">
+        <div class="pub-row-main">
+          <div class="item-info">
+            <span class="dot" [style.background]="teamColour(user.teamID)"></span>
+            <button type="button" class="name-tap-btn" (click)="togglePlayerInspector(user)" title="Tap to reveal password">
+              {{ user.name }}
+            </button>
           </div>
-        </ng-template>
+          <div class="row-actions">
+            <select class="form-control compact" [ngModel]="user.teamID" (ngModelChange)="changeTeam(user, $event)" [name]="'team-' + user.userID">
+              <option *ngFor="let t of teams" [value]="t.id">{{ t.name }}</option>
+            </select>
+            <button type="button" class="btn btn-small btn-danger" (click)="removeUser(user)" title="Remove from crawl">✕</button>
+          </div>
+        </div>
+        <app-password-reveal
+          *ngIf="inspectPlayerId === user.userID"
+          [userId]="user.userID"
+          [eventId]="currentEventID"
+          btnClass="btn btn-small btn-secondary"
+        ></app-password-reveal>
       </div>
     </div>
 
-    <div *ngIf="addUserMenu" class="add-user-section form-group">
-      <h3>Add New Users</h3>
-      <div *ngFor="let item of people; let i = index" class="new-user-row">
-        <div class="checkbox-group">
-          <input type="checkbox" [id]="'check-' + i" [(ngModel)]="newPlayerSelected[i]">
-          <label [for]="'check-' + i">{{ item.name }}</label>
-        </div>
-
-        <div class="team-select-group">
-          <label [for]="'team-' + i">Team:</label>
-          <select class="form-control" [(ngModel)]="newPlayerTeamIDs[i]" (change)="onTeamChange($event)">
-            <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
-            <option disabled>──────────</option>
-            <option value="new">Add New Team...</option>
-          </select>
-        </div>
+    <div class="form-group" *ngIf="teams.length">
+      <h3>Add players</h3>
+      <input type="search" class="form-control" [(ngModel)]="playerSearch" placeholder="Search by name...">
+      <div class="pick-actions">
+        <button type="button" class="link-btn" (click)="pickAllShown(true)">Select all shown</button>
+        <button type="button" class="link-btn" (click)="pickAllShown(false)">Clear</button>
       </div>
-      <button class="btn btn-primary" (click)="saveNewPlayers()">Add Selected Users</button>
+      <div class="pick-list">
+        <label *ngFor="let p of availablePeople()" class="pick" [class.on]="picked[p.id]">
+          <input type="checkbox" [(ngModel)]="picked[p.id]" [name]="'pick-' + p.id">
+          {{ p.name }}
+        </label>
+        <p class="hint" *ngIf="availablePeople().length === 0">Everyone matching is already in this crawl.</p>
+      </div>
+      <div class="inline-form">
+        <select class="form-control" [(ngModel)]="addToTeam" name="addToTeam">
+          <option value="__even__">Spread evenly across teams</option>
+          <option *ngFor="let t of teams" [value]="t.id">Put in {{ t.name }}</option>
+        </select>
+        <button type="button" class="btn btn-primary" (click)="addPickedPlayers()" [disabled]="pickedCount() === 0 || busy">
+          Add {{ pickedCount() || '' }} player{{ pickedCount() === 1 ? '' : 's' }}
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- Base Rules Card -->
-  <section class="admin-card">
-    <h2>Base Rules</h2>
+  <!-- 3. Pubs -->
+  <section class="admin-card" id="pubs">
+    <h2><span class="num">3</span> Pubs, in order</h2>
 
-    <div class="list-container">
-      <div *ngFor="let rule of baseRules; let i = index" class="list-item">
+    <ol class="route" *ngIf="pubs.length">
+      <li *ngFor="let pub of pubs; let i = index; let last = last" class="list-item pub-item">
+        <div class="pub-row-main">
+          <div class="item-info">
+            <span class="badge badge-gray">{{ i + 1 }}</span>
+            <div>
+              <strong>{{ pub.pubName }}</strong>
+              <div class="description-text" *ngIf="pub.ruleName">
+                <span class="rule-tag">Rule:</span> {{ pub.ruleName }}<span *ngIf="pub.ruleDescription">: {{ pub.ruleDescription }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-small btn-secondary" (click)="openPubRuleEditor(pub)">
+              {{ pub.ruleName ? 'Edit rule' : '+ Add rule' }}
+            </button>
+            <button type="button" class="btn btn-small btn-outline" (click)="movePub(i, -1)" [disabled]="i === 0" title="Move up">↑</button>
+            <button type="button" class="btn btn-small btn-outline" (click)="movePub(i, 1)" [disabled]="last" title="Move down">↓</button>
+            <button type="button" class="btn btn-small btn-danger" (click)="removeLocation(pub)" title="Remove">✕</button>
+          </div>
+        </div>
+
+        <form class="pub-rule-editor" *ngIf="editingPubId === pub.id" (ngSubmit)="savePubRule(pub)">
+          <input type="text" class="form-control" [name]="'editPubRule-' + pub.id" [(ngModel)]="editPubRuleName"
+                 [placeholder]="'Rule / challenge for ' + pub.pubName + ' (e.g. Drink with your left hand)'" autocomplete="off">
+          <textarea class="form-control" [name]="'editPubRuleDesc-' + pub.id" [(ngModel)]="editPubRuleDescription"
+                    rows="2" placeholder="Details (optional)"></textarea>
+          <div class="editor-actions">
+            <button type="submit" class="btn btn-small btn-primary" [disabled]="!editPubRuleName.trim() || busy">Save rule</button>
+            <button type="button" class="btn btn-small btn-danger" *ngIf="pub.ruleName" (click)="clearPubRule(pub)" [disabled]="busy">Remove rule</button>
+            <button type="button" class="btn btn-small btn-outline" (click)="cancelPubRuleEditor()">Cancel</button>
+          </div>
+        </form>
+      </li>
+    </ol>
+
+    <form class="form-group" (ngSubmit)="saveLocation()">
+      <div class="inline-form">
+        <input type="text" class="form-control" name="pubName" [(ngModel)]="newLocationName"
+               [placeholder]="pubs.length ? 'Next pub' : 'First pub'" autocomplete="off">
+        <button type="submit" class="btn btn-primary" [disabled]="!newLocationName.trim() || busy">Add pub</button>
+      </div>
+      <button type="button" class="link-btn" *ngIf="!showPubRule" (click)="showPubRule = true">+ Add a challenge for this pub (optional)</button>
+      <ng-container *ngIf="showPubRule">
+        <input type="text" class="form-control" name="pubRule" [(ngModel)]="newLocationRule" placeholder="Challenge (e.g. Drink with your left hand)">
+        <textarea class="form-control" name="pubRuleDesc" [(ngModel)]="newLocationRuleDescription" rows="2" placeholder="Details (optional)"></textarea>
+      </ng-container>
+    </form>
+  </section>
+
+  <!-- 4. Rules -->
+  <section class="admin-card" id="rules">
+    <h2><span class="num">4</span> Rules <small class="optional">whole crawl or per pub</small></h2>
+
+    <div class="list-container" *ngIf="baseRules.length || pubsWithRules().length">
+      <div *ngFor="let rule of baseRules" class="list-item">
         <div class="item-info">
-          <strong>{{rule.name}}</strong>
-          <span class="description-text">{{rule.description}}</span>
+          <span class="badge">Whole crawl</span>
+          <strong>{{ rule.name }}</strong>
+          <span class="description-text" *ngIf="rule.description">{{ rule.description }}</span>
         </div>
-        <button class="btn btn-small btn-danger" (click)="removeBaseRule(rule.id)">Remove</button>
+        <button type="button" class="btn btn-small btn-danger" (click)="removeBaseRule(rule)" title="Remove">✕</button>
       </div>
-    </div>
 
-    <div class="form-group add-rule-form">
-      <h3>Add New Base Rule</h3>
-      <input type="text" class="form-control" [(ngModel)]="newBaseRule" placeholder="Rule outline (e.g., No Phones)">
-      <textarea [(ngModel)]="newBaseRuleDescription" placeholder="Rule description..." rows="3" class="form-control"></textarea>
-      <button class="btn btn-primary" (click)="saveBaseRule(-1)">Add Base Rule</button>
-    </div>
-  </section>
-
-  <!-- Locations Card -->
-  <section class="admin-card">
-    <h2>Locations</h2>
-
-    <div class="list-container">
-      <div *ngFor="let pub of locationsRules; let i = index" class="list-item">
+      <div *ngFor="let pub of pubsWithRules()" class="list-item">
         <div class="item-info">
-          <span class="badge badge-gray">{{pub.order_index}}</span>
-          <strong>{{pub.pubName}}</strong> - {{pub.ruleName}}
-          <span class="description-text">{{pub.ruleDescription}}</span>
+          <span class="badge badge-gray">{{ pub.order_index }}. {{ pub.pubName }}</span>
+          <strong>{{ pub.ruleName }}</strong>
+          <span class="description-text" *ngIf="pub.ruleDescription">{{ pub.ruleDescription }}</span>
         </div>
-        <button class="btn btn-small btn-danger" (click)="removeLocation(pub.id)">Remove</button>
+        <div class="row-actions">
+          <button type="button" class="btn btn-small btn-secondary" (click)="editPubRuleFromRulesSection(pub)">Edit</button>
+          <button type="button" class="btn btn-small btn-danger" (click)="clearPubRule(pub)" title="Remove rule">✕</button>
+        </div>
       </div>
     </div>
 
-    <div class="form-group add-location-form">
-      <h3>Add New Location</h3>
-      <input type="text" class="form-control" [(ngModel)]="newLocationName" placeholder="Location Name">
-      <input type="text" class="form-control" [(ngModel)]="newBaseRuleLocation" placeholder="Rule outline for location">
-      <textarea [(ngModel)]="newBaseRuleDescriptionLocation" placeholder="Rule description..." rows="3" class="form-control"></textarea>
-      <button class="btn btn-primary" (click)="saveLocation()">Add Location</button>
-    </div>
+    <form class="form-group" (ngSubmit)="saveBaseRule()">
+      <label class="field-label" *ngIf="pubs.length">
+        Apply to:
+        <select class="form-control" name="baseRulePub" [(ngModel)]="newRulePubId">
+          <option value="">Whole crawl (all pubs)</option>
+          <option *ngFor="let pub of pubs; let i = index" [value]="pub.id">
+            Pub #{{ i + 1 }}: {{ pub.pubName }}{{ pub.ruleName ? ' (replace current rule)' : '' }}
+          </option>
+        </select>
+      </label>
+      <input type="text" class="form-control" name="baseRule" [(ngModel)]="newBaseRule"
+             [placeholder]="newRulePubId ? 'Rule / challenge for this pub (e.g. Drink with your left hand)' : 'Rule for the whole crawl (e.g. No phones at the table)'" autocomplete="off">
+      <textarea class="form-control" name="baseRuleDesc" [(ngModel)]="newBaseRuleDescription" rows="2" placeholder="Details (optional)"></textarea>
+      <button type="submit" class="btn btn-primary" [disabled]="!newBaseRule.trim() || busy">
+        {{ newRulePubId ? 'Save pub rule' : 'Add rule' }}
+      </button>
+    </form>
   </section>
+
+  <!-- 5 & 6. Mini Events (Spin the Wheel & Awards) -->
+  <app-mini-events-setup
+    *ngIf="currentEventID"
+    [eventId]="currentEventID"
+    (countsChanged)="onMiniCountsChanged($event)">
+  </app-mini-events-setup>
 </div>
 
-<!-- Team Popup Modal -->
-<div class="modal-overlay" *ngIf="showNewTeamForm">
-  <div class="team-popup card">
-    <h3>Create New Team</h3>
-    <div class="form-group">
-      <input type="text" class="form-control" [(ngModel)]="newTeamName" placeholder="Team Name">
-      <div class="color-picker-group">
-        <label>Pick a color:</label>
-        <input type="color" class="color-picker" [(ngModel)]="newTeamColor">
-      </div>
-    </div>
+<div class="toast" *ngIf="message">{{ message }}</div>
+
+<!-- Owner only: Reset scores / test data modal -->
+<div class="modal-overlay" *ngIf="showResetModal" (click)="closeResetModal()">
+  <div class="team-popup" (click)="$event.stopPropagation()">
+    <h3>Reset Crawl Scores?</h3>
+    <p>
+      Clean all test data for <strong>{{ eventName || 'this crawl' }}</strong>?
+      Clears all player &amp; team points, wheel tasks/spins, award votes, and pub progress while keeping teams, players, pubs, rules, wheels, and awards.
+    </p>
+    <label class="pick" [class.on]="resetClearMedia">
+      <input type="checkbox" [(ngModel)]="resetClearMedia" name="resetClearMediaModal">
+      Also delete uploaded photos/videos
+    </label>
+    <p class="hint" *ngIf="resetError" style="color:#b91c1c;margin-top:0.5rem">{{ resetError }}</p>
     <div class="modal-actions">
-      <button class="btn btn-outline" (click)="showNewTeamForm = false">Cancel</button>
-      <button class="btn btn-success" (click)="saveNewTeam()">Save Team</button>
+      <button type="button" class="btn btn-outline" (click)="closeResetModal()" [disabled]="resetting">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="confirmResetCrawl()" [disabled]="resetting">
+        {{ resetting ? 'Resetting...' : 'Reset Scores' }}
+      </button>
     </div>
   </div>
 </div>

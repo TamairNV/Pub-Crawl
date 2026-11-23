@@ -1,0 +1,32 @@
+<div class="wheel-box">
+  <div class="wheel-title">{{ wheelName }}</div>
+
+  <div class="wheel-stage">
+    <div class="pointer" aria-hidden="true">▼</div>
+    <div class="wheel-rotator" [style.transform]="'rotate(' + rotationDeg + 'deg)'">
+      <canvas #wheelCanvas width="320" height="320"></canvas>
+    </div>
+    <button
+      type="button"
+      class="center-hub"
+      (click)="requestSpin()"
+      [disabled]="disabled || isSpinning || items.length === 0"
+    >
+      {{ isSpinning ? '...' : 'SPIN' }}
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="spin-btn"
+    (click)="requestSpin()"
+    [disabled]="disabled || isSpinning || items.length === 0"
+  >
+    {{ isSpinning ? 'Spinning...' : 'Spin the Wheel!' }}
+  </button>
+
+  <div class="landed-banner" *ngIf="landedItem && !isSpinning">
+    <div class="landed-title">{{ landedItem.label }}</div>
+    <div class="landed-effect">{{ describe(landedItem) }}</div>
+  </div>
+</div>

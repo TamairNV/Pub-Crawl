@@ -5,7 +5,7 @@
 
 
     <h2>Your Events</h2>
-    <div *ngIf="currentUser.role == 'ADMIN'">
+    <div *ngIf="authService.isAdmin()">
       <a [routerLink]="['/admin-dashboard']" class="link-as-button">Go to Admin Dashboard</a>
     </div>
   </div>
@@ -13,6 +13,7 @@
   <div class="event-grid">
     <div *ngFor="let event of events" class="event-card">
       <h3>{{ event.name }}</h3>
+      <small *ngIf="event.created_at" style="color: #4b5563; font-weight: 700;">{{ event.created_at | date:'d MMM yyyy' }}</small>
       <p>Your adventure awaits! Click below to join the fun.</p>
       <a [routerLink]="['/event-play', event.id]" class="btn-primary">Go to Event</a>
     </div>

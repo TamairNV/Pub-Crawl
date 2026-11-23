@@ -1,0 +1,188 @@
+<!-- Active Tasks Card (if player minimized or wants an overview) -->
+<div class="dashboard-card" *ngIf="activeTasks.length > 0 || completedTasks.length > 0">
+  <h3>Your Mini-Event Tasks</h3>
+
+  <div *ngFor="let t of activeTasks" class="task-card" [class.highlight]="t.status !== 'pending'">
+    <div class="task-top">
+      <strong>{{ t.title }}</strong>
+      <span class="pill">{{ rewardBadge(t) }}</span>
+    </div>
+    <p class="task-desc" *ngIf="t.description">{{ t.description }}</p>
+
+    <div *ngIf="t.status === 'pending'" class="action-row">
+      <button *ngIf="!t.player_claimed_done" class="btn btn-success" (click)="claimDone(t)" [disabled]="busy">
+        ✓ I Did It! (Notify Ref)
+      </button>
+      <span *ngIf="t.player_claimed_done" class="pill pill-wait">✋ Ref notified — waiting for confirmation</span>
+    </div>
+
+    <div *ngIf="t.status === 'ready_to_spin'" class="action-row">
+      <button class="btn btn-primary" (click)="startSpinOverlay(t)" [disabled]="busy">
+        🎡 Spin Your Wheel!
+      </button>
+      <span class="mini-note">Or the ref can spin it for you</span>
+    </div>
+
+    <div *ngIf="t.status === 'awaiting_target'" class="target-wrap">
+      <div class="mini-note"><strong>{{ t.spun_label || t.title }}</strong> — Pick a team to lose points:</div>
+      <div class="target-btns">
+        <button *ngFor="let tm of otherTeams()" class="btn btn-target" (click)="applyTargetTeam(t, tm.id)" [disabled]="busy">
+          <span class="dot" [style.background]="tm.colour || '#fbbf24'"></span>
+          {{ tm.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="completedTasks.length > 0" class="done-list">
+    <div class="done-head">Recent Outcomes</div>
+    <div *ngFor="let c of completedTasks.slice(0, 5)" class="done-row">
+      <span>{{ c.spun_label || c.title }}</span>
+      <span class="pill">{{ c.result_summary || 'Completed' }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Awards Voting & Results Card -->
+<div class="dashboard-card" *ngIf="awards.length > 0">
+  <div class="card-head">
+    <h3>Crawl Awards</h3>
+    <span class="pill" [class.pill-open]="awardsSettings.voting_open">
+      {{ awardsSettings.voting_open ? 'Voting Open' : 'Voting Closed' }}
+    </span>
+  </div>
+
+  <p class="mini-note" *ngIf="!awardsSettings.voting_open && !awardsSettings.results_visible">
+    Voting is currently closed. Results will appear once the ref reveals them!
+  </p>
+
+  <div class="awards-list">
+    <div *ngFor="let award of awards" class="award-card">
+      <div class="award-head">
+        <strong>🏆 {{ award.name }}</strong>
+        <span class="pill">{{ award.target_type === 'team' ? 'Team' : award.target_type === 'either' ? 'Player or Team' : 'Player' }}</span>
+      </div>
+      <p class="task-desc" *ngIf="award.description">{{ award.description }}</p>
+
+      <div *ngIf="awardsSettings.voting_open">
+        <select
+          class="form-control"
+          [ngModel]="myVoteKey(award.id)"
+          (ngModelChange)="castMyVote(award, $event)"
+        >
+          <option value="">-- Tap to cast your vote --</option>
+          <optgroup *ngIf="award.target_type === 'player' || award.target_type === 'either'" label="Players">
+            <option *ngFor="let u of users" [value]="'player:' + u.userID">
+              {{ u.name }} ({{ u.teamName || 'Player' }})
+            </option>
+          </optgroup>
+          <optgroup *ngIf="award.target_type === 'team' || award.target_type === 'either'" label="Teams">
+            <option *ngFor="let t of teams" [value]="'team:' + t.id">
+              {{ t.name }} Team
+            </option>
+          </optgroup>
+        </select>
+        <div class="voted-badge" *ngIf="myVoteLabel(award.id) as lbl">
+          ✓ Your vote: <strong>{{ lbl }}</strong>
+        </div>
+      </div>
+
+      <div *ngIf="!awardsSettings.voting_open && myVoteLabel(award.id) as lbl" class="voted-badge">
+        ✓ You voted: <strong>{{ lbl }}</strong>
+      </div>
+
+      <div *ngIf="awardsSettings.results_visible && awardsVotes?.tally?.[award.id]?.length" class="tally">
+        <div *ngFor="let entry of awardsVotes.tally[award.id].slice(0, 3); let idx = index" class="tally-row">
+          <span>{{ idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉' }} {{ entry.nominee_name }}</span>
+          <strong>{{ entry.votes }} vote{{ entry.votes === 1 ? '' : 's' }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auto Task Pop-up Modal (for Pending Task or Awaiting Target) -->
+<div class="modal-backdrop" *ngIf="popupTask as pt">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="pill pill-pop" *ngIf="pt.status === 'pending'">⚡ New Task!</span>
+        <span class="pill pill-pop" *ngIf="pt.status === 'ready_to_spin'">🎉 Confirmed! Spin the Wheel!</span>
+        <span class="pill pill-pop" *ngIf="pt.status === 'awaiting_target'">🎯 Pick Your Target!</span>
+      </div>
+      <button type="button" class="close-btn" (click)="minimizeTaskPopup(pt)">Minimize</button>
+    </div>
+
+    <h4 class="pop-title">{{ pt.spun_label || pt.title }}</h4>
+    <p class="pop-desc" *ngIf="pt.description">{{ pt.description }}</p>
+    <div class="pop-reward">Reward: <strong>{{ rewardBadge(pt) }}</strong></div>
+
+    <!-- Pending -->
+    <div *ngIf="pt.status === 'pending'" class="pop-actions">
+      <button *ngIf="!pt.player_claimed_done" class="btn btn-success btn-big" (click)="claimDone(pt)" [disabled]="busy">
+        ✓ I Did It! (Notify Ref)
+      </button>
+      <div *ngIf="pt.player_claimed_done" class="pill pill-wait">
+        ✋ Ref notified — hang tight until the ref confirms!
+      </div>
+    </div>
+
+    <!-- Ready to spin -->
+    <div *ngIf="pt.status === 'ready_to_spin'" class="pop-actions">
+      <button class="btn btn-primary btn-big" (click)="startSpinOverlay(pt)" [disabled]="busy">
+        🎡 Spin the Wheel!
+      </button>
+    </div>
+
+    <!-- Awaiting target -->
+    <div *ngIf="pt.status === 'awaiting_target'" class="target-wrap">
+      <p class="mini-note"><strong>Pick a team to lose {{ pt.spun_points || pt.reward_points }} points:</strong></p>
+      <div class="target-btns">
+        <button *ngFor="let tm of otherTeams()" class="btn btn-target" (click)="applyTargetTeam(pt, tm.id)" [disabled]="busy">
+          <span class="dot" [style.background]="tm.colour || '#fbbf24'"></span>
+          {{ tm.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wheel Spin Modal (stays locked open through animation) -->
+<div class="modal-backdrop" *ngIf="spinningState as s">
+  <div class="modal-card spin-card">
+    <div class="modal-head">
+      <h4>🎉 {{ s.title }}</h4>
+      <button type="button" class="close-btn" (click)="closeSpinOverlay()" [disabled]="s.spinning && !s.done">✕</button>
+    </div>
+
+    <div class="mini-note" *ngIf="s.alreadySpunNote">{{ s.alreadySpunNote }}</div>
+
+    <app-spin-wheel
+      *ngIf="!s.alreadySpunNote"
+      [wheelName]="s.wheelName"
+      [items]="s.items"
+      [disabled]="s.spinning || s.done"
+      [spinCommand]="s.spinCommand"
+      (spinRequested)="triggerTaskSpin()"
+      (animationFinished)="onSpinAnimationDone()"
+    ></app-spin-wheel>
+
+    <div class="spin-result" *ngIf="s.done && s.resultTask as rt">
+      <div class="outcome-pill" *ngIf="rt.result_summary">{{ rt.result_summary }}</div>
+
+      <div *ngIf="rt.status === 'awaiting_target'" class="target-wrap">
+        <p class="mini-note"><strong>Pick which team loses {{ rt.spun_points || rt.reward_points }} points:</strong></p>
+        <div class="target-btns">
+          <button *ngFor="let tm of otherTeams()" class="btn btn-target" (click)="applyTargetTeam(rt, tm.id)" [disabled]="busy">
+            <span class="dot" [style.background]="tm.colour || '#fbbf24'"></span>
+            {{ tm.name }}
+          </button>
+        </div>
+      </div>
+
+      <button *ngIf="rt.status !== 'awaiting_target'" class="btn btn-primary" (click)="closeSpinOverlay()">Done!</button>
+    </div>
+  </div>
+</div>
+
+<div class="mini-toast" *ngIf="toast">{{ toast }}</div>

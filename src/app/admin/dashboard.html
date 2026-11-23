@@ -3,71 +3,127 @@
     <h1>Admin Dashboard</h1>
 
     <div class="header-actions">
-      <!-- Emojis add to the fun vibe, but feel free to remove them! -->
+      <a *ngIf="authService.isOwner()" [routerLink]="['/admin-restore']" class="btn btn-outline">
+        Restore{{ deletedCount > 0 ? ' (' + deletedCount + ')' : '' }}
+      </a>
       <a [routerLink]="['/player-dashboard']" class="btn btn-secondary">Player Mode</a>
-      <a [routerLink]="['/login']" class="btn btn-secondary">Logout</a>
-
+      <button type="button" class="btn btn-secondary" (click)="logout()">Logout</button>
     </div>
   </header>
 
   <div class="dashboard-grid">
     <!-- Create New Crawl Card -->
     <section class="admin-card">
-      <h2>Create New Crawl</h2>
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="event_name" placeholder="Event Name">
-        <button class="btn btn-primary" (click)="createCrawl()">Create & Configure</button>
-      </div>
-
-      <div *ngIf="eventCreated()">
-        <hr>
-        <h3>Add Participants</h3>
-        <div class="list-container">
-          <div *ngFor="let item of people; let i = index" class="list-item">
-            <div class="item-info">
-              <input type="checkbox" [id]="'check-' + i" [(ngModel)]="selectedPeople[i]">
-              <label [for]="'check-' + i">{{ item.name }}</label>
-            </div>
-            <select class="form-control" [(ngModel)]="selectedTeamIDs[i]" (change)="onTeamChange($event)">
-              <option *ngFor="let v of teams" [value]="v.id">{{ v.name }}</option>
-              <option disabled>──────────</option>
-              <option value="new">Add New Team...</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-success" (click)="savePlayers()">Save All Participants</button>
-      </div>
+      <h2>Start a New Crawl</h2>
+      <p class="hint">Give it a name. Next you'll add teams, players, the pubs in order and any rules, all on one page.</p>
+      <form class="form-group" (ngSubmit)="createCrawl()">
+        <input type="text" class="form-control" name="eventName" [(ngModel)]="eventName"
+               placeholder="e.g. Freshers Crawl 2026" autocomplete="off">
+        <button type="submit" class="btn btn-primary" [disabled]="!eventName.trim() || creating">
+          {{ creating ? 'Creating...' : 'Create & Set Up' }}
+        </button>
+      </form>
+      <p class="error-text" *ngIf="createError">{{ createError }}</p>
     </section>
 
     <!-- Current Events Card -->
     <section class="admin-card">
-      <h2>Current Events</h2>
+      <h2>Your Crawls</h2>
+      <p class="role-message" *ngIf="deleteMessage && !eventToDelete">{{ deleteMessage }}</p>
       <div class="list-container">
-        <div *ngFor="let event of events" class="list-item">
-          <a [routerLink]="['/event-details', event.id]" class="item-info">{{ event.name }}</a>
+        <div *ngFor="let event of events" class="list-item event-row">
+          <a [routerLink]="['/event-details', event.id]" class="event-link-area">
+            <span class="item-info">{{ event.name }}</span>
+            <small class="event-date" *ngIf="event.created_at">{{ event.created_at | date:'d MMM yyyy, HH:mm' }}</small>
+          </a>
+          <div class="row-actions">
+            <a [routerLink]="['/event-details', event.id]" class="go">Set up &rarr;</a>
+            <button
+              *ngIf="authService.isOwner()"
+              type="button"
+              class="btn btn-small btn-outline"
+              (click)="askResetEvent(event)"
+              title="Reset crawl scores and test data"
+            >
+              Reset
+            </button>
+            <button
+              *ngIf="authService.isOwner()"
+              type="button"
+              class="btn btn-small btn-danger"
+              (click)="askDeleteEvent(event)"
+              title="Move crawl to Restore"
+            >
+              Delete
+            </button>
+          </div>
         </div>
         <div *ngIf="events.length === 0" class="list-item">
-          <p>No events found.</p>
+          <p>No crawls yet. Start one on the left.</p>
         </div>
       </div>
     </section>
   </div>
-</div>
 
-<!-- New Team Modal -->
-<div class="modal-overlay" *ngIf="showNewTeamForm">
-  <div class="team-popup card">
-    <h3>Create New Team</h3>
-    <div class="form-group">
-      <input type="text" class="form-control" [(ngModel)]="newTeamName" placeholder="Team Name">
-      <div class="color-picker-group">
-        <label>Pick a color:</label>
-        <input type="color" class="color-picker" [(ngModel)]="newTeamColor">
+  <!-- Owner only: make people admins -->
+  <section class="admin-card" *ngIf="authService.isOwner()">
+    <h2>Admins</h2>
+    <p class="hint">Admins can create and run crawls. Changes work straight away.</p>
+    <input type="search" class="form-control" [(ngModel)]="userSearch" placeholder="Search people...">
+    <p class="role-message" *ngIf="roleMessage">{{ roleMessage }}</p>
+    <div class="list-container user-list">
+      <div *ngFor="let user of filteredUsers()" class="list-item">
+        <div class="item-info">
+          <strong>{{ user.name }}</strong>
+          <span class="role-badge" [class.is-admin]="roleOf(user) !== 'player'">{{ roleOf(user) === 'owner' ? 'owner' : roleOf(user) === 'admin' ? 'admin' : 'player' }}</span>
+        </div>
+        <ng-container [ngSwitch]="roleOf(user)">
+          <span *ngSwitchCase="'owner'" class="hint">You</span>
+          <button *ngSwitchCase="'admin'" type="button" class="btn btn-small btn-danger" (click)="setRole(user, 'player')">Remove admin</button>
+          <button *ngSwitchDefault type="button" class="btn btn-small btn-success" (click)="setRole(user, 'admin')">Make admin</button>
+        </ng-container>
+      </div>
+      <div *ngIf="filteredUsers().length === 0" class="list-item"><p>No one matches.</p></div>
+    </div>
+  </section>
+
+  <!-- Owner only: confirm soft delete -->
+  <div class="modal-overlay" *ngIf="eventToDelete" (click)="cancelDeleteEvent()">
+    <div class="team-popup" (click)="$event.stopPropagation()">
+      <h3>Delete Crawl?</h3>
+      <p>
+        Move <strong>{{ eventToDelete.name }}</strong> to Restore?
+        It will be hidden from dashboards and players, and you can restore it anytime from the Restore page.
+      </p>
+      <p class="error-text" *ngIf="deleteMessage">{{ deleteMessage }}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelDeleteEvent()" [disabled]="deletingEvent">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDeleteEvent()" [disabled]="deletingEvent">
+          {{ deletingEvent ? 'Moving...' : 'Move to Restore' }}
+        </button>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" (click)="showNewTeamForm = false">Cancel</button>
-      <button class="btn btn-success" (click)="saveTeam()">Save Team</button>
+  </div>
+
+  <!-- Owner only: confirm crawl score/data reset -->
+  <div class="modal-overlay" *ngIf="eventToReset" (click)="cancelResetEvent()">
+    <div class="team-popup" (click)="$event.stopPropagation()">
+      <h3>Reset Crawl Scores?</h3>
+      <p>
+        Clean all test data for <strong>{{ eventToReset.name }}</strong>?
+        This clears all player &amp; team points, wheel tasks/spins, award votes, and pub progress while keeping teams, players, pubs, rules, wheels, and awards.
+      </p>
+      <label class="reset-check">
+        <input type="checkbox" [(ngModel)]="resetClearMedia" name="resetClearMedia">
+        <span>Also delete uploaded photos/videos</span>
+      </label>
+      <p class="error-text" *ngIf="resetError">{{ resetError }}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelResetEvent()" [disabled]="resettingEvent">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmResetEvent()" [disabled]="resettingEvent">
+          {{ resettingEvent ? 'Resetting...' : 'Reset Scores' }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
