@@ -32,6 +32,9 @@ TIERS = {
 }
 CURRENCY = 'gbp'
 FREE_TEAM_LIMIT = 3
+# Stripe product tax code. Required when Managed Payments (Stripe as merchant of record) is on for the
+# account, and used by Stripe Tax otherwise. Default: General - Electronically Supplied Services.
+TAX_CODE = os.getenv("STRIPE_TAX_CODE", "txcd_10000000")
 PAID_EVENT_TYPES = ('checkout.session.completed', 'checkout.session.async_payment_succeeded')
 
 
@@ -160,6 +163,7 @@ def create_checkout():
           'product_data': {
             'name': f"Pub Crawl: {price['label']}",
             'description': f"Unlimited teams for \"{state['event_name']}\""[:250],
+            'tax_code': TAX_CODE,
           },
         },
       }],
@@ -193,11 +197,12 @@ def mark_paid(stripe_event_id, event_type, obj):
   tier = (obj.get('metadata') or {}).get('tier')
   session_id = obj.get('id')
   amount = obj.get('amount_total')
+  subtotal = obj.get('amount_subtotal', amount)  # before any tax Stripe adds
   currency = (obj.get('currency') or '').lower()
   if not event_id or tier not in TIERS:
     return 'ignored: no event or tier'
-  if amount != TIERS[tier]['amount'] or currency != CURRENCY:
-    return f'ignored: amount {amount} {currency} does not match {tier}'
+  if subtotal != TIERS[tier]['amount'] or currency != CURRENCY:
+    return f'ignored: amount {subtotal} {currency} does not match {tier}'
 
   connection = get_db()
   try:
