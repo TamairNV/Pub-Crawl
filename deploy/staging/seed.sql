@@ -14,6 +14,7 @@ DELETE FROM Participant;
 DELETE FROM Team;
 DELETE FROM User;
 DELETE FROM Event;
+DELETE FROM LoginAttempt; DELETE FROM EventRef;
 SET FOREIGN_KEY_CHECKS=1;
 INSERT INTO User (id,name,role,password) VALUES ('46e927dd-f386-501f-a495-ffcbc38d266b','tamair','OWNER','__OWNER_PW__'),('72020119-26bb-55ba-9ddc-0f712e7d7984','demo-ref','ADMIN','__REF_PW__');
 INSERT INTO User (id,name,role,password) VALUES ('90166580-852e-5441-8a81-7065d29833d0','alex','player','__PLAYER_PW__'),('fa1d606e-c7b8-51ec-8664-ccbc94243d5b','sam','player','__PLAYER_PW__'),('ac7c5dd7-de80-581f-92b3-468f01661cd2','jordan','player','__PLAYER_PW__'),('44dd23e1-a0f5-5b3f-ac0d-6ae7806bff98','charlie','player','__PLAYER_PW__'),('34ee5daf-91d7-554f-b572-e729516d0d08','riley','player','__PLAYER_PW__'),('d3aa53d5-0a19-57ff-8b6a-8ce7d287f0f1','morgan','player','__PLAYER_PW__'),('8c9e9c93-f762-5d0c-b840-ec6dbf9c58e2','casey','player','__PLAYER_PW__'),('a04111c1-10fc-53c1-b06e-09b232b73a7d','jamie','player','__PLAYER_PW__'),('223b95e2-3ab1-548f-a924-de254649e345','taylor','player','__PLAYER_PW__'),('a29cf3f4-262e-5866-aaf8-03cc11835672','robin','player','__PLAYER_PW__'),('66a6981d-f99e-5c0b-a3df-a448fb53028a','frankie','player','__PLAYER_PW__'),('9d2f7d5f-0db2-5438-b115-177b35e2801c','drew','player','__PLAYER_PW__');
