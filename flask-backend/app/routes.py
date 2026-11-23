@@ -285,6 +285,10 @@ def save_new_team():
   if not data:
     return jsonify({"status": "failed", "received": data})
 
+  from .payments import team_limit_reached, FREE_TEAM_LIMIT
+  if team_limit_reached(data.get('event_id')):
+    return jsonify({"status": "failed", "received": f"Free crawls have up to {FREE_TEAM_LIMIT} teams. Unlock this crawl to add more."}), 402
+
   teams = create_new_team_sql(data['name'],data['colour'],data['event_id'])
   return jsonify({"status": "success", "received": teams})
 

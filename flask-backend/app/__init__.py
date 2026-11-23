@@ -46,6 +46,9 @@ def create_app():
 
   app.register_blueprint(main)
 
+  from .payments import payments
+  app.register_blueprint(payments)
+
   @app.after_request
   def set_security_headers(response):
     response.headers['CSP'] = (

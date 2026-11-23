@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MiniEventsSetupComponent } from './mini-events-setup';
 import { AuthService } from '../auth';
 import { PasswordRevealComponent } from '../shared/password-reveal';
+import { UnlockCrawlComponent } from '../shared/unlock-crawl';
 
 // Colours offered for new teams, in order
 const TEAM_COLOURS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7', '#ec4899', '#14b8a6', '#f97316'];
@@ -15,7 +16,7 @@ const TEAM_NAMES = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Pink', 'Teal', 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MiniEventsSetupComponent, PasswordRevealComponent],
+  imports: [CommonModule, FormsModule, RouterLink, MiniEventsSetupComponent, PasswordRevealComponent, UnlockCrawlComponent],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css'
 })
