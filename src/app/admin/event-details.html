@@ -12,6 +12,8 @@
 
   <h2 class="crawl-name" *ngIf="eventName">{{ eventName }}</h2>
 
+  <app-unlock-crawl *ngIf="currentEventID" [eventId]="currentEventID"></app-unlock-crawl>
+
   <!-- Progress -->
   <nav class="steps">
     <button type="button" class="step" [class.done]="teams.length > 0" (click)="scrollTo('teams')">

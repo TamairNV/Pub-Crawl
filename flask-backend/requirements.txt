@@ -7,3 +7,4 @@ dotenv
 Pillow
 Werkzeug
 pillow-heif
+stripe==16.1.0
