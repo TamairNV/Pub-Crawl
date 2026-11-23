@@ -134,3 +134,6 @@ body {
 .link-as-button:hover {
   background-color: #f59e0b;
 }
+
+/* Routed pages fill the screen width instead of growing to their widest child (stops sideways scroll on phones) */
+.main-container > *:not(.separator):not(h1):not(router-outlet) { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
