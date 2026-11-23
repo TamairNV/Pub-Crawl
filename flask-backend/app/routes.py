@@ -19,6 +19,8 @@ UPLOAD_FOLDER = '/app/static/uploads'
 
 main = Blueprint('main', __name__)
 from .SQL_manager import *
+from .security import (hash_password, verify_and_upgrade, new_passkey, login_blocked, record_login,
+                       too_many_tries, client_ip, MAX_SIGNUPS_PER_IP)
 from .mini_events_manager import (
   get_wheels_for_event_sql,
   create_wheel_sql,
@@ -128,22 +130,16 @@ def set_user_role():
     return jsonify({"status": "failed", "received": "Not changed"}), 400
   return jsonify({"status": "success", "received": {"user_id": user_id, "role": role}})
 
-@main.route('/api/BOB')
-def index():
-  data = "BOB"
-  return jsonify(data)
-
 @main.route('/api/get-users')
 @admin_required
 def get_users():
-  all_users = get_all_users_sql()
-  print(all_users)
-  return jsonify(all_users)
+  return jsonify(get_all_users_sql())
 
 
-@main.route('/api/reveal-password', methods=['POST'])
+@main.route('/api/reset-password', methods=['POST'])
 @admin_required
-def reveal_password():
+def reset_password():
+  # Passwords are hashed, so they can't be shown. A ref can give a player a fresh 6-digit passkey instead.
   data = request.get_json(silent=True) or {}
   user_id = data.get('user_id')
   event_id = data.get('event_id')
@@ -155,23 +151,16 @@ def reveal_password():
     if not is_user_in_event_sql(user_id, event_id):
       return jsonify({"status": "failed", "received": "Player is not in this crawl"}), 404
 
-  user_row = get_user_password_for_admin_sql(user_id)
-  if user_row is False:
-    return jsonify({"status": "failed", "received": "Could not load password"}), 500
+  user_row = get_user_profile_sql(user_id)
   if not user_row:
     return jsonify({"status": "failed", "received": "User not found"}), 404
+  if str(user_row.get('role') or '').upper() in ('OWNER', 'ADMIN') and not is_owner():
+    return jsonify({"status": "failed", "received": "Only the owner can reset an admin's password"}), 403
 
-  if str(user_row.get('role') or '').upper() == 'OWNER' and not is_owner():
-    return jsonify({"status": "failed", "received": "Owner passwords cannot be revealed by admins"}), 403
-
-  resp = jsonify({
-    "status": "success",
-    "received": {
-      "id": user_row['id'],
-      "name": user_row['name'],
-      "password": user_row['password'],
-    },
-  })
+  passkey = new_passkey()
+  if not set_user_password_sql(user_id, hash_password(passkey)):
+    return jsonify({"status": "failed", "received": "Could not reset password"}), 500
+  resp = jsonify({"status": "success", "received": {"id": user_row['id'], "name": user_row['name'], "password": passkey}})
   resp.headers['Cache-Control'] = 'no-store'
   return resp
 
@@ -211,42 +200,42 @@ def logout_user():
 
 @main.route('/api/create-user',methods=['POST'])
 def create_user():
-  user_data = request.get_json()
-  if not user_data:
-    return jsonify({"status": "failed", "received": user_data})
-  out = is_name_taken(user_data['name'])
-  if not out:
-    create_user_sql(user_data['name'],user_data['passkey'])
-  else:
+  user_data = request.get_json(silent=True) or {}
+  name = str(user_data.get('name') or '').strip()
+  passkey = str(user_data.get('passkey') or '')
+  if not name or not passkey or len(name) > 60:
+    return jsonify({"status": "failed", "received": "Bad request"})
+  if login_blocked('create:' + client_ip(), MAX_SIGNUPS_PER_IP):
+    return too_many_tries()
+  record_login('create:' + client_ip(), False)  # counts sign-ups per IP against the same limit
+  if is_name_taken(name):
     return jsonify({"status": "failed", "received": "Taken"})
-
-  return jsonify({"status": "success", "received": user_data})
+  create_user_sql(name, hash_password(passkey))
+  return jsonify({"status": "success", "received": {"name": name}})
 
 
 @main.route('/api/login-user',methods=['POST'])
 def login_user():
-  user_data = request.get_json()
-  if not user_data:
-    return jsonify({"status": "failed", "received": user_data})
+  user_data = request.get_json(silent=True) or {}
+  name = str(user_data.get('name') or '').strip()
+  passkey = user_data.get('passkey')
+  if not name or passkey is None:
+    return jsonify({"status": "failed", "received": "Wrong"})
+  if login_blocked(name):
+    return too_many_tries()
 
-  user = get_user_data_from_name_sql(user_data['name'])
-
-  if not user:
-    print(user)
+  user = get_user_data_from_name_sql(name)
+  if not user or not verify_and_upgrade(user[0], passkey):
+    record_login(name, False)
     return jsonify({"status": "failed", "received": "Wrong"})
 
-  if user[0]['password'] == user_data['passkey']:
-    session.clear()
-    session.permanent = True
-    session['user_id'] = user[0]['id']
-    session['role'] = user[0]['role']
-    profile = {"id": user[0]['id'], "name": user[0]['name'], "role": user[0]['role']}
-    return jsonify({"status": "success", "received": profile})
-  else:
-    return jsonify({"status": "failed", "received": "Wrong"})
-
-
-  return jsonify({"status": "success", "received": user_data})
+  record_login(name, True)
+  session.clear()
+  session.permanent = True
+  session['user_id'] = user[0]['id']
+  session['role'] = user[0]['role']
+  profile = {"id": user[0]['id'], "name": user[0]['name'], "role": user[0]['role']}
+  return jsonify({"status": "success", "received": profile})
 
 @main.route('/api/create-crawl',methods=['POST'])
 @admin_required

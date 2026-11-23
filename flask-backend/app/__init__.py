@@ -41,6 +41,11 @@ def create_app():
   from .mini_events_manager import ensure_mini_events_schema
   ensure_mini_events_schema()
 
+  from .security import csrf_check
+  app.before_request(csrf_check)
+  if len(Config.SECRET_KEY) < 32:
+    app.logger.warning("SECRET_KEY is shorter than 32 characters; use a long random value (openssl rand -hex 32)")
+
   from .routes import main
 
 

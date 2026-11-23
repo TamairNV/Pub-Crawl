@@ -21,9 +21,9 @@ import { HttpClient } from '@angular/common/http';
         (click)="toggleReveal()"
         [disabled]="loading || !userId"
       >
-        {{ loading ? 'Loading...' : (revealedPassword !== null ? '🙈 Hide Password' : '🔑 Reveal Password') }}
+        {{ loading ? 'Resetting...' : (revealedPassword !== null ? 'Hide new passkey' : '🔑 Reset passkey') }}
       </button>
-      <span class="pw-secret" *ngIf="revealedPassword !== null">{{ revealedPassword }}</span>
+      <span class="pw-secret" *ngIf="revealedPassword !== null">New passkey: {{ revealedPassword }}</span>
       <span class="pw-error" *ngIf="errorMsg">{{ errorMsg }}</span>
     </div>
   `,
@@ -55,10 +55,11 @@ export class PasswordRevealComponent implements OnChanges {
       this.errorMsg = '';
       return;
     }
+    if (!confirm('Give this player a new 6-digit passkey? Their old one stops working.')) return;
     this.loading = true;
     this.errorMsg = '';
     this.http
-      .post('/api/reveal-password', {
+      .post('/api/reset-password', {
         user_id: this.userId,
         event_id: this.eventId || null,
       })
@@ -68,13 +69,13 @@ export class PasswordRevealComponent implements OnChanges {
           if (res.status === 'success' && res.received) {
             this.revealedPassword = String(res.received.password ?? '');
           } else {
-            this.errorMsg = res.received || 'Could not reveal password';
+            this.errorMsg = res.received || 'Could not reset passkey';
           }
           this.cdr.detectChanges();
         },
         error: (err) => {
           this.loading = false;
-          this.errorMsg = err?.error?.received || 'Could not reveal password';
+          this.errorMsg = err?.error?.received || 'Could not reset passkey';
           this.cdr.detectChanges();
         },
       });

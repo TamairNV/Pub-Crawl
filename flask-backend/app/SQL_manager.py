@@ -721,6 +721,14 @@ def get_user_profile_sql(user_id):
     return None
 
 
+def set_user_password_sql(user_id, password_hash):
+  try:
+    _run("UPDATE User SET password = %s WHERE id = %s", [password_hash, user_id])
+    return True
+  except Exception as e:
+    print(f"Query Failed: {e}")
+    return False
+
 def get_user_password_for_admin_sql(user_id):
   """Look up a user's username, role, and passkey for admin recovery."""
   query = "SELECT id, name, role, password FROM User WHERE id = %s LIMIT 1"
