@@ -15,7 +15,7 @@ li.empty { color: #6b7280; }
 .tap { color: #fbbf24; font-weight: 900; text-align: center; padding: 1rem; font-size: 1.2rem; }
 .reveal-actions { display: flex; flex-direction: column; gap: .7rem; margin-top: 1.5rem; }
 .r-btn { min-height: 52px; padding: .6rem 1.1rem; border: 3px solid #111827; border-radius: 12px; background: #fbbf24; color: #111827;
-  font: 900 1.05rem inherit; font-family: inherit; box-shadow: 3px 3px 0 #000; text-decoration: none; display: inline-flex;
+  font-weight: 900; font-size: 1.05rem; font-family: inherit; box-shadow: 3px 3px 0 #000; text-decoration: none; display: inline-flex;
   align-items: center; justify-content: center; cursor: pointer; }
 .r-btn.light { background: #fff; }
 .r-btn.big { min-height: 72px; font-size: 1.5rem; }

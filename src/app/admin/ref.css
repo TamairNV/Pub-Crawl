@@ -310,7 +310,7 @@
 }
 
 .no-phone { display: flex; gap: .5rem; margin-bottom: 1rem; }
-.no-phone input { flex: 1; min-width: 0; padding: .7rem .9rem; font: 700 max(16px, 1rem) inherit; font-family: inherit;
+.no-phone input { flex: 1; min-width: 0; padding: .7rem .9rem; font-weight: 700; font-size: max(16px, 1rem); font-family: inherit;
   border: 3px dashed #111827; border-radius: 12px; background: #fff; }
-.no-phone button { min-width: 72px; border: 3px solid #111827; border-radius: 12px; background: #bbf7d0; font: 900 1rem inherit;
+.no-phone button { min-width: 72px; border: 3px solid #111827; border-radius: 12px; background: #bbf7d0; font-weight: 900; font-size: 1rem;
   font-family: inherit; box-shadow: 2px 2px 0 #111827; }

@@ -6,7 +6,7 @@
 .wiz-card { background: #f0f8ff; border: 3px solid #111827; border-radius: 16px; box-shadow: 6px 6px 0 #fbbf24; padding: 1.2rem; }
 .wiz-card h2 { margin: .2rem 0 1rem; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
 .wiz-hint { margin: .6rem 0 0; font-weight: 700; color: #4b5563; }
-.wiz-input { width: 100%; box-sizing: border-box; font: 800 max(16px, 1.3rem) inherit; font-family: inherit; padding: .9rem 1rem;
+.wiz-input { width: 100%; box-sizing: border-box; font-weight: 800; font-size: max(16px, 1.3rem); font-family: inherit; padding: .9rem 1rem;
   border: 3px solid #111827; border-radius: 12px; box-shadow: 4px 4px 0 #111827; }
 .wiz-area { font-size: max(16px, 1.1rem); line-height: 1.5; resize: vertical; }
 .wiz-option { display: flex; align-items: center; gap: .9rem; width: 100%; text-align: left; margin-bottom: .6rem;
@@ -27,7 +27,7 @@
 .wiz-error { color: #fecaca; font-weight: 800; text-align: center; }
 .wiz-nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: .6rem; padding: .8rem .9rem calc(.8rem + env(safe-area-inset-bottom));
   background: #1f2937; border-top: 3px solid #111827; z-index: 30; }
-.wiz-btn { flex: 1; min-height: 60px; border: 3px solid #111827; border-radius: 14px; font: 900 1.25rem inherit; font-family: inherit;
+.wiz-btn { flex: 1; min-height: 60px; border: 3px solid #111827; border-radius: 14px; font-weight: 900; font-size: 1.25rem; font-family: inherit;
   box-shadow: 3px 3px 0 #000; cursor: pointer; }
 .wiz-btn.back { flex: 0 0 34%; background: #bfdbfe; }
 .wiz-btn.go { background: #fbbf24; }

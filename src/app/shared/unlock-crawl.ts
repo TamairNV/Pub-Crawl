@@ -72,9 +72,9 @@ interface PaymentState {
     .tier-btn:disabled { opacity: .6; cursor: wait; }
     .note { margin: 1rem 0 0; }
     .code-form { display: flex; gap: .6rem; margin-top: 1rem; }
-    .code-input { flex: 1; min-width: 0; padding: .8rem 1rem; font: 900 max(16px, 1.2rem) inherit; font-family: inherit;
+    .code-input { flex: 1; min-width: 0; padding: .8rem 1rem; font-weight: 900; font-size: max(16px, 1.2rem); font-family: inherit;
       letter-spacing: .12em; text-transform: uppercase; border: 3px solid #111827; border-radius: 12px; }
-    .code-btn { min-width: 6.5rem; border: 3px solid #111827; border-radius: 12px; background: #bbf7d0; font: 900 1.05rem inherit;
+    .code-btn { min-width: 6.5rem; border: 3px solid #111827; border-radius: 12px; background: #bbf7d0; font-weight: 900; font-size: 1.05rem;
       font-family: inherit; box-shadow: 3px 3px 0 #111827; }
     .error { margin: 1rem 0 0; color: #b91c1c; }
   `]
