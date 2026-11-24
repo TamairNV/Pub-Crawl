@@ -80,6 +80,27 @@ def can_view_event(event_id):
   return bool(cached(('view', uid, event_id), 30,
                      lambda: can_manage_event(event_id) or is_user_in_event_sql(uid, event_id) or None))
 
+
+def shared_read_cache(f):
+  """Cache a per-crawl read for LIVE_CACHE_SECONDS for players (200 phones opening the page at once
+  then cost one DB hit, not 200). Refs/organisers always get fresh data."""
+  @wraps(f)
+  def wrapper(*args, **kwargs):
+    data = request.get_json(silent=True) or {}
+    event_id = data.get('event_id')
+    uid = session.get('user_id')
+    if not event_id or (uid and cached(('mgr', uid, event_id), 30, lambda: 'yes' if can_manage_event(event_id) else 'no') == 'yes'):
+      return f(*args, **kwargs)
+    body = cached((event_id, request.path), LIVE_CACHE_SECONDS, lambda: _json_or_none(f(*args, **kwargs)))
+    return jsonify(body) if body is not None else f(*args, **kwargs)
+  return wrapper
+
+
+def _json_or_none(resp):
+  if isinstance(resp, tuple) or getattr(resp, 'status_code', 200) != 200:
+    return None
+  return resp.get_json()
+
 def login_required(f):
   @wraps(f)
   def wrapper(*args, **kwargs):
@@ -449,6 +470,7 @@ def reset_event():
   return jsonify({"status": "success", "received": out.get('cleared')})
 
 @main.route('/api/get-event-details',methods=['GET', 'POST'])
+@shared_read_cache
 def get_event_details():
   data = request.get_json()
   if not data:
@@ -542,6 +564,7 @@ def set_pub_rule():
 
 
 @main.route('/api/get-base-rules',methods=['GET', 'POST'])
+@shared_read_cache
 def get_base_rules():
   data = request.get_json()
   if not data:
@@ -557,6 +580,7 @@ def get_base_rules():
 
 
 @main.route('/api/get-locations-rules',methods=['GET', 'POST'])
+@shared_read_cache
 def get_locations_rules():
   data = request.get_json()
   if not data:
@@ -631,6 +655,7 @@ def reorder_locations():
 
 
 @main.route('/api/get-user-points',methods=['GET', 'POST'])
+@shared_read_cache
 def get_user_points():
   data = request.get_json()
   if not data:

@@ -13,9 +13,10 @@ COPY . .
 # Expose the port (we'll use 8001 to avoid clashing with your other site)
 EXPOSE 8001
 
-# Run Gunicorn
+# Run Gunicorn. Worker count comes from WEB_CONCURRENCY (gunicorn reads it); 8 suits the 16-core server
+ENV WEB_CONCURRENCY=8
 CMD ["gunicorn", "--bind", "0.0.0.0:8001", \
-     "--workers", "4", "--threads", "4", \
+     "--threads", "4", \
      "--timeout", "900", "--graceful-timeout", "30", \
      "--access-logfile", "-", "--error-logfile", "-", \
      "run:app"]
