@@ -1,6 +1,6 @@
 <!-- 5. Spin the Wheel Mini Events -->
 <div class="schema-banner" *ngIf="schemaError">{{ schemaError }}</div>
-<section class="admin-card" id="wheels">
+<section class="admin-card" id="wheels" *ngIf="showWheel">
   <h2><span class="num">5</span> Spin the Wheel Mini Events <small class="optional">optional</small></h2>
   <p class="hint">Create one or more wheels for this crawl. Add tasks and point rewards (or remove points from rival teams).</p>
 
@@ -85,7 +85,7 @@
 </section>
 
 <!-- 6. Awards -->
-<section class="admin-card" id="awards">
+<section class="admin-card" id="awards" *ngIf="showAwards">
   <h2><span class="num">6</span> Awards <small class="optional">players &amp; refs vote</small></h2>
   <p class="hint">Best Dressed, Best Group Chemistry, Best Handshake, etc. Players vote on their own page and refs can vote on behalf of anyone.</p>
 

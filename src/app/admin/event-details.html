@@ -14,6 +14,17 @@
 
   <app-unlock-crawl *ngIf="currentEventID" [eventId]="currentEventID"></app-unlock-crawl>
 
+  <!-- What this crawl uses: switched-off features disappear from this page and from the players' screens -->
+  <section class="admin-card features-card">
+    <h2>This crawl has</h2>
+    <div class="feature-chips">
+      <button type="button" *ngFor="let f of featureList" class="feature-chip" [class.on]="features[f.key]" (click)="toggleFeature(f.key)">
+        <span>{{ features[f.key] ? '✓' : '+' }}</span> {{ f.label }}
+      </button>
+    </div>
+    <a class="link-btn" *ngIf="features['teams'] && teams.length" [routerLink]="['/reveal', currentEventID]">📣 Team reveal screen</a>
+  </section>
+
   <!-- Progress -->
   <nav class="steps">
     <button type="button" class="step" [class.done]="teams.length > 0" (click)="scrollTo('teams')">
@@ -48,7 +59,7 @@
   </div>
 
   <!-- 1. Teams -->
-  <section class="admin-card" id="teams">
+  <section class="admin-card" id="teams" *ngIf="features['teams']">
     <h2><span class="num">1</span> Teams</h2>
 
     <div class="team-chips" *ngIf="teams.length">
@@ -77,7 +88,7 @@
   <section class="admin-card" id="players">
     <h2><span class="num">2</span> Players</h2>
 
-    <div class="invite-box" *ngIf="joinUrl">
+    <div class="invite-box" *ngIf="joinUrl && features['qr_join']">
       <h3>Invite with a QR code</h3>
       <p class="hint">Players scan this, type their name and they're in. No account needed.</p>
       <img class="invite-qr" [src]="qrSrc" alt="QR code to join this crawl" width="240" height="240">
@@ -92,6 +103,17 @@
       </div>
       <button type="button" class="link-btn" *ngIf="canChangeRefs" (click)="regenerateJoinLink()">Make a new link (the old QR stops working)</button>
       <p class="hint" *ngIf="joinMessage">{{ joinMessage }}</p>
+    </div>
+
+    <div class="quick-players">
+      <div class="inline-form" *ngIf="features['teams'] && teams.length">
+        <button type="button" class="btn btn-primary" (click)="randomiseTeams(false)" [disabled]="busy">🎲 Random teams</button>
+        <button type="button" class="btn btn-secondary" (click)="randomiseTeams(true)" [disabled]="busy">Place new players only</button>
+      </div>
+      <form class="inline-form" (ngSubmit)="addNoPhonePlayer()">
+        <input type="text" class="form-control" name="noPhoneName" [(ngModel)]="noPhoneName" placeholder="Add someone without a phone" maxlength="40" autocomplete="off">
+        <button type="submit" class="btn btn-secondary" [disabled]="!noPhoneName.trim() || busy">Add</button>
+      </form>
     </div>
 
     <p class="hint" *ngIf="teams.length === 0">Add a team first, then pick players.</p>
@@ -223,7 +245,7 @@
   </section>
 
   <!-- 4. Rules -->
-  <section class="admin-card" id="rules">
+  <section class="admin-card" id="rules" *ngIf="features['general_rules'] || features['pub_rules']">
     <h2><span class="num">4</span> Rules <small class="optional">whole crawl or per pub</small></h2>
 
     <div class="list-container" *ngIf="baseRules.length || pubsWithRules().length">
@@ -272,6 +294,8 @@
   <app-mini-events-setup
     *ngIf="currentEventID"
     [eventId]="currentEventID"
+    [showWheel]="features['wheel']"
+    [showAwards]="features['awards']"
     (countsChanged)="onMiniCountsChanged($event)">
   </app-mini-events-setup>
 </div>

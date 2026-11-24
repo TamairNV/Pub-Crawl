@@ -21,6 +21,8 @@ main = Blueprint('main', __name__)
 from .SQL_manager import *
 from .security import (hash_password, verify_and_upgrade, new_passkey, login_blocked, record_login,
                        too_many_tries, client_ip, MAX_SIGNUPS_PER_IP)
+from .cache import cached
+LIVE_CACHE_SECONDS = 3
 from .organisers import (event_manager_required, can_manage_event, can_change_refs, is_staff, managed_events_sql,
                          active_crawl_count, set_event_owner_sql, list_refs_sql, add_ref_sql, remove_ref_sql,
                          MAX_ACTIVE_CRAWLS_PER_ORGANISER)
@@ -72,7 +74,11 @@ def is_owner():
   return current_role() == 'owner'
 
 def can_view_event(event_id):
-  return can_manage_event(event_id) or is_user_in_event_sql(session['user_id'], event_id)
+  uid = session.get('user_id')
+  if not uid:
+    return False
+  return bool(cached(('view', uid, event_id), 30,
+                     lambda: can_manage_event(event_id) or is_user_in_event_sql(uid, event_id) or None))
 
 def login_required(f):
   @wraps(f)
@@ -895,14 +901,17 @@ def player_live_state():
   if not event_id or not can_view_event(event_id):
     return jsonify({"status": "failed", "received": "Forbidden"}), 403
 
-  cur_pub = get_current_pub_sql(event_id)
-  my_tasks = get_event_tasks_sql(event_id, user_id=session['user_id'])
-  points = get_user_points_sql(event_id)
-  team_adjustments = get_team_adjustments_sql(event_id)
-  wheels = get_wheels_for_event_sql(event_id)
-  awards = get_awards_for_event_sql(event_id)
-  settings = get_awards_settings_sql(event_id)
   admin_user = can_manage_event(event_id)
+  # Shared parts are the same for every player: cache them for a few seconds (refs always get fresh data)
+  ttl = 0 if admin_user else LIVE_CACHE_SECONDS
+  shared = (lambda key, fn: fn()) if not ttl else (lambda key, fn: cached((event_id, key), ttl, fn))
+  cur_pub = shared('cur_pub', lambda: get_current_pub_sql(event_id))
+  my_tasks = get_event_tasks_sql(event_id, user_id=session['user_id'])
+  points = shared('points', lambda: get_user_points_sql(event_id))
+  team_adjustments = shared('adj', lambda: get_team_adjustments_sql(event_id))
+  wheels = shared('wheels', lambda: get_wheels_for_event_sql(event_id))
+  awards = shared('awards', lambda: get_awards_for_event_sql(event_id))
+  settings = shared('award_settings', lambda: get_awards_settings_sql(event_id))
   votes = get_award_votes_summary_sql(
     event_id,
     session['user_id'],

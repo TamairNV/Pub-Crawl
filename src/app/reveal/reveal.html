@@ -1,0 +1,22 @@
+<div class="reveal">
+  <div class="reveal-top">
+    <a [routerLink]="['/event-details', eventId]" class="r-btn light">← Setup</a>
+    <button type="button" class="r-btn" (click)="share()" [disabled]="sharing || !teams.length">📤 Share image</button>
+  </div>
+  <h2 class="reveal-title">{{ crawlName }}</h2>
+
+  <div class="team-grid">
+    <div *ngFor="let t of teams; let i = index" class="team-block" [class.hidden]="i >= shown" [style.--c]="t.colour"
+         (click)="i === shown && revealNext()">
+      <div class="team-name">{{ i < shown ? t.name : '?' }}</div>
+      <ul *ngIf="i < shown"><li *ngFor="let m of t.members">{{ m }}</li><li *ngIf="!t.members.length" class="empty">No one yet</li></ul>
+      <div class="tap" *ngIf="i === shown">Tap to reveal</div>
+    </div>
+  </div>
+
+  <div class="reveal-actions" *ngIf="shown < teams.length">
+    <button type="button" class="r-btn big" (click)="revealNext()">Reveal next team 🥁</button>
+    <button type="button" class="r-btn light" (click)="revealAll()">Show all</button>
+  </div>
+  <p class="note" *ngIf="note">{{ note }}</p>
+</div>

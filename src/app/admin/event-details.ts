@@ -83,6 +83,15 @@ export class EventDetailsComponent implements OnInit {
   newRefName = '';
   refMessage = '';
 
+  // Feature switches (teams, rules, wheel, awards, photos, QR)
+  features: Record<string, boolean> = { teams: true, general_rules: true, pub_rules: true, wheel: true, awards: true, photos: true, qr_join: true };
+  featureList = [
+    { key: 'teams', label: 'Teams' }, { key: 'general_rules', label: 'Crawl rules' }, { key: 'pub_rules', label: 'Pub rules' },
+    { key: 'wheel', label: 'Spin the wheel' }, { key: 'awards', label: 'Awards' }, { key: 'photos', label: 'Photos' },
+    { key: 'qr_join', label: 'QR join' },
+  ];
+  noPhoneName = '';
+
   // QR / link invites
   joinUrl = '';
   qrSrc = '';
@@ -113,6 +122,42 @@ export class EventDetailsComponent implements OnInit {
       this.refreshAll();
       this.loadRefs();
       this.loadJoinInfo();
+      this.loadFeatures();
+    });
+  }
+
+  loadFeatures() {
+    this.http.post('/api/event-features', { event_id: this.currentEventID }).subscribe({
+      next: (res: any) => { if (res.status === 'success') { this.features = res.received; this.cdr.detectChanges(); } },
+      error: () => {}
+    });
+  }
+
+  toggleFeature(key: string) {
+    const next = { ...this.features, [key]: !this.features[key] };
+    this.features = next;
+    this.http.post('/api/set-event-features', { event_id: this.currentEventID, features: { [key]: next[key] } }).subscribe({
+      next: (res: any) => { if (res.status === 'success') this.features = res.received; this.cdr.detectChanges(); },
+      error: () => { this.loadFeatures(); }
+    });
+  }
+
+  randomiseTeams(onlyNew: boolean) {
+    if (!onlyNew && !confirm('Shuffle everyone into random, even teams?')) return;
+    this.busy = true;
+    this.http.post('/api/randomise-teams', { event_id: this.currentEventID, only_unassigned: onlyNew }).subscribe({
+      next: (res: any) => { this.busy = false; this.message = `Placed ${res.received.moved} players.`; this.refreshAll(); },
+      error: (err) => { this.busy = false; this.message = err?.error?.received || 'Could not shuffle teams.'; this.cdr.detectChanges(); }
+    });
+  }
+
+  addNoPhonePlayer() {
+    const name = this.noPhoneName.trim();
+    if (!name) return;
+    this.busy = true;
+    this.http.post('/api/add-guest-player', { event_id: this.currentEventID, name }).subscribe({
+      next: () => { this.busy = false; this.noPhoneName = ''; this.message = `${name} added.`; this.refreshAll(); },
+      error: (err) => { this.busy = false; this.message = err?.error?.received || 'Could not add them.'; this.cdr.detectChanges(); }
     });
   }
 

@@ -24,6 +24,8 @@ interface ItemDraft {
 })
 export class MiniEventsSetupComponent implements OnChanges {
   @Input() eventId: string | null = '';
+  @Input() showWheel = true;
+  @Input() showAwards = true;
   @Output() countsChanged = new EventEmitter<{ wheels: number; awards: number }>();
 
   private http = inject(HttpClient);

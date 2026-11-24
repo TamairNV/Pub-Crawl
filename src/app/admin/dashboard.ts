@@ -64,28 +64,11 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // Step 1 of a new crawl: just a name. Everything else is set up on the crawl's own page.
+  // Step 1 of a new crawl: the name. The wizard (/new-crawl) does the rest in a few taps.
   async createCrawl() {
     const name = this.eventName.trim();
-    if (!name || this.creating) {
-      return;
-    }
-    this.creating = true;
-    this.createError = '';
-    try {
-      const response: any = await firstValueFrom(
-        this.http.post('/api/create-crawl', { name, id: crypto.randomUUID() })
-      );
-      if (response.status === 'success') {
-        this.router.navigate(['/event-details', response.received]);
-      } else {
-        this.createError = 'Could not create the crawl. Try again.';
-      }
-    } catch (error) {
-      this.createError = 'Could not create the crawl. Are you still logged in as an admin?';
-    }
-    this.creating = false;
-    this.cdr.detectChanges();
+    if (!name) return;
+    this.router.navigate(['/new-crawl'], { queryParams: { name } });
   }
 
   getEvents() {

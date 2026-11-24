@@ -55,6 +55,11 @@
       </button>
     </div>
     <input *ngIf="userDetails.length > 8" type="search" class="player-search" [(ngModel)]="playerSearch" placeholder="Find a player…">
+    <form class="no-phone" (ngSubmit)="addNoPhonePlayer()">
+      <input type="text" name="noPhoneName" [(ngModel)]="noPhoneName" placeholder="+ Someone with no phone" maxlength="40" autocomplete="off">
+      <button type="submit" [disabled]="!noPhoneName.trim()">Add</button>
+    </form>
+    <p class="grid-hint" *ngIf="noPhoneMsg">{{ noPhoneMsg }}</p>
     <div class="user-grid">
       <div *ngFor="let user of shownPlayers(); trackBy: trackUser" class="player-card">
         <button type="button" class="player-name-btn" (click)="openPlayerModal(user)">

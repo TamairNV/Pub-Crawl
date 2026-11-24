@@ -401,3 +401,10 @@ textarea.form-control {
 .invite-cap { align-items: center; justify-content: center; flex-wrap: wrap; }
 .invite-cap label { font-weight: 800; }
 .invite-cap .form-control { width: 6rem; }
+
+/* feature switches */
+.feature-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+.feature-chip { min-height: 48px; padding: .45rem .9rem; border: 3px solid #111827; border-radius: 999px; background: #fff;
+  font: 800 1rem inherit; font-family: inherit; color: #6b7280; cursor: pointer; }
+.feature-chip.on { background: #fbbf24; color: #111827; box-shadow: 2px 2px 0 #111827; }
+.quick-players { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1rem; }

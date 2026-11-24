@@ -137,6 +137,18 @@ export class RefComponent implements OnInit, OnDestroy {
   }
   trackUser(_: number, u: any) { return u.userID; }
 
+  // Not everyone has the app: the ref adds them by name and scores them like anyone else
+  noPhoneName = '';
+  noPhoneMsg = '';
+  addNoPhonePlayer() {
+    const name = this.noPhoneName.trim();
+    if (!name) return;
+    this.http.post('/api/add-guest-player', { event_id: this.currentEventID, team_id: this.teamFilter || null, name }).subscribe({
+      next: () => { this.noPhoneName = ''; this.noPhoneMsg = `${name} added.`; this.getEventDetails(); },
+      error: (err) => { this.noPhoneMsg = err?.error?.received || 'Could not add them.'; this.cdr.detectChanges(); }
+    });
+  }
+
   givePoint(n: any,id : String){
     const row = (this.userDetails || []).find((u: any) => u.userID === id);
     if (row) { row.points = (Number(row.points) || 0) + n; }

@@ -1,0 +1,59 @@
+<div class="wizard">
+  <div class="wiz-top">
+    <a [routerLink]="['/admin-dashboard']" class="wiz-link">✕ Cancel</a>
+    <span class="wiz-steps">Step {{ step }} of {{ lastStep }}</span>
+  </div>
+
+  <section class="wiz-card" *ngIf="step === 1">
+    <h2>Name your crawl</h2>
+    <input class="wiz-input" [(ngModel)]="name" (keyup.enter)="next()" placeholder="e.g. Freshers Crawl 2026" maxlength="80" autofocus>
+  </section>
+
+  <section class="wiz-card" *ngIf="step === 2">
+    <h2>What do you want?</h2>
+    <p class="wiz-hint">Tap to switch on or off. You can change this later.</p>
+    <button type="button" *ngFor="let f of featureList" class="wiz-option" [class.on]="features[f.key]" (click)="features[f.key] = !features[f.key]">
+      <span class="tick">{{ features[f.key] ? '✓' : '' }}</span>
+      <span class="opt-text"><strong>{{ f.label }}</strong><small>{{ f.hint }}</small></span>
+    </button>
+  </section>
+
+  <section class="wiz-card" *ngIf="step === 3">
+    <ng-container *ngIf="features['teams']">
+      <h2>How many teams?</h2>
+      <div class="stepper">
+        <button type="button" (click)="teamCount = teamCount > 2 ? teamCount - 1 : 2">−</button>
+        <span>{{ teamCount }}</span>
+        <button type="button" (click)="teamCount = teamCount < 8 ? teamCount + 1 : 8">+</button>
+      </div>
+      <p class="wiz-hint">Players get shared out evenly when they join. You can rename teams later.</p>
+    </ng-container>
+    <h2>Which pubs, in order?</h2>
+    <textarea class="wiz-input wiz-area" [(ngModel)]="pubsText" rows="6" placeholder="One per line, e.g.&#10;The Red Lion&#10;The Crown&#10;The Ship"></textarea>
+    <p class="wiz-hint">{{ pubs.length ? pubs.length + ' pubs' : 'Optional: you can add pubs later.' }}</p>
+  </section>
+
+  <section class="wiz-card" *ngIf="step === 4">
+    <h2>Pick a rule pack</h2>
+    <button type="button" *ngFor="let p of packs" class="wiz-option pack" [class.on]="packId === p.id" (click)="packId = p.id">
+      <span class="tick">{{ packId === p.id ? '✓' : '' }}</span>
+      <span class="opt-text">
+        <strong>{{ p.name }}</strong><small>{{ p.blurb }}</small>
+        <em *ngIf="p.per_pub?.[0]">e.g. “{{ p.per_pub[0].name }}: {{ p.per_pub[0].description }}”</em>
+      </span>
+    </button>
+    <button type="button" class="wiz-option" [class.on]="packId === ''" (click)="packId = ''">
+      <span class="tick">{{ packId === '' ? '✓' : '' }}</span>
+      <span class="opt-text"><strong>No pack</strong><small>I'll write my own rules</small></span>
+    </button>
+  </section>
+
+  <p class="wiz-error" *ngIf="error">{{ error }}</p>
+
+  <div class="wiz-nav">
+    <button type="button" class="wiz-btn back" (click)="back()" *ngIf="step > 1" [disabled]="busy">← Back</button>
+    <button type="button" class="wiz-btn go" (click)="next()" [disabled]="busy">
+      {{ busy ? 'Setting up…' : (step === lastStep ? "Create crawl 🍻" : 'Next →') }}
+    </button>
+  </div>
+</div>
