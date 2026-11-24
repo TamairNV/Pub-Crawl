@@ -54,6 +54,8 @@ def create_app():
   from .join import join
   from .setup_wizard import wizard
   from .access_codes import access_codes
+  from .recap import recap
+  app.register_blueprint(recap)
   app.register_blueprint(access_codes)
   app.register_blueprint(wizard)
   app.register_blueprint(join)

@@ -1,0 +1,57 @@
+<div class="recap">
+  <div class="recap-top">
+    <a [routerLink]="['/event-play', eventId]" class="r-btn light">← Crawl</a>
+    <button type="button" class="r-btn" (click)="share()" [disabled]="!r || sharing">🏆 Winners poster</button>
+  </div>
+  <p class="err" *ngIf="error">{{ error }}</p>
+
+  <ng-container *ngIf="r">
+    <h2 class="recap-title">{{ r.event.name }}</h2>
+    <p class="recap-date" *ngIf="r.event.date">{{ r.event.date | date:'EEEE d MMMM yyyy' }}</p>
+
+    <div class="champ" *ngIf="r.teams[0] as w" [style.--c]="w.colour">
+      <small>Champions</small>
+      <strong>{{ w.name }}</strong>
+      <span>{{ w.points }} points</span>
+    </div>
+
+    <section class="card">
+      <h3>Final standings</h3>
+      <div class="row" *ngFor="let t of r.teams; let i = index">
+        <span class="pos">{{ medal(i) }}</span>
+        <span class="dot" [style.background]="t.colour"></span>
+        <span class="name">{{ t.name }}</span>
+        <span class="pts">{{ t.points }}</span>
+      </div>
+    </section>
+
+    <section class="card" *ngIf="r.top_players.length">
+      <h3>Top players</h3>
+      <div class="row" *ngFor="let p of r.top_players; let i = index">
+        <span class="pos">{{ medal(i) }}</span><span class="name">{{ p.name }} <small>{{ p.team }}</small></span><span class="pts">{{ p.points }}</span>
+      </div>
+    </section>
+
+    <section class="card" *ngIf="r.awards.length">
+      <h3>Awards</h3>
+      <div class="row" *ngFor="let a of r.awards">
+        <span class="pos">🏅</span><span class="name">{{ a.name }}</span>
+        <span class="pts small">{{ a.winner ? a.winner.name : 'secret 🤫' }}</span>
+      </div>
+    </section>
+
+    <section class="card stats">
+      <div><strong>{{ r.stats.players }}</strong><small>players</small></div>
+      <div><strong>{{ r.stats.pubs }}</strong><small>pubs</small></div>
+      <div><strong>{{ r.stats.points }}</strong><small>points</small></div>
+      <div><strong>{{ r.stats.photos }}</strong><small>photos</small></div>
+    </section>
+
+    <section class="card" *ngIf="r.pubs.length">
+      <h3>The route</h3>
+      <ol class="route"><li *ngFor="let p of r.pubs">{{ p }}</li></ol>
+      <a class="r-btn light wide" *ngIf="r.stats.photos" [routerLink]="['/map-view', eventId]">📸 See the photos</a>
+    </section>
+    <p class="note" *ngIf="note">{{ note }}</p>
+  </ng-container>
+</div>

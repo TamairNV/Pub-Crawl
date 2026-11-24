@@ -5,6 +5,7 @@
     <div class="header-actions">
       <a [routerLink]="['/ref', currentEventID]" class="btn btn-outline">Ref Mode</a>
       <a [routerLink]="['/map-view', currentEventID]" class="btn btn-outline">Media</a>
+      <a [routerLink]="['/recap', currentEventID]" class="btn btn-outline">Recap</a>
       <button *ngIf="canChangeRefs" type="button" class="btn btn-danger" (click)="openResetModal()">Reset Scores</button>
       <a [routerLink]="['/admin-dashboard']" class="btn btn-outline">Back</a>
     </div>
