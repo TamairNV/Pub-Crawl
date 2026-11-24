@@ -69,7 +69,7 @@ def login_blocked(name, max_per_name=MAX_FAILS_PER_NAME):
   try:
     rows = _run(
       "SELECT "
-      " SUM(name = %s) AS by_name, SUM(ip = %s AND name NOT LIKE 'create:%%') AS by_ip "
+      " SUM(name = %s) AS by_name, SUM(ip = %s AND name NOT LIKE 'create:%%' AND name NOT LIKE 'join:%%') AS by_ip "
       "FROM LoginAttempt WHERE success = 0 AND created_at > NOW() - INTERVAL %s MINUTE "
       "AND (name = %s OR ip = %s)",
       [name, client_ip(), FAIL_WINDOW_MIN, name, client_ip()])
