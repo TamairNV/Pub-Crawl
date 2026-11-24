@@ -26,7 +26,7 @@ import { RouterLink } from '@angular/router';
     <h3>Who sees it</h3>
     <p>People in your crawl see names, teams, scores and media. The organiser and refs can manage the crawl. We use Stripe for payments and Cloudflare to deliver the site securely. We never sell your data.</p>
     <h3>How long we keep it</h3>
-    <p>Photos and videos are deleted after a set time once the crawl is over. Crawls and accounts stay until you or your organiser delete them. Ask us and we'll delete your data.</p>
+    <p>Photos and videos are deleted 90 days after the crawl's last activity, unless the organiser asks us to keep them. Crawls and accounts stay until you or your organiser delete them. Ask us and we'll delete your data.</p>
     <h3>Your rights</h3>
     <p>You can ask to see, correct, export or delete your data, or object to how we use it. You can also complain to the ICO (ico.org.uk).</p>
   </article></div>`,

@@ -52,7 +52,8 @@ def _stripe_ready():
 
 
 def _base_url():
-  return os.getenv('APP_BASE_URL', 'https://crawl.tamairnv.co.uk').rstrip('/')
+  # Every absolute URL comes from PUBLIC_BASE_URL (APP_BASE_URL kept as the old name)
+  return (os.getenv('PUBLIC_BASE_URL') or os.getenv('APP_BASE_URL') or 'https://crawl.tamairnv.co.uk').rstrip('/')
 
 
 def _query(sql, args=None, one=False):
