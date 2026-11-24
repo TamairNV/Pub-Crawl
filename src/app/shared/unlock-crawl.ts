@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 interface PaymentState {
   available: boolean;
+  stripe?: boolean;
   paid?: boolean;
   tier?: string | null;
   team_count?: number;
@@ -31,6 +32,7 @@ interface PaymentState {
           } @else {
             <h3>Unlock this crawl</h3>
             <p>Free crawls get up to {{ s.free_team_limit }} teams (you have {{ s.team_count }}). Unlock for unlimited teams.</p>
+            @if (s.stripe) {
             <div class="tiers">
               @for (key of tierKeys(s); track key) {
                 <button type="button" class="tier-btn" [disabled]="busy()" (click)="buy(key)">
@@ -38,6 +40,11 @@ interface PaymentState {
                 </button>
               }
             </div>
+            }
+            <form class="code-form" (submit)="redeem($event, codeInput.value)">
+              <input #codeInput class="code-input" name="code" placeholder="Got a code?" autocomplete="off" autocapitalize="characters">
+              <button type="submit" class="code-btn" [disabled]="busy()">Use code</button>
+            </form>
             @if (cancelled()) { <p class="note">Payment cancelled. Nothing was charged.</p> }
             @if (error()) { <p class="error">{{ error() }}</p> }
           }
@@ -64,6 +71,11 @@ interface PaymentState {
     .tier-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #111827; }
     .tier-btn:disabled { opacity: .6; cursor: wait; }
     .note { margin: 1rem 0 0; }
+    .code-form { display: flex; gap: .6rem; margin-top: 1rem; }
+    .code-input { flex: 1; min-width: 0; padding: .8rem 1rem; font: 900 max(16px, 1.2rem) inherit; font-family: inherit;
+      letter-spacing: .12em; text-transform: uppercase; border: 3px solid #111827; border-radius: 12px; }
+    .code-btn { min-width: 6.5rem; border: 3px solid #111827; border-radius: 12px; background: #bbf7d0; font: 900 1.05rem inherit;
+      font-family: inherit; box-shadow: 3px 3px 0 #111827; }
     .error { margin: 1rem 0 0; color: #b91c1c; }
   `]
 })
@@ -90,6 +102,16 @@ export class UnlockCrawlComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.pollTimer) { clearTimeout(this.pollTimer); }
+  }
+
+  redeem(ev: Event, code: string) {
+    ev.preventDefault();
+    if (!code.trim() || this.busy()) return;
+    this.busy.set(true); this.error.set('');
+    this.http.post<any>('/api/redeem-access-code', { event_id: this.eventId, code }).subscribe({
+      next: () => { this.busy.set(false); this.load(); },
+      error: (err) => { this.busy.set(false); this.error.set(err?.error?.received || "That code doesn't work."); },
+    });
   }
 
   load() {
@@ -130,6 +152,6 @@ export class UnlockCrawlComponent implements OnInit, OnDestroy {
   }
 
   tierKeys(s: PaymentState) { return Object.keys(s.tiers || {}); }
-  tierLabel(t?: string | null) { return (t && this.state()?.tiers?.[t]?.label) || 'Paid crawl'; }
+  tierLabel(t?: string | null) { return t === 'code' ? 'Unlocked with a code' : ((t && this.state()?.tiers?.[t]?.label) || 'Paid crawl'); }
   price(pence: number) { return '£' + (pence / 100).toFixed(2).replace(/\.00$/, ''); }
 }

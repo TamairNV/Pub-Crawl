@@ -1,0 +1,11 @@
+.code-make { display: grid; gap: .75rem; }
+.code-make label { display: flex; flex-direction: column; gap: .3rem; font-weight: 800; }
+.made { font-size: 1.2rem; font-weight: 800; }
+.code-row { display: flex; flex-direction: column; gap: .4rem; }
+.code-row.off { opacity: .55; }
+.code-main { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.code-chip { font: 900 1.1rem ui-monospace, monospace; letter-spacing: .1em; background: #fbbf24; border: 3px solid #111827;
+  border-radius: 10px; padding: .35rem .6rem; cursor: pointer; }
+.code-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-weight: 700; }
+.uses { margin: .2rem 0 0; padding-left: 1.2rem; font-weight: 700; }
+.uses small { color: #4b5563; }

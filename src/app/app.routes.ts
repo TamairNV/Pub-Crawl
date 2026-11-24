@@ -12,6 +12,7 @@ import {UploadComponent} from './photos/upload';
 import {JoinComponent} from './join/join';
 import {NewCrawlWizardComponent} from './wizard/wizard';
 import {TeamRevealComponent} from './reveal/reveal';
+import {AdminCodesComponent} from './admin-codes/admin-codes';
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'join/:token', component: JoinComponent },
   { path: 'new-crawl', component: NewCrawlWizardComponent },
   { path: 'reveal/:id', component: TeamRevealComponent },
+  { path: 'admin-codes', component: AdminCodesComponent },
   { path: '',redirectTo: '/login',pathMatch : 'full' },
   { path: 'event-details/:id', component: EventDetailsComponent },
   { path: 'ref/:id', component: RefComponent },

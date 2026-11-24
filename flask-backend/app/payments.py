@@ -109,7 +109,8 @@ def payment_status():
     return jsonify({"status": "failed", "received": "No such crawl"}), 404
   state.pop('event_name')
   state.update({
-    'available': _stripe_ready(),
+    'available': _stripe_ready() or os.getenv('PAYMENTS_ENFORCE') == '1',
+    'stripe': _stripe_ready(),
     'free_team_limit': FREE_TEAM_LIMIT,
     'enforced': os.getenv('PAYMENTS_ENFORCE') == '1',
     'tiers': {k: {'amount': v['amount'], 'label': v['label']} for k, v in TIERS.items()},

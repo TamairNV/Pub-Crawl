@@ -1,0 +1,41 @@
+<div class="admin-dashboard">
+  <header class="admin-header">
+    <h1>Free codes</h1>
+    <div class="header-actions"><a [routerLink]="['/admin-dashboard']" class="btn btn-outline">Back</a></div>
+  </header>
+
+  <section class="admin-card">
+    <h2>Make a code</h2>
+    <p class="hint">Give it to a friend. Their organiser types it on Crawl Setup and the crawl is unlocked for free.</p>
+    <form class="code-make" (ngSubmit)="create()">
+      <label>Who's it for? <input class="form-control" name="label" [(ngModel)]="label" placeholder="e.g. Jamie's stag" maxlength="120"></label>
+      <label>Max uses <input class="form-control" type="number" min="1" max="1000" name="maxUses" [(ngModel)]="maxUses"></label>
+      <label>Expires in (days, blank = never) <input class="form-control" type="number" min="1" name="expiresDays" [(ngModel)]="expiresDays"></label>
+      <label>Custom code (optional) <input class="form-control" name="custom" [(ngModel)]="custom" placeholder="auto" maxlength="40"></label>
+      <button type="submit" class="btn btn-primary">Create code</button>
+    </form>
+    <p class="made" *ngIf="justMade">New code: <strong>{{ justMade }}</strong> <button type="button" class="btn btn-small btn-secondary" (click)="copy(justMade)">Copy</button></p>
+    <p class="hint" *ngIf="message">{{ message }}</p>
+  </section>
+
+  <section class="admin-card">
+    <h2>Codes ({{ codes.length }})</h2>
+    <div class="list-container">
+      <div class="list-item code-row" *ngFor="let c of codes" [class.off]="!c.active || c.expired">
+        <div class="code-main">
+          <button type="button" class="code-chip" (click)="copy(c.code)">{{ c.code }}</button>
+          <span class="item-info">{{ c.label || '—' }}</span>
+        </div>
+        <div class="code-meta">
+          <strong>{{ c.uses }}/{{ c.max_uses }} used</strong>
+          <span *ngIf="c.expires_at">· {{ c.expired ? 'expired' : 'expires' }} {{ c.expires_at | date:'d MMM yyyy' }}</span>
+          <button type="button" class="btn btn-small" [class.btn-danger]="c.active" [class.btn-secondary]="!c.active" (click)="toggle(c)">{{ c.active ? 'Turn off' : 'Turn on' }}</button>
+        </div>
+        <ul class="uses" *ngIf="c.used_by?.length">
+          <li *ngFor="let u of c.used_by">{{ u.event_name }} <small>by {{ u.user_name || '?' }}, {{ u.used_at | date:'d MMM HH:mm' }}</small></li>
+        </ul>
+      </div>
+      <p class="hint" *ngIf="!codes.length">No codes yet.</p>
+    </div>
+  </section>
+</div>

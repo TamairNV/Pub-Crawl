@@ -6,6 +6,7 @@
       <a *ngIf="authService.isOwner()" [routerLink]="['/admin-restore']" class="btn btn-outline">
         Restore{{ deletedCount > 0 ? ' (' + deletedCount + ')' : '' }}
       </a>
+      <a *ngIf="authService.isOwner()" [routerLink]="['/admin-codes']" class="btn btn-outline">Free codes</a>
       <a [routerLink]="['/player-dashboard']" class="btn btn-secondary">Player Mode</a>
       <button type="button" class="btn btn-secondary" (click)="logout()">Logout</button>
     </div>
