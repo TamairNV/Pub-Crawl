@@ -81,6 +81,16 @@ def can_view_event(event_id):
                      lambda: can_manage_event(event_id) or is_user_in_event_sql(uid, event_id) or None))
 
 
+@main.route('/api/healthz')
+def healthz():
+  """Liveness + DB check for Docker healthchecks and smoke tests."""
+  try:
+    _run("SELECT 1", [])
+    return jsonify({"status": "ok"})
+  except Exception:
+    return jsonify({"status": "db-down"}), 503
+
+
 def shared_read_cache(f):
   """Cache a per-crawl read for LIVE_CACHE_SECONDS for players (200 phones opening the page at once
   then cost one DB hit, not 200). Refs/organisers always get fresh data."""
