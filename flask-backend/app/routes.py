@@ -19,6 +19,7 @@ UPLOAD_FOLDER = '/app/static/uploads'
 
 main = Blueprint('main', __name__)
 from .SQL_manager import *
+from .SQL_manager import _run
 from .security import (hash_password, verify_and_upgrade, new_passkey, login_blocked, record_login,
                        too_many_tries, client_ip, MAX_SIGNUPS_PER_IP)
 from .cache import cached
