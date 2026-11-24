@@ -129,3 +129,5 @@
   color: #2563eb;
   text-decoration: underline;
 }
+
+.legal-note { font-size: .9rem; font-weight: 700; color: #4b5563; margin: .8rem 0 0; }

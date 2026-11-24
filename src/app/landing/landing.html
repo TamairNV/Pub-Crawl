@@ -1,0 +1,46 @@
+<div class="landing">
+  <section class="hero">
+    <h2>Run the pub crawl<br>everyone talks about</h2>
+    <p>Teams, rules for every pub, a live leaderboard and a ref with a big red button. Set up in a minute. Players just scan a QR code.</p>
+    <div class="cta">
+      <a *ngIf="!loggedIn" routerLink="/create-account" class="big-btn">Start a crawl 🍻</a>
+      <a *ngIf="loggedIn" routerLink="/admin-dashboard" class="big-btn">Your crawls 🍻</a>
+      <a *ngIf="!loggedIn" routerLink="/login" class="small-link">I've got an account</a>
+    </div>
+  </section>
+
+  <section class="card how">
+    <h3>How it works</h3>
+    <ol>
+      <li><strong>Set it up in a minute.</strong> Name it, pick a rule pack, paste your pubs. Done.</li>
+      <li><strong>Everyone scans the QR.</strong> They type their name. No app, no account.</li>
+      <li><strong>The ref scores it live.</strong> Big buttons, works with no signal, the leaderboard updates on every phone.</li>
+      <li><strong>Crown the champions.</strong> A winners poster and recap to share in the group chat.</li>
+    </ol>
+  </section>
+
+  <section class="features">
+    <div class="feat">🎲<strong>Random teams</strong><span>with a big team reveal</span></div>
+    <div class="feat">📜<strong>Rule packs</strong><span>Classic, Stag/Hen, Society, Chill</span></div>
+    <div class="feat">🎡<strong>Spin the wheel</strong><span>dares and point swings</span></div>
+    <div class="feat">📶<strong>Works offline</strong><span>basement bars welcome</span></div>
+    <div class="feat">📸<strong>Photo map</strong><span>everyone's pics in one place</span></div>
+    <div class="feat">🏆<strong>Awards</strong><span>vote for the legend of the night</span></div>
+  </section>
+
+  <section class="card pricing">
+    <h3>Pricing</h3>
+    <div class="tiers">
+      <div class="tier"><strong>Free</strong><span class="price">£0</span><small>Up to 3 teams. Every feature.</small></div>
+      <div class="tier hot"><strong>Group</strong><span class="price">£9.99</span><small>Per crawl. Unlimited teams.</small></div>
+      <div class="tier"><strong>Society</strong><span class="price">£15</span><small>Per crawl. Unlimited teams.</small></div>
+    </div>
+    <p class="fine">One-off payment per crawl, no subscription.</p>
+  </section>
+
+  <p class="responsible">18+ only. Drink responsibly: soft drinks count for every challenge, and nobody has to drink to play.</p>
+
+  <footer class="foot">
+    <a routerLink="/terms">Terms</a> · <a routerLink="/privacy">Privacy</a> · <span>© Isotopic Studios</span>
+  </footer>
+</div>

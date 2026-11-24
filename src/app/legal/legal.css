@@ -1,0 +1,7 @@
+.legal { width: 100%; max-width: 760px; margin: 1rem auto 3rem; padding: 0 1rem; box-sizing: border-box; font-family: "Nunito", sans-serif; }
+.doc { background: #f0f8ff; border: 3px solid #111827; border-radius: 16px; box-shadow: 6px 6px 0 #fbbf24; padding: 1.2rem 1.3rem; color: #111827; }
+.doc h2 { margin-top: 0; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; }
+.doc h3 { font-size: 1.15rem; font-weight: 900; margin: 1.2rem 0 .4rem; }
+.doc p, .doc li { font-size: 1.02rem; line-height: 1.5; font-weight: 600; }
+.updated { color: #4b5563; font-weight: 800; }
+.back { display: inline-block; margin-bottom: 1rem; color: #bfdbfe; font-weight: 800; }

@@ -23,7 +23,7 @@
       <button class="btn-primary join-go" (click)="joinCrawl()" [disabled]="joining">
         {{ joining ? 'Joining…' : "Let's go 🍻" }}
       </button>
-      <p class="join-small">No account needed. Stay on this phone and you stay in.</p>
+      <p class="join-small">No account needed. Stay on this phone and you stay in.<br>18+ only · <a routerLink="/terms">Terms</a> · <a routerLink="/privacy">Privacy</a></p>
     </ng-container>
 
     <p class="error-message" *ngIf="crawl?.full">This crawl is full. Ask your organiser to raise the player limit.</p>

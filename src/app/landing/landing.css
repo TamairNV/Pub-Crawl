@@ -1,0 +1,28 @@
+.landing { width: 100%; max-width: 760px; margin: 1rem auto 2rem; padding: 0 1rem; box-sizing: border-box; font-family: "Nunito", sans-serif; color: #111827; }
+.hero { text-align: center; padding: 1rem 0 1.5rem; }
+.hero h2 { color: #f0f8ff; font-size: clamp(2rem, 8vw, 3.2rem); font-weight: 900; line-height: 1.05; text-transform: uppercase;
+  -webkit-text-stroke: 1.5px #111827; text-shadow: 4px 4px 0 #fbbf24; margin: .5rem 0 1rem; }
+.hero p { color: #e5e7eb; font-size: 1.2rem; font-weight: 700; }
+.cta { display: flex; flex-direction: column; align-items: center; gap: .8rem; margin-top: 1.3rem; }
+.big-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 72px; padding: 0 2.2rem; background: #fbbf24;
+  border: 4px solid #111827; border-radius: 18px; box-shadow: 6px 6px 0 #000; font-size: 1.6rem; font-weight: 900; color: #111827; text-decoration: none; }
+.small-link { color: #bfdbfe; font-weight: 800; }
+.card { background: #f0f8ff; border: 3px solid #111827; border-radius: 16px; box-shadow: 6px 6px 0 #fbbf24; padding: 1.1rem 1.2rem; margin: 1.4rem 0; }
+.card h3 { margin: 0 0 .7rem; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #111827; padding-bottom: .3rem; }
+.how ol { margin: 0; padding-left: 1.3rem; font-size: 1.1rem; font-weight: 700; }
+.how li { margin-bottom: .6rem; }
+.features { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .8rem; }
+.feat { background: #fff; border: 3px solid #111827; border-radius: 14px; box-shadow: 4px 4px 0 #bfdbfe; padding: .8rem; display: flex;
+  flex-direction: column; font-size: 1.8rem; }
+.feat strong { font-size: 1.15rem; font-weight: 900; }
+.feat span { font-size: .95rem; font-weight: 700; color: #4b5563; }
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+.tier { background: #fff; border: 3px solid #111827; border-radius: 14px; padding: .9rem; text-align: center; display: flex; flex-direction: column; }
+.tier.hot { background: #fef3c7; box-shadow: 4px 4px 0 #111827; }
+.tier strong { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; }
+.price { font-size: 2.2rem; font-weight: 900; }
+.tier small { font-weight: 700; color: #4b5563; }
+.fine { margin: .8rem 0 0; font-weight: 700; color: #4b5563; text-align: center; }
+.responsible { color: #e5e7eb; text-align: center; font-weight: 700; }
+.foot { text-align: center; color: #9ca3af; font-weight: 800; margin-top: 1.5rem; }
+.foot a { color: #bfdbfe; }

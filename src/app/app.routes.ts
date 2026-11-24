@@ -14,6 +14,9 @@ import {NewCrawlWizardComponent} from './wizard/wizard';
 import {TeamRevealComponent} from './reveal/reveal';
 import {AdminCodesComponent} from './admin-codes/admin-codes';
 import {RecapComponent} from './recap/recap';
+import {LandingComponent} from './landing/landing';
+import {TermsComponent} from './legal/terms';
+import {PrivacyComponent} from './legal/privacy';
 
 export const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent }, // Home/Login page
@@ -25,7 +28,9 @@ export const routes: Routes = [
   { path: 'reveal/:id', component: TeamRevealComponent },
   { path: 'admin-codes', component: AdminCodesComponent },
   { path: 'recap/:id', component: RecapComponent },
-  { path: '',redirectTo: '/login',pathMatch : 'full' },
+  { path: '', component: LandingComponent, pathMatch: 'full' },
+  { path: 'terms', component: TermsComponent },
+  { path: 'privacy', component: PrivacyComponent },
   { path: 'event-details/:id', component: EventDetailsComponent },
   { path: 'ref/:id', component: RefComponent },
   { path: 'player-dashboard', component: PlayerDashboard },
